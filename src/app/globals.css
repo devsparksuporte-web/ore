@@ -1,0 +1,370 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* ════════════════════════════════════════════════════════════════════
+   STRATA DESIGN TOKENS · Sprint 1.1
+   Arquitetura em camadas (ADR-015 / doc 05 §8):
+     1. PRIMITIVOS  — valores brutos da marca (nunca usados direto em componente)
+     2. SEMÂNTICOS  — significado de uso (o que componentes consomem)
+   White label (F4): tenants sobrescrevem APENAS a camada semântica.
+   Regra: nenhum valor visual hardcoded fora deste arquivo + tailwind.config.
+   ════════════════════════════════════════════════════════════════════ */
+
+:root {
+  /* ── 1. PRIMITIVOS ─────────────────────────────────────────────── */
+
+  /* Marca Ore (doc 11) */
+  --navy-950: #081527;
+  --navy-900: #0D2240;
+  --navy-800: #16324F;
+  --navy-700: #1F4265;
+  --navy-100: #DCE5EF;
+  --navy-50:  #EEF3F8;
+  --action-700: #1749BE;
+  --action-600: #1E5EEA;
+  --action-100: #E3ECFE;
+  --copper-500: #C0703A;
+  --copper-100: #F6E7DC;
+
+  /* Neutros (escala cinza-azulada) */
+  --gray-900: #111827;
+  --gray-700: #374151;
+  --gray-500: #6B7280;
+  --gray-400: #9CA3AF;
+  --gray-300: #D1D5DB;
+  --gray-200: #E5E7EB;
+  --gray-100: #F3F4F6;
+
+  /* Status (DS §3.5 — pares verificados AA) */
+  --green-600: #188049; --green-100: #E7F5EE; --green-800: #116039;
+  --amber-600: #B45309; --amber-100: #FCF1E3; --amber-800: #8A4207;
+  --red-600:   #C93B3B; --red-100:   #FBEAEA; --red-800:   #9E2B2B;
+  --blue-600:  #0E6FA8; --blue-100:  #E5F2FA; --blue-800:  #0B577F;
+
+  /* ── 2. SEMÂNTICOS ─────────────────────────────────────────────── */
+
+  /* Superfícies */
+  --bg-canvas: #F7F8FA;
+  --bg-surface: #FFFFFF;
+  --bg-sunken: #EEF0F3;
+  --bg-inverse: var(--navy-900);
+  --bg-sidebar-from: #0C1F3A; /* mais profundo que navy-900 (Premium Polish) */
+  --bg-sidebar-to: #050E1B;
+
+  /* shadcn mapping (hsl) — mantidos para compatibilidade Radix/shadcn */
+  --background: 220 20% 97%;
+  --foreground: 221 39% 11%;
+  --card: 0 0% 100%;
+  --card-foreground: 221 39% 11%;
+  --popover: 0 0% 100%;
+  --popover-foreground: 221 39% 11%;
+  --primary: 222 81% 52%;
+  --primary-foreground: 0 0% 100%;
+  --secondary: 216 24% 96%;
+  --secondary-foreground: 217 33% 17%;
+  --muted: 216 24% 96%;
+  --muted-foreground: 220 9% 46%;
+  --accent: 219 90% 94%;
+  --accent-foreground: 217 71% 15%;
+  --destructive: 0 56% 51%;
+  --destructive-foreground: 0 0% 100%;
+  --border: 220 14% 93.5%; /* hairline — menos borda, profundidade via sombra */
+  --input: 216 12% 84%;
+  --ring: 222 81% 52%;
+
+  /* Tipografia — escala (doc 05 §4.2) */
+  --text-display: 2rem;       --leading-display: 2.5rem;
+  --text-h1: 1.5rem;          --leading-h1: 2rem;
+  --text-h2: 1.25rem;         --leading-h2: 1.75rem;
+  --text-h3: 1rem;            --leading-h3: 1.5rem;
+  --text-body: 0.875rem;      --leading-body: 1.25rem;
+  --text-body-sm: 0.8125rem;  --leading-body-sm: 1.125rem;
+  --text-label: 0.75rem;      --leading-label: 1rem;
+  --text-caption: 0.6875rem;  --leading-caption: 0.875rem;
+  --text-kpi: 1.75rem;        --leading-kpi: 2rem;
+  --text-micro: 0.625rem;     --leading-micro: 0.875rem; /* overlines, labels de eixo */
+  --text-hero: 2.375rem;      --leading-hero: 1.2;       /* displays institucionais (login) */
+  --tracking-label: 0.06em;
+  --tracking-display: -0.02em; /* títulos modernos: compactos, sem peso excessivo */
+  --tracking-kpi: -0.015em;
+  --tracking-snug: -0.01em;   /* h2/valores intermediários */
+  --tracking-wide: 0.02em;    /* corpo levemente aberto */
+  --tracking-caps: 0.08em;    /* legendas caps de gráfico */
+  --tracking-overline: 0.14em;/* labels de navegação/overlines */
+  --tracking-banner: 0.16em;  /* assinaturas institucionais */
+  --tracking-brand: 0.24em;   /* lockups de marca */
+  /* Pesos — máx. 3 por vista (DS §4.2) */
+  --font-regular: 400;
+  --font-medium: 500;
+  --font-semibold: 600;
+  --font-bold: 700;
+
+  /* Spacing — grid de 8px (DS §5). Passos aprovados; meio-passo 4px só
+     para relações íntimas (ícone↔label). Em Tailwind: 1(4) 2(8) 3(12)
+     4(16) 6(24) 8(32) 12(48) 16(64). Valores fora da escala = violação. */
+  --space-1: 4px;  --space-2: 8px;  --space-3: 12px; --space-4: 16px;
+  --space-6: 24px; --space-8: 32px; --space-12: 48px; --space-16: 64px;
+
+  /* Radius (DS §6) */
+  --radius-sm: 0.25rem;   /* chips, kbd */
+  --radius: 0.375rem;     /* inputs, botões */
+  --radius-md: 0.5rem;    /* cards */
+  --radius-lg: 0.75rem;   /* modais */
+  --radius-full: 9999px;  /* pills, avatares */
+
+  /* Sombras — Premium Polish: extremamente suaves, multi-camada difusa
+     (Linear/Stripe). Profundidade em camadas: borda → xs (repouso) →
+     sm/md (elevação micro no hover) → overlay (flutuantes). */
+  --shadow-xs: 0 1px 2px rgb(8 21 39 / 0.04);
+  --shadow-sm: 0 1px 3px rgb(8 21 39 / 0.04), 0 6px 16px -6px rgb(8 21 39 / 0.06);
+  --shadow-md: 0 2px 6px -1px rgb(8 21 39 / 0.05), 0 12px 28px -10px rgb(8 21 39 / 0.09);
+  --shadow-lg: 0 4px 12px -2px rgb(8 21 39 / 0.06), 0 24px 48px -16px rgb(8 21 39 / 0.12);
+  --shadow-overlay: 0 8px 24px -6px rgb(8 21 39 / 0.10), 0 32px 72px -18px rgb(8 21 39 / 0.20);
+
+  /* Blur — única escala de desfoque (glass, véus, luzes difusas) */
+  --blur-xs: 2px;   /* véu de recarga */
+  --blur-sm: 4px;   /* profundidade discreta */
+  --blur-md: 10px;  /* glass padrão (topbar/filtros/tooltip) */
+  --blur-lg: 24px;  /* painéis flutuantes grandes */
+  --blur-xl: 64px;  /* luzes de ambiente (radiais decorativas) */
+
+  /* Ícones — tamanhos e traço (Lucide) */
+  --icon-xs: 0.75rem;  /* 12px — inline em caption */
+  --icon-sm: 0.875rem; /* 14px — meta, rodapés */
+  --icon-md: 1rem;     /* 16px — navegação, botões (padrão) */
+  --icon-lg: 1.25rem;  /* 20px — headers de card */
+  --icon-xl: 1.5rem;   /* 24px — empty states, heros */
+  --icon-stroke-light: 1.25; /* decorativo/denso */
+  --icon-stroke: 1.6;        /* padrão do produto */
+  --icon-stroke-bold: 2;     /* ênfase (ativo, alertas) */
+
+  /* Elevation — níveis semânticos: cada nível = sombra + (quando flutua) z-index.
+     0 flat · 1 repouso (xs) · 2 hover/raised (sm→md) · 3 flutuante (lg) ·
+     4 overlay (overlay + z-overlay). Componentes usam shadow-* / z-*; esta
+     tabela é o contrato de profundidade. */
+
+  /* Z-index — escala nomeada única (nunca números soltos) */
+  --z-base: 0;
+  --z-sticky: 20;    /* headers de tabela, subtotais fixos */
+  --z-topbar: 30;
+  --z-sidebar: 40;
+  --z-overlay: 50;   /* sheet/dialog overlay + conteúdo */
+  --z-popover: 55;   /* dropdown, select, tooltip (acima de modais) */
+  --z-toast: 60;
+
+  /* Opacity */
+  --opacity-disabled: 0.5;
+  --opacity-overlay: 0.4;    /* scrim navy de modais/drawers */
+  --opacity-refetch: 0.4;    /* véu de recarga em cards */
+  --opacity-muted-icon: 0.6;
+
+  /* Dataviz — tokens consumidos pelo espelho TS (chart-tokens.ts) */
+  --chart-actual: #0D2240;
+  --chart-budget: #8A97A8;
+  --chart-forecast: #1E5EEA;
+  --chart-prior: #C9D2DC;
+  --chart-target: #C0703A;
+  --chart-positive: #188049;
+  --chart-negative: #C93B3B;
+  --chart-inflow: #0D2240;
+  --chart-outflow: #B9C6D6;
+  --chart-grid: #EEF0F4;
+  --chart-axis: #8A94A6;
+
+  /* Triplets RGB — consumidos pelo Tailwind com suporte a /opacity */
+  --rgb-gray-50: 249 250 251; --rgb-gray-100: 243 244 246; --rgb-gray-200: 229 231 235;
+  --rgb-gray-300: 209 213 219; --rgb-gray-400: 156 163 175; --rgb-gray-500: 107 114 128;
+  --rgb-gray-700: 55 65 81; --rgb-gray-800: 31 41 55; --rgb-gray-900: 17 24 39;
+  --rgb-navy-50: 238 243 248; --rgb-navy-100: 220 229 239; --rgb-navy-700: 31 66 101;
+  --rgb-navy-800: 22 50 79; --rgb-navy-900: 13 34 64; --rgb-navy-950: 8 21 39;
+  --rgb-action-100: 227 236 254; --rgb-action-600: 30 94 234; --rgb-action-700: 23 73 190;
+  --rgb-copper-100: 246 231 220; --rgb-copper-500: 192 112 58;
+  --rgb-success: 24 128 73; --rgb-success-bg: 231 245 238; --rgb-success-fg: 17 96 57;
+  --rgb-warning: 180 83 9; --rgb-warning-bg: 252 241 227; --rgb-warning-fg: 138 66 7;
+  --rgb-danger: 201 59 59; --rgb-danger-bg: 251 234 234; --rgb-danger-fg: 158 43 43;
+  --rgb-info: 14 111 168; --rgb-info-bg: 229 242 250; --rgb-info-fg: 11 87 127;
+  --rgb-inverse: 13 34 64;
+
+  /* Motion — microinterações 120–220ms (Linear/Framer/Raycast) */
+  --duration-instant: 120ms; /* press/active, scale sutil */
+  --duration-fast: 150ms;    /* hover, foco, cores — padrão */
+  --duration-base: 200ms;    /* drawer, dialog, colapso, slide */
+  --duration-slow: 220ms;    /* entrada de conteúdo (1ª carga apenas) */
+  --ease-standard: cubic-bezier(0.2, 0, 0, 1);
+  --ease-out: cubic-bezier(0, 0, 0.2, 1);
+}
+
+/* ── DARK MODE (preparado — F-09.1 / DT-010) ───────────────────────
+   Rascunho da paleta escura via remapeamento das MESMAS variáveis.
+   Como todos os componentes consomem tokens, ligar o tema = aplicar
+   a classe `dark` no <html>. Habilitação global condicionada à
+   aprovação da paleta no doc 05 (DoD 3.3). */
+.dark {
+  --bg-canvas: #0B1420;
+  --bg-surface: #101D2E;
+  --bg-sunken: #0D1826;
+  --bg-inverse: #EEF3F8;
+
+  --background: 214 47% 8%;
+  --foreground: 214 32% 91%;
+  --card: 213 48% 12%;
+  --card-foreground: 214 32% 91%;
+  --popover: 213 48% 12%;
+  --popover-foreground: 214 32% 91%;
+  --muted: 214 40% 16%;
+  --muted-foreground: 215 16% 62%;
+  --accent: 218 60% 20%;
+  --accent-foreground: 219 90% 88%;
+  --border: 214 35% 20%;
+  --input: 214 30% 26%;
+
+  /* Neutros invertidos para texto/dados */
+  --gray-900: #E7ECF3;
+  --gray-700: #C3CCD8;
+  --gray-500: #8B98A9;
+  --gray-400: #64748B;
+  --gray-300: #3A4A5E;
+  --gray-200: #22314A;
+  --gray-100: #182539;
+
+  /* Marca em superfícies escuras: texto de marca clareia; fundos de marca escurecem.
+     ATENÇÃO: superfícies de marca (sidebar, botão institucional, tooltip) NUNCA
+     usam --navy-900 diretamente — usam os semânticos abaixo, que não flipam. */
+  --navy-900: #DCE5EF;
+  --navy-100: #1D3050;
+  --navy-50: #16273F;
+  --bg-inverse: #1D3050; /* tooltip/painéis institucionais seguem escuros no dark */
+
+  /* Sombras no escuro: mais presentes, ainda difusas */
+  --shadow-xs: 0 1px 2px rgb(0 0 0 / 0.25);
+  --shadow-sm: 0 1px 3px rgb(0 0 0 / 0.25), 0 6px 16px -6px rgb(0 0 0 / 0.35);
+  --shadow-md: 0 2px 6px -1px rgb(0 0 0 / 0.3), 0 12px 28px -10px rgb(0 0 0 / 0.45);
+  --shadow-lg: 0 4px 12px -2px rgb(0 0 0 / 0.35), 0 24px 48px -16px rgb(0 0 0 / 0.5);
+  --shadow-overlay: 0 8px 24px -6px rgb(0 0 0 / 0.4), 0 32px 72px -18px rgb(0 0 0 / 0.55);
+
+  /* Triplets no escuro — cinzas invertidos sobre base navy; status clareiam */
+  --rgb-gray-50: 19 31 49; --rgb-gray-100: 24 37 57; --rgb-gray-200: 34 49 74;
+  --rgb-gray-300: 58 74 94; --rgb-gray-400: 100 116 139; --rgb-gray-500: 139 152 169;
+  --rgb-gray-700: 195 204 216; --rgb-gray-800: 211 220 231; --rgb-gray-900: 231 236 243;
+  --rgb-navy-900: 220 229 239; --rgb-navy-100: 29 48 80; --rgb-navy-50: 22 39 63;
+  --rgb-action-100: 28 52 106;
+  --rgb-success-bg: 18 53 40; --rgb-success-fg: 127 214 168;
+  --rgb-warning-bg: 58 42 18; --rgb-warning-fg: 232 178 122;
+  --rgb-danger-bg: 61 26 26; --rgb-danger-fg: 233 148 148;
+  --rgb-info-bg: 18 41 58; --rgb-info-fg: 137 198 235;
+  --rgb-inverse: 29 48 80;
+
+  /* Dataviz no escuro: série protagonista clareia; contexto recua */
+  --chart-actual: #A9C4E8;
+  --chart-budget: #75839B;
+  --chart-forecast: #6FA0FF;
+  --chart-prior: #3A4A5E;
+  --chart-target: #D98A50;
+  --chart-positive: #3FB07A;
+  --chart-negative: #E06A6A;
+  --chart-inflow: #A9C4E8;
+  --chart-outflow: #33465E;
+  --chart-grid: #1B2A40;
+  --chart-axis: #64748B;
+}
+
+/* Redução de movimento (13-accessibility §8) */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+
+/* ── Base ──────────────────────────────────────────────────────────── */
+* { border-color: hsl(var(--border)); }
+
+body {
+  /* Ambiente com respiro: luz suave no topo do canvas (Vercel/Raycast) */
+  background-color: var(--bg-canvas);
+  background-image: radial-gradient(1100px 420px at 50% -12%, var(--bg-ambient), transparent 62%);
+  background-repeat: no-repeat;
+  color: hsl(var(--foreground));
+  font-feature-settings: "cv02", "cv03";
+}
+
+:root { --bg-ambient: rgb(255 255 255 / 0.9); }
+.dark { --bg-ambient: rgb(29 48 80 / 0.32); }
+
+::selection { background: rgb(30 94 234 / 0.16); }
+.dark ::selection { background: rgb(111 160 255 / 0.24); }
+
+/* Glassmorphism MUITO discreto — só em chrome fixo (topbar/filtros) */
+.glass {
+  background: color-mix(in srgb, var(--bg-surface) 78%, transparent);
+  -webkit-backdrop-filter: blur(var(--blur-md)) saturate(1.3);
+  backdrop-filter: blur(var(--blur-md)) saturate(1.3);
+}
+@supports not (backdrop-filter: blur(1px)) {
+  .glass { background: var(--bg-surface); }
+}
+
+/* Números financeiros: tabulares (DS §4) */
+.tnum { font-variant-numeric: tabular-nums; }
+
+/* Superfície do sidebar — semântica fixa (identidade navy nos DOIS temas).
+   Nunca compor com from-navy-900 (o primitivo flipa no dark).
+   Premium Polish: gradiente vertical + luz difusa muito discreta no topo
+   (profundidade sem blur real — custo zero, efeito de vidro fosco). */
+.bg-sidebar {
+  background:
+    radial-gradient(340px 200px at 30% -40px, rgb(122 162 220 / 0.10), transparent 70%),
+    linear-gradient(to bottom, var(--bg-sidebar-from), var(--bg-sidebar-to));
+}
+
+/* Separador-fio do sidebar: some nas pontas (elegância Linear/Raycast) */
+.sidebar-hairline {
+  height: 1px;
+  background: linear-gradient(to right, transparent, rgb(255 255 255 / 0.08) 22%, rgb(255 255 255 / 0.08) 78%, transparent);
+}
+
+/* Microinterações utilitárias (120–220ms, nunca exageradas) */
+.anim-fade { animation: mi-fade var(--duration-base) var(--ease-out) both; }
+.anim-rise { animation: mi-rise var(--duration-base) var(--ease-out) both; }
+.anim-scale-in { animation: mi-scale var(--duration-fast) var(--ease-out) both; }
+@keyframes mi-fade { from { opacity: 0 } to { opacity: 1 } }
+@keyframes mi-rise { from { opacity: 0; transform: translateY(6px) } to { opacity: 1; transform: translateY(0) } }
+@keyframes mi-scale { from { opacity: 0; transform: scale(0.98) } to { opacity: 1; transform: scale(1) } }
+
+/* Entrada de widget — SÓ movimento (nunca opacidade): conteúdo permanece
+   visível mesmo com rAF/animações congelados (aba em background, testes,
+   export). Robustez > efeito (UX Review 001, princípio de previsibilidade). */
+.widget-enter {
+  animation: widget-enter var(--duration-base) var(--ease-out) both;
+}
+@keyframes widget-enter {
+  from { transform: translateY(4px); }
+  to { transform: translateY(0); }
+}
+
+/* Anel de foco padrão — único no produto (13-accessibility §4) */
+.focus-ring {
+  @apply focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2;
+}
+
+/* Scrollbar sóbria */
+::-webkit-scrollbar { width: 10px; height: 10px; }
+::-webkit-scrollbar-thumb {
+  background: var(--gray-300);
+  border-radius: var(--radius-full);
+  border: 2px solid transparent;
+  background-clip: content-box;
+}
+::-webkit-scrollbar-track { background: transparent; }
+
+/* Skeleton shimmer (desativado por prefers-reduced-motion acima) */
+.skeleton { @apply relative overflow-hidden rounded-md bg-gray-100; }
+.skeleton::after {
+  content: "";
+  @apply absolute inset-0 -translate-x-full;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.7), transparent);
+  animation: shimmer 1.6s infinite;
+}
+@keyframes shimmer { 100% { transform: translateX(100%); } }
