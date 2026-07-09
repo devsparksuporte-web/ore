@@ -1,5 +1,5 @@
 import {
-  BarChart3, Briefcase, Building2, FileCheck2, FolderKanban, GitBranch, LayoutDashboard,
+  BarChart3, Briefcase, Building2, Compass, FileCheck2, FolderKanban, GitBranch, LayoutDashboard,
   Link2, ListChecks, Landmark, Receipt, ScrollText, Settings, ShieldCheck, TrendingUp,
   Users, Wallet, type LucideIcon,
 } from "lucide-react";
@@ -55,7 +55,10 @@ export function companyNav(slug: string, pendingApprovals: number): NavGroup[] {
   return [
     {
       label: "Visão Geral",
-      items: [{ label: "Dashboard", href: `${base}/overview`, icon: LayoutDashboard }],
+      items: [
+        { label: "Estratégia & Execução", href: `${base}/estrategia`, icon: Compass },
+        { label: "Dashboard", href: `${base}/overview`, icon: LayoutDashboard },
+      ],
     },
     {
       label: "Financeiro",

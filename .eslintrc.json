@@ -1,0 +1,44 @@
+{
+  "extends": "next/core-web-vitals",
+  "rules": {
+    "no-restricted-imports": [
+      "error",
+      {
+        "patterns": [
+          {
+            "group": ["@modules/*/services", "@modules/*/services/*", "@modules/*/components/*", "@modules/*/hooks/*", "@modules/*/utils/*", "@modules/*/pages/*"],
+            "message": "Fronteira de módulo (ADR-017): importe apenas o barrel público '@modules/<dominio>'. Internals são privados."
+          }
+        ]
+      }
+    ]
+  },
+  "overrides": [
+    {
+      "files": ["src/app/**/*.tsx", "src/components/shell/**/*.tsx"],
+      "rules": {
+        "no-restricted-imports": [
+          "warn",
+          {
+            "patterns": [
+              {
+                "group": ["@/mocks/*"],
+                "message": "Legado (DT-015): páginas devem consumir os PORTS '@modules/<dominio>' — @/mocks é detalhe do adaptador e só pode ser importado por modules/*/services."
+              },
+              {
+                "group": ["@modules/*/services", "@modules/*/services/*"],
+                "message": "Fronteira de módulo (ADR-017): importe apenas o barrel público '@modules/<dominio>'."
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "files": ["src/modules/*/services/**"],
+      "rules": {
+        "no-restricted-imports": "off"
+      }
+    }
+  ]
+}
