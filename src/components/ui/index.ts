@@ -39,3 +39,4 @@ export * from "./status-badge";
 export * from "./section-header";
 export * from "./quick-actions";
 export * from "./user-menu";
+export * from "./timeline";

@@ -7,14 +7,16 @@
  * Adaptador E5 (Crystal): @modules/api com as MESMAS assinaturas → Promise.
  * A troca mock→API não deve exigir mudança em nenhum componente consumidor.
  */
-import { decisions, strategicMaps } from "@/mocks/estrategia";
+import { decisions, exitPlans, strategicMaps, strategyTimeline } from "@/mocks/estrategia";
 import type {
-  AssetRef, Decision, DecisionFilters, StrategicMap, StrategyKpis,
+  AssetRef, Decision, DecisionFilters, ExitPlan, StrategicMap,
+  StrategyEvent, StrategyKpis,
 } from "../types";
 
 export type {
-  AssetRef, Decision, DecisionFilters, DecisionStatus, DecisionType,
-  KeyRisk, Priority, RiskSeverity, StrategicMap, StrategyKpis,
+  AssetRef, CriticalPathStep, Decision, DecisionFilters, DecisionStatus, DecisionType,
+  ExitPlan, ExitStage, KeyRisk, Priority, RiskSeverity, StrategicMap, StrategyEvent,
+  StrategyEventKind, StrategyEventState, StrategyKpis,
 } from "../types";
 
 /** "Hoje" do mock — no E5 vem do relógio/servidor. Base do cálculo de atraso. */
@@ -70,6 +72,20 @@ export function listDecisionsByCompany(companySlug: string, filters: DecisionFil
 /** Uma decisão pelo id (detalhe do Drawer). */
 export function getDecision(id: string): Decision | undefined {
   return decisions.find((d) => d.id === id);
+}
+
+/* ─────────────────────────── Timeline ─────────────────────────── */
+
+/** Eventos de execução (Timeline) de uma empresa investida (por slug). */
+export function getStrategyTimelineByCompany(companySlug: string): StrategyEvent[] {
+  return strategyTimeline[companySlug] ?? [];
+}
+
+/* ────────────────────────── Plano de Saída ────────────────────────── */
+
+/** Plano de saída de uma empresa investida (por slug). */
+export function getExitPlanByCompany(companySlug: string): ExitPlan | undefined {
+  return exitPlans.find((p) => p.asset.companySlug === companySlug);
 }
 
 /** Ativos distintos presentes nas decisões — alimenta os filtros de UI. */

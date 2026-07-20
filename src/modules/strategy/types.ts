@@ -31,22 +31,72 @@ export interface KeyRisk {
   severity: RiskSeverity;
 }
 
-/** Painel do Mapa Estratégico por Ativo (aba "Mapa Estratégico"). */
+/** Etapa do caminho crítico (stepper de execução da tese). */
+export interface CriticalPathStep {
+  label: string;
+  /** Concluída (marca o progresso ao longo do stepper). */
+  done?: boolean;
+  /** Etapa em curso (destaque). */
+  current?: boolean;
+}
+
+/** Painel da Estratégia da Investida (bloco HERO). */
 export interface StrategicMap {
   id: string;
   asset: AssetRef;
-  /** Tese Atual. */
+  /** Tese Original (como o investimento nasceu). */
+  thesisOriginal?: string;
+  /** Tese Atual (como evoluiu). */
   thesis: string;
+  /** Caminho crítico — sequência de etapas até destravar a tese. */
+  criticalPath?: CriticalPathStep[];
+  /** Objetivos estratégicos do ciclo. */
+  objectives?: string[];
   /** Riscos-chave (com severidade — alimenta o KPI "Riscos críticos"). */
   keyRisks: KeyRisk[];
   /** Definição de sucesso 2026. */
   success: string;
-  /** Decisão estratégica 2026. */
+  /** Decisão estratégica 2026 (callout). */
   decision: string;
   /* ── ganchos de evolução (reservados) ── */
   updatedAt?: string;
   updatedBy?: string;
   aiInsights?: AiInsight[];
+}
+
+/** Evento da Timeline de execução (bloco próprio, reutilizável). */
+export type StrategyEventKind = "milestone" | "decision" | "risk" | "delivery";
+export type StrategyEventState = "done" | "current" | "upcoming";
+
+export interface StrategyEvent {
+  id: string;
+  /** Data normalizada (ISO) quando aplicável — ordenação/alertas futuros. */
+  dateISO?: string;
+  /** Rótulo de exibição da data (ex.: "Abr/2026", "Contínuo"). */
+  dateLabel: string;
+  title: string;
+  kind: StrategyEventKind;
+  state: StrategyEventState;
+}
+
+/** Plano de Saída da investida (bloco próprio; cresce nas próximas versões). */
+export interface ExitStage {
+  label: string;
+}
+
+export interface ExitPlan {
+  id: string;
+  asset: AssetRef;
+  /** Estratégia de saída (ex.: "Venda estratégica", "Block trade"). */
+  strategy: string;
+  /** Estágios do processo de saída (stepper). */
+  stages: ExitStage[];
+  /** Índice do estágio atual dentro de `stages`. */
+  currentStageIndex: number;
+  /** Próximos passos até avançar de estágio. */
+  nextSteps: string[];
+  /** Horizonte estimado (ex.: "2027–2028"). */
+  horizon: string;
 }
 
 /** Linha do log de Decisões & Ações (aba "Decisões e Ações"). */

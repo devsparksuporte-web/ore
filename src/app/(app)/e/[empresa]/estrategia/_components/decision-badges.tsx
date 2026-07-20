@@ -1,7 +1,7 @@
 /**
  * Badges de domínio de Estratégia & Execução.
- * Reusam exclusivamente o primitivo <Badge/> do Design System (só mapeiam
- * enum → variant + rótulo pt-BR). Nenhum estilo novo é introduzido.
+ * Reusam o primitivo <Badge/> do Design System (só mapeiam enum → variant +
+ * rótulo pt-BR). `whitespace-nowrap` garante que nunca quebrem em duas linhas.
  */
 import { Badge } from "@/components/ui";
 import type {
@@ -10,6 +10,8 @@ import type {
 
 type Variant =
   | "default" | "success" | "warning" | "danger" | "info" | "navy" | "copper" | "outline";
+
+const NOWRAP = "whitespace-nowrap";
 
 const statusMap: Record<DecisionStatus, { label: string; variant: Variant; dot?: boolean }> = {
   open: { label: "Aberto", variant: "outline", dot: true },
@@ -38,20 +40,20 @@ const riskMap: Record<RiskSeverity, { label: string; variant: Variant }> = {
 
 export function StatusBadge({ status }: { status: DecisionStatus }) {
   const s = statusMap[status];
-  return <Badge variant={s.variant} dot={s.dot}>{s.label}</Badge>;
+  return <Badge variant={s.variant} dot={s.dot} className={NOWRAP}>{s.label}</Badge>;
 }
 
 export function PriorityBadge({ priority }: { priority: Priority }) {
   const p = priorityMap[priority];
-  return <Badge variant={p.variant}>{p.label}</Badge>;
+  return <Badge variant={p.variant} className={NOWRAP}>{p.label}</Badge>;
 }
 
 export function TypeBadge({ type }: { type: DecisionType }) {
   const t = typeMap[type];
-  return <Badge variant={t.variant}>{t.label}</Badge>;
+  return <Badge variant={t.variant} className={NOWRAP}>{t.label}</Badge>;
 }
 
 export function RiskBadge({ severity }: { severity: RiskSeverity }) {
   const r = riskMap[severity];
-  return <Badge variant={r.variant} dot>{r.label}</Badge>;
+  return <Badge variant={r.variant} dot className={NOWRAP}>{r.label}</Badge>;
 }
