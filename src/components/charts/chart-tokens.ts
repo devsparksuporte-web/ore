@@ -61,4 +61,7 @@ export const gradientIds = {
   navy: "strata-grad-navy",
   blue: "strata-grad-blue",
   copper: "strata-grad-copper",
+  /** Preenchimentos de barra (sólido → translúcido). */
+  barNavy: "strata-bar-navy",
+  barMuted: "strata-bar-muted",
 } as const;

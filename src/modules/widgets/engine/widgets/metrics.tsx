@@ -12,14 +12,14 @@ export function KpiWidgetBody({ data }: { data: KpiWidgetData; config: WidgetCon
   return (
     <div className="flex h-full flex-col">
       <div className="flex items-center justify-between gap-2">
-        <span className="text-caption font-medium uppercase tracking-wider text-gray-500">{data.label}</span>
+        <span className="text-body-sm text-gray-500">{data.label}</span>
         {data.badge && <Badge variant="warning">{data.badge}</Badge>}
       </div>
       {/* Valor SEMPRE alinhado ao topo (linhas de cards irmãos não afundam
           o número) e SEM quebra — se apertar, o span do widget está errado. */}
       <div className="mt-2 flex items-start justify-between gap-3">
         <div className="min-w-0">
-          <div className="whitespace-nowrap font-display text-kpi tnum tracking-tight text-navy-900">{data.value}</div>
+          <div className="whitespace-nowrap font-display text-kpi tnum tracking-kpi text-navy-900">{data.value}</div>
           {data.reading && <p className="mt-1 truncate text-body-sm text-gray-700">{data.reading}</p>}
           {data.delta && (
             <div className="mt-2">
@@ -66,7 +66,10 @@ export function ProgressWidgetBody({ data }: { data: ProgressWidgetData; config:
         <span className="text-body-sm text-muted-foreground tnum">de {fmt(data.max)}</span>
       </div>
       <div className="relative mt-2 h-2 w-full overflow-hidden rounded-full bg-gray-100">
-        <div className="h-full rounded-full bg-navy-900 transition-[width] duration-slow ease-out" style={{ width: `${pct}%` }} />
+        <div
+          className="h-full rounded-full bg-gradient-to-r from-navy-800 to-navy-900 transition-[width] duration-slow ease-out"
+          style={{ width: `${pct}%` }}
+        />
         {data.marker && (
           <div
             className="absolute top-[-3px] h-3.5 w-[2px] rounded bg-copper-500"

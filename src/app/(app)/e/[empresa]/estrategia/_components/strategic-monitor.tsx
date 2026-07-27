@@ -15,7 +15,7 @@ const riskWord: Record<RiskSeverity, string> = { critical: "Crítico", high: "Al
 function Section({ title, children }: { title: string; children: React.ReactNode }) {
   return (
     <div>
-      <div className="mb-2.5 text-caption font-medium uppercase tracking-wide text-muted-foreground">{title}</div>
+      <div className="mb-3 text-body-sm text-gray-500">{title}</div>
       {children}
     </div>
   );
@@ -29,7 +29,7 @@ export function StrategicMonitor({
   indicators: Indicator[];
 }) {
   return (
-    <Card className="anim-rise">
+    <Card>
       <CardHeader><CardTitle>Monitoramento estratégico</CardTitle></CardHeader>
         <CardContent className="space-y-6">
           <Section title="Riscos-chave">
@@ -39,7 +39,7 @@ export function StrategicMonitor({
                   <span className={`mt-1.5 block h-1.5 w-1.5 shrink-0 rounded-full ${riskDot[r.severity]}`} aria-hidden />
                   <span className="text-body-sm leading-snug text-gray-600">
                     {r.label}
-                    <span className="ml-1.5 text-caption uppercase tracking-wide text-gray-400">{riskWord[r.severity]}</span>
+                    <span className="ml-1.5 text-caption text-gray-500">{riskWord[r.severity]}</span>
                   </span>
                 </li>
               ))}

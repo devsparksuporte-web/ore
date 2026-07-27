@@ -25,7 +25,7 @@ export function StrategyTimeline({ events }: { events: StrategyEvent[] }) {
     meta: <Badge variant={kindVariant[e.kind]}>{kindLabel[e.kind]}</Badge>,
   }));
   return (
-    <Card className="anim-rise">
+    <Card>
       <CardHeader><CardTitle>Timeline de execução</CardTitle></CardHeader>
       <CardContent className="pt-2">
         <Timeline items={items} />

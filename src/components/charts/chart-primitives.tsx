@@ -26,6 +26,16 @@ export function ChartDefs() {
         <stop offset="0%" stopColor={chartColors.target} stopOpacity={0.08} />
         <stop offset="100%" stopColor={chartColors.target} stopOpacity={0} />
       </linearGradient>
+      {/* Preenchimento de barra: sólido no topo → levemente translúcido na base.
+          Profundidade discreta, sem efeito decorativo (DS §7). */}
+      <linearGradient id="strata-bar-navy" x1="0" y1="0" x2="0" y2="1">
+        <stop offset="0%" stopColor={chartColors.actual} stopOpacity={0.95} />
+        <stop offset="100%" stopColor={chartColors.actual} stopOpacity={0.55} />
+      </linearGradient>
+      <linearGradient id="strata-bar-muted" x1="0" y1="0" x2="0" y2="1">
+        <stop offset="0%" stopColor={chartColors.actual} stopOpacity={0.55} />
+        <stop offset="100%" stopColor={chartColors.actual} stopOpacity={0.3} />
+      </linearGradient>
     </defs>
   );
 }

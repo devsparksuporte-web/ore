@@ -1,6 +1,6 @@
 import {
-  BarChart3, Briefcase, Building2, Compass, FileCheck2, FolderKanban, GitBranch, LayoutDashboard,
-  Link2, ListChecks, Landmark, Receipt, ScrollText, Settings, ShieldCheck, TrendingUp,
+  BarChart3, Briefcase, Building2, Compass, FileCheck2, FolderKanban, Gauge, GitBranch, LayoutDashboard,
+  Link2, ListChecks, Landmark, Receipt, Scale, ScrollText, Settings, ShieldCheck, TrendingUp,
   Users, Wallet, type LucideIcon,
 } from "lucide-react";
 
@@ -57,6 +57,8 @@ export function companyNav(slug: string, pendingApprovals: number): NavGroup[] {
       label: "Visão Geral",
       items: [
         { label: "Estratégia & Execução", href: `${base}/estrategia`, icon: Compass },
+        { label: "Performance do Investimento", href: `${base}/performance`, icon: Gauge },
+        { label: "Governança Corporativa", href: `${base}/governanca-corporativa`, icon: Scale },
         { label: "Dashboard", href: `${base}/overview`, icon: LayoutDashboard },
       ],
     },

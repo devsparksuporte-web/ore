@@ -81,7 +81,7 @@ export function DecisionsTable({
   ];
 
   return (
-    <Card className="anim-rise">
+    <Card>
       <CardHeader><CardTitle>{title}</CardTitle></CardHeader>
       <CardContent className="pt-1">
         {showToolbar && (
@@ -116,7 +116,7 @@ export function DecisionsTable({
       </div>
         )}
 
-        <DataTable columns={columns} rows={rows} onRowClick={openRow} dense />
+        <DataTable columns={columns} rows={rows} onRowClick={openRow} dense exportable={false} />
       </CardContent>
 
       <DecisionDrawer decision={selected} open={drawerOpen} onOpenChange={setDrawerOpen} />

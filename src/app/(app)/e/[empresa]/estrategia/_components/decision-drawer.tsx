@@ -16,7 +16,7 @@ import { PriorityBadge, StatusBadge, TypeBadge } from "./decision-badges";
 function Field({ label, children }: { label: string; children: React.ReactNode }) {
   return (
     <div className="space-y-1">
-      <span className="text-caption font-medium uppercase tracking-wider text-gray-500">{label}</span>
+      <span className="text-caption text-gray-500">{label}</span>
       <div className="text-body-sm text-gray-800">{children}</div>
     </div>
   );
@@ -68,7 +68,7 @@ export function DecisionDrawer({
 
               {/* Preparado para evolução (Crystal) — não implementado nesta entrega */}
               <div className="rounded-md border border-dashed bg-gray-50 px-4 py-3">
-                <span className="flex items-center gap-1.5 text-caption font-medium uppercase tracking-wider text-gray-500">
+                <span className="flex items-center gap-1.5 text-caption text-gray-500">
                   <MessagesSquare className="h-3.5 w-3.5 text-gray-400" aria-hidden /> Evolução do módulo
                 </span>
                 <p className="mt-1 text-body-sm leading-5 text-gray-500">
@@ -78,7 +78,7 @@ export function DecisionDrawer({
             </DrawerBody>
 
             <DrawerFooter>
-              <span className="text-caption text-gray-400">Fonte: workbook de gestão Ore · dado mockado</span>
+              <span className="text-caption text-gray-500">Comitê de investimentos</span>
             </DrawerFooter>
           </>
         )}

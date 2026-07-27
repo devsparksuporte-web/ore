@@ -35,7 +35,7 @@ export function CriticalActions({ actions }: { actions: Decision[] }) {
   const openRow = (d: Decision) => { setSelected(d); setOpen(true); };
 
   return (
-    <Card className="anim-rise">
+    <Card>
       <CardHeader><CardTitle>Ações críticas</CardTitle></CardHeader>
       <CardContent className="pt-1">
         <ul className="divide-y">

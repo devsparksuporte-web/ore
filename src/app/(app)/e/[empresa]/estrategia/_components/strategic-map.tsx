@@ -9,7 +9,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui";
 import type { CriticalPathStep, StrategicMap } from "@modules/strategy";
 
 function Label({ children }: { children: React.ReactNode }) {
-  return <div className="mb-1.5 text-caption font-medium uppercase tracking-wide text-muted-foreground">{children}</div>;
+  return <div className="mb-1.5 text-body-sm text-gray-500">{children}</div>;
 }
 
 function CriticalPath({ steps }: { steps: CriticalPathStep[] }) {
@@ -48,7 +48,7 @@ function CriticalPath({ steps }: { steps: CriticalPathStep[] }) {
 
 export function StrategyHero({ map }: { map: StrategicMap }) {
   return (
-    <Card className="anim-rise">
+    <Card>
       <CardHeader><CardTitle>Estratégia da investida</CardTitle></CardHeader>
         <CardContent className="space-y-6">
           <div className="grid gap-x-10 gap-y-6 md:grid-cols-2">
@@ -86,7 +86,7 @@ export function StrategyHero({ map }: { map: StrategicMap }) {
           )}
 
           <div className="rounded-md bg-copper-100/40 p-4">
-            <div className="mb-1.5 text-caption font-medium uppercase tracking-wide text-copper-500">Decisão estratégica</div>
+            <div className="mb-1.5 text-body-sm text-copper-500">Decisão estratégica</div>
             <p className="max-w-prose text-body-sm font-medium leading-6 text-navy-900">{map.decision}</p>
           </div>
         </CardContent>

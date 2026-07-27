@@ -52,12 +52,11 @@ export function Timeline({ items, className }: { items: TimelineItem[]; classNam
                 <span className={cn("relative z-10 mx-auto block h-2.5 w-2.5 rounded-full border-2", dot[state])} aria-hidden />
               </div>
               {/* Rótulos */}
-              <div className="mt-2.5 text-center">
-                <div className={cn("text-micro font-medium uppercase tracking-overline tnum", dateTone[state])}>{it.dateLabel}</div>
+              <div className="mt-3 text-center">
+                <div className={cn("text-caption tnum", dateTone[state])}>{it.dateLabel}</div>
                 <div className={cn("mx-auto mt-1 max-w-[150px] text-body-sm leading-snug", state === "upcoming" ? "text-gray-500" : "text-navy-900")}>
                   {it.title}
                 </div>
-                {it.meta && <div className="mt-1.5 flex justify-center">{it.meta}</div>}
               </div>
             </li>
           );

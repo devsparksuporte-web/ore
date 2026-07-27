@@ -1,7 +1,6 @@
 "use client";
 
 import Link from "next/link";
-import { motion } from "framer-motion";
 import type { LucideIcon } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { DeltaIndicator } from "./delta-indicator";
@@ -9,7 +8,7 @@ import { Sparkline } from "./sparkline";
 import { SourceCaption } from "./source-caption";
 import type { KpiData } from "@/types/domain";
 import { cn } from "@/lib/utils";
-import { icon as dsIcon, motion as dsMotion } from "@/design-system";
+import { icon as dsIcon } from "@/design-system";
 
 /**
  * KpiCard Strata v1.1 — hierarquia Stripe/Linear/Vercel:
@@ -30,10 +29,7 @@ export function KpiCard({
   className?: string;
 }) {
   const inner = (
-    <motion.div
-      initial={{ opacity: 0, y: 4 }}
-      animate={{ opacity: 1, y: 0 }}
-      transition={{ duration: dsMotion.duration.base / 1000, ease: [0.2, 0, 0, 1] }}
+    <div
       className={cn(
         "group flex h-full flex-col rounded-md border bg-surface p-6",
         kpi.href &&
@@ -43,7 +39,7 @@ export function KpiCard({
     >
       {/* Linha 1 — label discreto + ícone/badge */}
       <div className="flex items-center justify-between gap-2">
-        <span className="flex items-center gap-1.5 text-caption font-medium uppercase tracking-wider text-gray-500">
+        <span className="flex items-center gap-1.5 text-body-sm text-gray-500">
           {Icon && <Icon className="h-3.5 w-3.5 text-gray-400" strokeWidth={dsIcon.stroke.regular} aria-hidden />}
           {kpi.label}
         </span>
@@ -53,7 +49,7 @@ export function KpiCard({
       {/* Linha 2 — o protagonista */}
       <div className="mt-3 flex items-end justify-between gap-4">
         <div className="min-w-0">
-          <div className="font-display text-kpi tnum tracking-tight text-navy-900">{kpi.value}</div>
+          <div className="font-display text-kpi tnum tracking-kpi text-navy-900">{kpi.value}</div>
           {kpi.subMetric && (
             <div className="mt-1 truncate text-body-sm tnum text-gray-500">{kpi.subMetric}</div>
           )}
@@ -83,7 +79,7 @@ export function KpiCard({
           </span>
         )}
       </div>
-    </motion.div>
+    </div>
   );
 
   if (kpi.href && hrefBase)

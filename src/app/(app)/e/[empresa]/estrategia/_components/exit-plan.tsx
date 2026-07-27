@@ -44,28 +44,28 @@ function Stepper({ stages, current }: { stages: { label: string }[]; current: nu
 
 export function ExitPlanSection({ plan }: { plan: ExitPlan }) {
   return (
-    <Card className="anim-rise">
+    <Card>
       <CardHeader><CardTitle>Plano de saída</CardTitle></CardHeader>
         <CardContent className="space-y-6">
           <div className="grid gap-x-10 gap-y-4 sm:grid-cols-2">
             <div>
-              <div className="mb-1.5 text-caption font-medium uppercase tracking-wide text-muted-foreground">Estratégia de saída</div>
+              <div className="mb-1.5 text-body-sm text-gray-500">Estratégia de saída</div>
               <p className="text-body-sm font-medium leading-6 text-navy-900">{plan.strategy}</p>
             </div>
             <div>
-              <div className="mb-1.5 text-caption font-medium uppercase tracking-wide text-muted-foreground">Horizonte estimado</div>
+              <div className="mb-1.5 text-body-sm text-gray-500">Horizonte estimado</div>
               <p className="font-display text-lg font-semibold tnum text-navy-900">{plan.horizon}</p>
             </div>
           </div>
 
           <div>
-            <div className="mb-2.5 text-caption font-medium uppercase tracking-wide text-muted-foreground">Estágio atual</div>
+            <div className="mb-2.5 text-body-sm text-gray-500">Estágio atual</div>
             <Stepper stages={plan.stages} current={plan.currentStageIndex} />
           </div>
 
           {plan.nextSteps.length > 0 && (
             <div>
-              <div className="mb-2 text-caption font-medium uppercase tracking-wide text-muted-foreground">Próximos passos</div>
+              <div className="mb-2 text-body-sm text-gray-500">Próximos passos</div>
               <ul className="grid gap-2 sm:grid-cols-2">
                 {plan.nextSteps.map((s, i) => (
                   <li key={i} className="flex items-start gap-2.5 text-body-sm leading-snug text-gray-600">

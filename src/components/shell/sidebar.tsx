@@ -119,7 +119,7 @@ export function Sidebar() {
         <div className="sidebar-hairline mb-4" aria-hidden />
         <p className="flex items-center gap-1.5 text-caption tracking-wide text-white/55">
           <RefreshCw className="h-3 w-3" strokeWidth={dsIcon.stroke.regular} />
-          Última sync · hoje 06:15
+          Dados sincronizados
           <span className="ml-auto h-1.5 w-1.5 rounded-full bg-success shadow-[0_0_6px_1px_rgb(24_128_73/0.5)]" />
         </p>
         <div className="mt-3.5 flex items-center gap-3">

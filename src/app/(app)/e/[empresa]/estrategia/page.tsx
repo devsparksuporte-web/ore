@@ -56,6 +56,10 @@ export default function CompanyEstrategiaPage() {
         badge={<Badge variant="outline">{companyName}</Badge>}
       />
 
+      <p className="max-w-3xl text-body-sm leading-6 text-gray-500">
+        Acompanhe a tese, o caminho crítico, as decisões e o plano de saída da investida.
+      </p>
+
       <ExecutiveSummary items={summary} />
 
       <div className="grid items-start gap-6 xl:grid-cols-3">
