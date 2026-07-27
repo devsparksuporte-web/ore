@@ -39,10 +39,14 @@ export default function CompanyEstrategiaPage() {
   const decisionRows = decisions.filter((d) => d.type === "decision");
   const actionRows = decisions.filter((d) => d.type === "action");
 
+  // Cada indicador espelha exatamente um bloco da página (rastreabilidade):
+  // Decisões → Log de decisões · Ações → Ações críticas · Bloqueados e
+  // Riscos → sinais. "Total de decisões" (que somava decisões + ações) foi
+  // descontinuado por induzir a leitura errada.
   const summary: SummaryItem[] = [
-    { label: "Total de decisões", value: String(kpis.totalDecisions) },
-    { label: "Em andamento", value: String(kpis.inProgress) },
-    { label: "Bloqueadas", value: String(kpis.blocked), alert: kpis.blocked > 0 },
+    { label: "Decisões", value: String(decisionRows.length) },
+    { label: "Ações", value: String(actionRows.length) },
+    { label: "Bloqueados", value: String(kpis.blocked), alert: kpis.blocked > 0 },
     { label: "Riscos críticos", value: String(kpis.criticalRisks), alert: kpis.criticalRisks > 0 },
   ];
 

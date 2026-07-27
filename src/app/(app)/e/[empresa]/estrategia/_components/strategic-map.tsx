@@ -23,7 +23,7 @@ function CriticalPath({ steps }: { steps: CriticalPathStep[] }) {
               className={
                 "inline-flex items-center gap-1.5 rounded-full px-2.5 py-1 text-caption font-medium " +
                 (state === "current"
-                  ? "bg-copper-100 text-copper-500"
+                  ? "bg-copper-500/[0.12] text-copper-500"
                   : state === "done"
                     ? "bg-navy-100 text-navy-900"
                     : "bg-gray-100 text-gray-500")
@@ -85,7 +85,7 @@ export function StrategyHero({ map }: { map: StrategicMap }) {
             </div>
           )}
 
-          <div className="rounded-md bg-copper-100/40 p-4">
+          <div className="rounded-md border border-copper-500/25 bg-copper-500/[0.07] p-4">
             <div className="mb-1.5 text-body-sm text-copper-500">Decisão estratégica</div>
             <p className="max-w-prose text-body-sm font-medium leading-6 text-navy-900">{map.decision}</p>
           </div>

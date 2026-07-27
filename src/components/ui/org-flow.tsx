@@ -25,7 +25,9 @@ export function OrgFlow({ nodes, className }: { nodes: OrgFlowNode[]; className?
           <div
             className={cn(
               "rounded-md border px-4 py-2.5 transition-colors duration-fast",
-              n.emphasis ? "border-copper-500/40 bg-copper-100/40" : "bg-surface"
+              // Destaque em cobre translúcido: legível em claro E escuro
+              // (copper-100 é primitivo que não flipa no dark — nunca usar aqui).
+              n.emphasis ? "border-copper-500/35 bg-copper-500/[0.07]" : "bg-surface"
             )}
           >
             <p className={cn("text-caption", n.emphasis ? "text-copper-500" : "text-gray-500")}>{n.label}</p>

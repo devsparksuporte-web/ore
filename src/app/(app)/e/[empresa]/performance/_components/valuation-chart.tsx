@@ -34,7 +34,7 @@ export function ValuationChart({ data }: { data: ValuationPoint[] }) {
         <ChartDefs />
         <CartesianGrid {...gridProps} />
         <XAxis dataKey="year" {...axisProps} />
-        <YAxis {...axisProps} width={52} tickCount={3} tickFormatter={short} />
+        <YAxis {...axisProps} width={66} tickCount={3} tickFormatter={short} />
         <Tooltip content={tooltip} cursor={cursorLine} />
         <Area dataKey="value" stroke="none" fill={`url(#${gradientIds.navy})`} type="monotone" {...animationProps} />
         <Line

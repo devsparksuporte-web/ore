@@ -19,7 +19,7 @@ function Stepper({ stages, current }: { stages: { label: string }[]; current: nu
               className={
                 "inline-flex items-center gap-1.5 rounded-full px-2.5 py-1 text-caption font-medium " +
                 (state === "current"
-                  ? "bg-copper-100 text-copper-500"
+                  ? "bg-copper-500/[0.12] text-copper-500"
                   : state === "done"
                     ? "bg-navy-100 text-navy-900"
                     : "bg-gray-100 text-gray-500")

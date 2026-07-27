@@ -24,7 +24,7 @@ export interface TimelineItem {
 
 const dot: Record<TimelineState, string> = {
   done: "bg-copper-500 border-copper-500",
-  current: "bg-surface border-copper-500 ring-4 ring-copper-100",
+  current: "bg-surface border-copper-500 ring-4 ring-copper-500/20",
   upcoming: "bg-surface border-gray-300",
 };
 
