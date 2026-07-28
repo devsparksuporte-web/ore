@@ -14,7 +14,7 @@ export function AlertsBlock({ alerts }: { alerts: GovernanceAlert[] }) {
   if (alerts.length === 0) {
     return (
       <Card>
-        <CardHeader><CardTitle>Alertas</CardTitle></CardHeader>
+        <CardHeader><CardTitle>Ações requeridas</CardTitle></CardHeader>
         <CardContent>
           <EmptyState kind="all-clear" title="Sem alertas" description="Nenhuma pendência jurídica, contratual ou de compliance exige ação no momento." />
         </CardContent>
@@ -33,7 +33,7 @@ export function AlertsBlock({ alerts }: { alerts: GovernanceAlert[] }) {
 
   return (
     <Card>
-      <CardHeader><CardTitle>Alertas</CardTitle></CardHeader>
+      <CardHeader><CardTitle>Ações requeridas</CardTitle></CardHeader>
       <CardContent className="pt-1">
         <ExecutiveList items={items} />
       </CardContent>

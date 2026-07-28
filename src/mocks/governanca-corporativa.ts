@@ -16,23 +16,22 @@ export const governanceSnapshots: GovernanceSnapshot[] = [
       {
         id: "b-dir", kind: "executive", name: "Diretoria estatutária",
         members: [
-          { name: "João Nogueira", role: "Diretor-presidente", mandate: "2025–2027", isPresident: true },
-          { name: "Marina Alves", role: "Diretora financeira", mandate: "2025–2027" },
-          { name: "Ricardo Sette", role: "Diretor de operações", mandate: "2025–2027" },
+          { name: "Alexandre Pimenta", role: "Diretor-presidente (CEO)", mandate: "2025–2027", isPresident: true },
+          { name: "Eduardo Cardoso", role: "Diretor financeiro (CFO)", mandate: "2025–2027" },
         ],
       },
       {
         id: "b-cons", kind: "board", name: "Conselho de administração",
         members: [
           { name: "Victor da Mata", role: "Presidente do conselho", mandate: "até 2027" },
-          { name: "Ana Prado", role: "Conselheira", mandate: "até 2027" },
-          { name: "Carlos Bueno", role: "Conselheiro", mandate: "até 2027" },
-          { name: "Helena Reis", role: "Conselheira independente", mandate: "até 2027" },
-          { name: "Paulo Tavares", role: "Conselheiro", mandate: "até 2027" },
+          { name: "A confirmar", role: "Conselheiro", mandate: "até 2027" },
+          { name: "A confirmar", role: "Conselheiro", mandate: "até 2027" },
+          { name: "A confirmar", role: "Conselheiro independente", mandate: "até 2027" },
+          { name: "A confirmar", role: "Conselheiro", mandate: "até 2027" },
         ],
       },
-      { id: "b-audit", kind: "committee", name: "Comitê de auditoria", members: [{ name: "Helena Reis", role: "Coordenadora" }, { name: "Ana Prado", role: "Membro" }, { name: "Externo", role: "Especialista" }] },
-      { id: "b-inv", kind: "committee", name: "Comitê de investimentos", members: [{ name: "Victor da Mata", role: "Coordenador" }, { name: "Carlos Bueno", role: "Membro" }, { name: "Marina Alves", role: "Membro" }, { name: "Paulo Tavares", role: "Membro" }] },
+      { id: "b-audit", kind: "committee", name: "Comitê de auditoria", members: [{ name: "A confirmar", role: "Coordenador" }, { name: "A confirmar", role: "Membro" }, { name: "A confirmar", role: "Especialista externo" }] },
+      { id: "b-inv", kind: "committee", name: "Comitê de investimentos", members: [{ name: "Victor da Mata", role: "Coordenador" }, { name: "Eduardo Cardoso", role: "Membro" }, { name: "A confirmar", role: "Membro" }, { name: "A confirmar", role: "Membro" }] },
     ],
     contracts: [
       {
@@ -54,9 +53,9 @@ export const governanceSnapshots: GovernanceSnapshot[] = [
         nextEvents: [{ dateLabel: "30/04/2026", title: "Aditivo de garantia (vencido)" }, { dateLabel: "Ago/2026", title: "Primeiro desembolso previsto" }],
       },
       {
-        id: "k-tiasa", name: "SPA earn-out Tiasa", type: "divestment",
+        id: "k-spa", name: "SPA de desinvestimento (earn-out)", type: "divestment",
         object: "Compra e venda de participação com componente de earn-out atrelado a marcos operacionais.",
-        parties: ["Ativa Mineração S.A.", "Tiasa Participações"],
+        parties: ["Ativa Mineração S.A.", "Investidor estratégico"],
         executiveSummary: "Em revisão de cláusulas de earn-out. Divergência sobre marcos de gatilho; jurídico em negociação.",
         keyObligations: ["Definir marcos de earn-out", "Auditoria de fechamento", "Liberação de escrow"],
         status: "pending", responsible: "Jurídico Ore", updatedAt: "2026-06-20",
@@ -84,7 +83,7 @@ export const governanceSnapshots: GovernanceSnapshot[] = [
     obligations: [
       { id: "o-sblc", title: "Emitir SBLC para desembolso BNB", owner: "CFO Ativa", dueDate: "30/04/2026", dueDateISO: "2026-04-30", status: "overdue", area: "contratual", contractRef: "k-bnb" },
       { id: "o-fund", title: "Registro fundiário Fazenda Panamá", owner: "Jurídico Ativa", dueDate: "31/03/2026", dueDateISO: "2026-03-31", status: "overdue", area: "societário", contractRef: "k-fundiario" },
-      { id: "o-earnout", title: "Definir marcos de earn-out Tiasa", owner: "Jurídico Ore", dueDate: "31/07/2026", dueDateISO: "2026-07-31", status: "due_soon", area: "contratual", contractRef: "k-tiasa" },
+      { id: "o-earnout", title: "Definir marcos de earn-out", owner: "Jurídico Ore", dueDate: "31/07/2026", dueDateISO: "2026-07-31", status: "due_soon", area: "contratual", contractRef: "k-spa" },
       { id: "o-reporte", title: "Reporte trimestral aos acionistas", owner: "RI Ore", dueDate: "15/08/2026", dueDateISO: "2026-08-15", status: "on_track", area: "societário", contractRef: "k-acionistas" },
     ],
     risks: [
@@ -95,7 +94,7 @@ export const governanceSnapshots: GovernanceSnapshot[] = [
     timeline: [
       { id: "e-1", dateISO: "2026-01-20", dateLabel: "Jan/2026", title: "Assembleia geral ordinária", kind: "assembly", state: "done" },
       { id: "e-2", dateISO: "2026-04-30", dateLabel: "Abr/2026", title: "Aditivo de garantia BNB (vencido)", kind: "amendment", state: "current" },
-      { id: "e-3", dateISO: "2026-07-31", dateLabel: "Jul/2026", title: "Revisão de cláusulas earn-out Tiasa", kind: "decision", state: "upcoming" },
+      { id: "e-3", dateISO: "2026-07-31", dateLabel: "Jul/2026", title: "Revisão de cláusulas de earn-out", kind: "decision", state: "upcoming" },
       { id: "e-4", dateISO: "2026-09-30", dateLabel: "Set/2026", title: "Revisão da política de dividendos", kind: "decision", state: "upcoming" },
     ],
     compliance: { total: 40, fulfilled: 38, pending: 2, overdue: 2, updatedAt: "2026-07-10", responsible: "Jurídico Ore" },
@@ -105,9 +104,9 @@ export const governanceSnapshots: GovernanceSnapshot[] = [
   {
     assetId: "c-morroverde", companySlug: "morro-verde", entityType: "S.A. de capital fechado", jurisdiction: "Brasil (BR)", asOf: "2026-06-30",
     bodies: [
-      { id: "mv-dir", kind: "executive", name: "Diretoria estatutária", members: [{ name: "Saurin Melo", role: "CEO", mandate: "2025–2028", isPresident: true }, { name: "Diretor financeiro", role: "CFO", mandate: "2025–2028" }] },
-      { id: "mv-cons", kind: "board", name: "Conselho de administração", members: [{ name: "Victor da Mata", role: "Presidente do conselho" }, { name: "Membro", role: "Conselheiro" }, { name: "Membro", role: "Conselheiro" }] },
-      { id: "mv-audit", kind: "committee", name: "Comitê de auditoria", members: [{ name: "Membro", role: "Coordenador" }, { name: "Membro", role: "Membro" }] },
+      { id: "mv-dir", kind: "executive", name: "Diretoria estatutária", members: [{ name: "A confirmar", role: "Diretor-presidente (CEO)", mandate: "2025–2028", isPresident: true }, { name: "A confirmar", role: "Diretor financeiro (CFO)", mandate: "2025–2028" }] },
+      { id: "mv-cons", kind: "board", name: "Conselho de administração", members: [{ name: "Victor da Mata", role: "Presidente do conselho" }, { name: "A confirmar", role: "Conselheiro" }, { name: "A confirmar", role: "Conselheiro" }] },
+      { id: "mv-audit", kind: "committee", name: "Comitê de auditoria", members: [{ name: "A confirmar", role: "Coordenador" }, { name: "A confirmar", role: "Membro" }] },
     ],
     contracts: [
       { id: "mv-massari", name: "Aquisição Massari", type: "investment", object: "Compra de ativos e passivos da Massari.", parties: ["Morro Verde", "Massari"], executiveSummary: "Assinado e em integração. Sem pendências relevantes.", keyObligations: ["Integração 100 dias", "Reperfilamento de dívida"], status: "fulfilled", responsible: "Jurídico Ore", updatedAt: "2026-06-01", nextEvents: [] },
@@ -127,8 +126,8 @@ export const governanceSnapshots: GovernanceSnapshot[] = [
   {
     assetId: "c-nazareno", companySlug: "nazareno-gold", entityType: "S.A. de capital fechado", jurisdiction: "Brasil (BR)", asOf: "2026-06-30",
     bodies: [
-      { id: "nz-dir", kind: "executive", name: "Diretoria estatutária", members: [{ name: "Diretor-presidente", role: "CEO", isPresident: true }, { name: "Diretor técnico", role: "CTO" }] },
-      { id: "nz-cons", kind: "board", name: "Conselho de administração", members: [{ name: "Victor da Mata", role: "Presidente do conselho" }, { name: "Membro", role: "Conselheiro" }] },
+      { id: "nz-dir", kind: "executive", name: "Diretoria estatutária", members: [{ name: "A confirmar", role: "Diretor-presidente (CEO)", isPresident: true }, { name: "A confirmar", role: "Diretor técnico" }] },
+      { id: "nz-cons", kind: "board", name: "Conselho de administração", members: [{ name: "Victor da Mata", role: "Presidente do conselho" }, { name: "A confirmar", role: "Conselheiro" }] },
     ],
     contracts: [{ id: "nz-jv", name: "Memorando de entendimento (farm-out)", type: "divestment", object: "Negociação de venda/JV do pacote de direitos.", parties: ["NZR Gold", "Interessados"], executiveSummary: "Em prospecção; sem vínculo definitivo.", keyObligations: ["Concluir due diligence técnica"], status: "pending", responsible: "Sócios Ore", updatedAt: "2026-06-18", nextEvents: [{ dateLabel: "Set/2026", title: "Decisão desenvolvimento vs venda" }] }],
     obligations: [{ id: "nz-o1", title: "Concluir trade-off studies (DMT)", owner: "Equipe técnica", dueDate: "30/06/2026", dueDateISO: "2026-06-30", status: "due_soon", area: "contratual" }],
@@ -139,8 +138,8 @@ export const governanceSnapshots: GovernanceSnapshot[] = [
   {
     assetId: "c-rionovo", companySlug: "rio-novo", entityType: "S.A. de capital fechado", jurisdiction: "Brasil (BR)", asOf: "2026-06-30",
     bodies: [
-      { id: "rn-dir", kind: "executive", name: "Diretoria estatutária", members: [{ name: "Diretor-presidente", role: "CEO", isPresident: true }] },
-      { id: "rn-cons", kind: "board", name: "Conselho de administração", members: [{ name: "Victor da Mata", role: "Presidente do conselho" }, { name: "Membro", role: "Conselheiro" }] },
+      { id: "rn-dir", kind: "executive", name: "Diretoria estatutária", members: [{ name: "A confirmar", role: "Diretor-presidente (CEO)", isPresident: true }] },
+      { id: "rn-cons", kind: "board", name: "Conselho de administração", members: [{ name: "Victor da Mata", role: "Presidente do conselho" }, { name: "A confirmar", role: "Conselheiro" }] },
     ],
     contracts: [{ id: "rn-centaurus", name: "Cessão de direitos Centaurus", type: "divestment", object: "Cessão de direitos minerários ao parceiro Centaurus.", parties: ["IOCG Norte", "Centaurus"], executiveSummary: "Formalização em curso na ANM; monitoramento contratual.", keyObligations: ["Formalizar cessão na ANM", "Acompanhar programa do parceiro"], status: "pending", responsible: "Jurídico Ore", updatedAt: "2026-06-12", nextEvents: [{ dateLabel: "Jun/2026", title: "Formalização ANM" }] }],
     obligations: [{ id: "rn-o1", title: "Formalizar cessão na ANM", owner: "Jurídico Ore", dueDate: "30/06/2026", dueDateISO: "2026-06-30", status: "due_soon", area: "societário" }],
@@ -151,8 +150,8 @@ export const governanceSnapshots: GovernanceSnapshot[] = [
   {
     assetId: "c-alvo", companySlug: "alvo-minerals", entityType: "Companhia listada (ASX)", jurisdiction: "Austrália (AU)", asOf: "2026-06-30",
     bodies: [
-      { id: "al-dir", kind: "executive", name: "Diretoria (board executivo)", members: [{ name: "Managing Director", role: "MD", isPresident: true }] },
-      { id: "al-cons", kind: "board", name: "Board of Directors", members: [{ name: "Chairman", role: "Chairman" }, { name: "Ore (assento)", role: "Non-exec director" }, { name: "Membro", role: "Director" }] },
+      { id: "al-dir", kind: "executive", name: "Diretoria (board executivo)", members: [{ name: "A confirmar", role: "Managing Director", isPresident: true }] },
+      { id: "al-cons", kind: "board", name: "Board of Directors", members: [{ name: "A confirmar", role: "Chairman" }, { name: "Ore (assento no board)", role: "Non-executive director" }, { name: "A confirmar", role: "Director" }] },
     ],
     contracts: [{ id: "al-pos", name: "Posição acionária (9,56%)", type: "investment", object: "Participação minoritária listada, marcada a mercado.", parties: ["Fundo Ore I", "Alvo Minerals"], executiveSummary: "Posição em hold com gatilhos; sem obrigações contratuais relevantes.", keyObligations: ["Cumprir regras de disclosure de participação"], status: "fulfilled", responsible: "Jurídico Ore", updatedAt: "2026-06-05", nextEvents: [] }],
     obligations: [{ id: "al-o1", title: "Disclosure de participação (ASX)", owner: "Jurídico Ore", dueDate: "contínuo", status: "on_track", area: "societário" }],
@@ -163,8 +162,8 @@ export const governanceSnapshots: GovernanceSnapshot[] = [
   {
     assetId: "c-neeo", companySlug: "neeo-exploration", entityType: "Ltda", jurisdiction: "Brasil (BR)", asOf: "2026-06-30",
     bodies: [
-      { id: "ne-dir", kind: "executive", name: "Administração", members: [{ name: "Administrador", role: "Sócio-administrador", isPresident: true }] },
-      { id: "ne-cons", kind: "board", name: "Comitê gestor (Fundo 1)", members: [{ name: "Victor da Mata", role: "Coordenador" }, { name: "Membro", role: "Membro" }] },
+      { id: "ne-dir", kind: "executive", name: "Administração", members: [{ name: "A confirmar", role: "Sócio-administrador", isPresident: true }] },
+      { id: "ne-cons", kind: "board", name: "Comitê gestor (Fundo 1)", members: [{ name: "Victor da Mata", role: "Coordenador" }, { name: "A confirmar", role: "Membro" }] },
     ],
     contracts: [{ id: "ne-pack", name: "Pacote de direitos minerários", type: "divestment", object: "Direitos de exploração (ouro e titânio) para monetização.", parties: ["Neeo", "Fundo 1"], executiveSummary: "Aguardando pacote mínimo de dados para JV/venda.", keyObligations: ["Montar dados mínimos", "Manter titularidade dos direitos"], status: "pending", responsible: "Sócios Ore", updatedAt: "2026-06-08", nextEvents: [{ dateLabel: "Dez/2026", title: "Data limite para manter direitos" }] }],
     obligations: [{ id: "ne-o1", title: "Manutenção anual dos direitos (ANM)", owner: "Jurídico Ore", dueDate: "31/12/2026", dueDateISO: "2026-12-31", status: "on_track", area: "societário" }],

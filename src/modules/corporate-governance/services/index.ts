@@ -19,6 +19,21 @@ export type {
   LegalRiskSeverity, LegalStatus, Obligation, ObligationStatus, ComplianceData,
 } from "../types";
 
+/* ───────────────── Regras de vencimento (donas no port) ─────────────────
+ * Uma obrigação não deve virar alerta só quando vence — o alerta precisa
+ * antecipar. Janela de antecedência e limiar de urgência abaixo. */
+
+/** Antecedência (dias) em que uma obrigação passa a gerar alerta. */
+export const OBLIGATION_DUE_SOON_DAYS = 30;
+/** Abaixo deste prazo, o alerta sobe para prioridade alta. */
+export const OBLIGATION_URGENT_DAYS = 7;
+
+/** Dias entre duas datas ISO (b − a). Negativo = a data já passou. */
+function daysBetween(fromISO: string, toISO: string): number {
+  const MS = 86_400_000;
+  return Math.round((Date.parse(toISO + "T00:00:00Z") - Date.parse(fromISO + "T00:00:00Z")) / MS);
+}
+
 /** Snapshot de governança de uma empresa investida (por slug). */
 export function getGovernanceByCompany(companySlug: string): GovernanceSnapshot | undefined {
   return governanceSnapshots.find((s) => s.companySlug === companySlug);
@@ -58,8 +73,32 @@ export function deriveGovernance(s: GovernanceSnapshot): GovernanceDerived {
   else if (highRisks > 0) attentionPoints.push({ id: "ap-risk-h", label: `${highRisks} risco(s) de atenção`, tone: "warning" });
 
   const alerts: GovernanceAlert[] = [];
+
+  // 1. Obrigações VENCIDAS — prioridade alta, com o atraso explícito.
   for (const o of s.obligations.filter((x) => x.status === "overdue")) {
-    alerts.push({ id: `al-${o.id}`, priority: "high", category: "compliance", title: o.title, detail: "Obrigação vencida — requer regularização.", owner: o.owner, dueLabel: `Vencida · ${o.dueDate}` });
+    const late = o.dueDateISO ? daysBetween(o.dueDateISO, s.asOf) : 0;
+    alerts.push({
+      id: `al-${o.id}`, priority: "high", category: "compliance", title: o.title,
+      detail: late > 0 ? `Vencida há ${late} ${late === 1 ? "dia" : "dias"} — requer regularização.` : "Obrigação vencida — requer regularização.",
+      owner: o.owner, dueLabel: `Venceu ${o.dueDate}`,
+    });
+  }
+
+  // 2. Obrigações A VENCER — alertam ANTES do vencimento (janela de
+  //    antecedência); sobem para alta quando entram no prazo de urgência.
+  for (const o of s.obligations) {
+    if (o.status === "overdue" || o.status === "fulfilled") continue;
+    const days = o.dueDateISO ? daysBetween(s.asOf, o.dueDateISO) : null;
+    const withinWindow = days !== null && days >= 0 && days <= OBLIGATION_DUE_SOON_DAYS;
+    if (!withinWindow && o.status !== "due_soon") continue;
+    const urgent = days !== null && days <= OBLIGATION_URGENT_DAYS;
+    alerts.push({
+      id: `al-${o.id}`, priority: urgent ? "high" : "medium", category: "compliance", title: o.title,
+      detail: days !== null
+        ? `Vence em ${days} ${days === 1 ? "dia" : "dias"} — antecipar tratativa.`
+        : "Prazo se aproximando — antecipar tratativa.",
+      owner: o.owner, dueLabel: `Vence ${o.dueDate}`,
+    });
   }
   for (const c of s.contracts.filter((x) => x.status === "at_risk")) {
     alerts.push({ id: `al-${c.id}`, priority: "high", category: "contractual", title: `${c.name} em risco`, detail: c.executiveSummary, owner: c.responsible });

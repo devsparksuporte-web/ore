@@ -61,7 +61,7 @@ export const strategicMaps: StrategicMap[] = [
     thesisOriginal:
       "Desenvolver o projeto Floresta (planta + mina) como ativo produtor, financiado por BNB e estruturado para venda a trader e mercado.",
     thesis:
-      "Planta Floresta: obter garantia, alocar financiamento BNB, construir e operar. Mina: LP e LI, CAPEX via caixa/equity/dívida. Aquisição Tiasa e Tiper por veículo separado. Venda ~50% trader / ~50% mercado.",
+      "Planta Floresta: obter garantia, alocar financiamento BNB, construir e operar. Mina: LP e LI, CAPEX via caixa/equity/dívida. Aquisições complementares por veículo separado. Venda ~50% trader / ~50% mercado.",
     criticalPath: [
       { label: "EIA/RIMA e vistoria CPRH", done: true },
       { label: "Audiência pública", current: true },
@@ -175,7 +175,7 @@ export const strategicMaps: StrategicMap[] = [
     thesisOriginal:
       "Portfólio de direitos minerários em exploração (ouro e titânio) a ser monetizado via JV ou venda.",
     thesis:
-      "Manter burn rate mínimo e buscar JV / desinvestimento com upside. Rotas não-excludentes: (i) venda / JV standalone com pacote mínimo de dados; (ii) empacotar 2 áreas de ouro junto com NZR. Área de titânio para eventual veículo Tiasa.",
+      "Manter burn rate mínimo e buscar JV / desinvestimento com upside. Rotas não-excludentes: (i) venda / JV standalone com pacote mínimo de dados; (ii) empacotar 2 áreas de ouro junto com NZR. Área de titânio para eventual veículo separado.",
     criticalPath: [
       { label: "Manter burn rate mínimo", current: true },
       { label: "Montar pacote mínimo de dados" },
@@ -303,6 +303,6 @@ export const decisions: Decision[] = [
   { id: "dec-16", ref: 16, asset: A.alvo, title: "Decidir: hold com gatilhos vs rota de saída", context: "Posição 9,56%. Definir se 0,5–1,0x capital é sucesso aceitável.", type: "decision", priority: "medium", owner: "Sócios Ore", dueDate: "30/06/2026", dueDateISO: "2026-06-30", status: "open", lastUpdate: "Mar/2026" },
   { id: "dec-17", ref: 17, asset: A.alvo, title: "Avaliar participação em Board com remuneração", context: "Reduzir tempo investido se não há catalisador claro.", type: "decision", priority: "low", owner: "Sócios Ore", dueDate: "30/06/2026", dueDateISO: "2026-06-30", status: "open", lastUpdate: "Mar/2026" },
   { id: "dec-18", ref: 18, asset: A.neeo, title: "Data limite para manter direitos minerários no Fundo 1", context: "Burn rate mínimo, mas evitar 'ativo zumbi'.", type: "decision", priority: "medium", owner: "Sócios Ore", dueDate: "31/12/2026", dueDateISO: "2026-12-31", status: "open", lastUpdate: "Mar/2026" },
-  { id: "dec-19", ref: 19, asset: A.neeo, title: "Empacotar áreas Au com NZR (ou venda standalone)", context: "Rotas não excludentes. Áreas de Ti poderiam ir para veículo Tiasa.", type: "decision", priority: "medium", owner: "Sócios Ore", dueDate: "30/09/2026", dueDateISO: "2026-09-30", status: "open", lastUpdate: "Mar/2026" },
+  { id: "dec-19", ref: 19, asset: A.neeo, title: "Empacotar áreas Au com NZR (ou venda standalone)", context: "Rotas não excludentes. Áreas de Ti poderiam ir para veículo separado.", type: "decision", priority: "medium", owner: "Sócios Ore", dueDate: "30/09/2026", dueDateISO: "2026-09-30", status: "open", lastUpdate: "Mar/2026" },
   { id: "dec-20", ref: 20, asset: A.fundo1, title: "Captações / Fundo 2 — decisão de iniciar ou não", context: "Depende de performance de saídas e apetite de LPs.", type: "decision", priority: "low", owner: "Sócios Ore", dueDate: "31/12/2026", dueDateISO: "2026-12-31", status: "open", lastUpdate: "Mar/2026" },
 ];

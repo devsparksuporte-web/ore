@@ -20,7 +20,7 @@ export function LegalTimeline({ events }: { events: LegalEvent[] }) {
   }));
   return (
     <Card>
-      <CardHeader><CardTitle>Linha do tempo jurídica</CardTitle></CardHeader>
+      <CardHeader><CardTitle>Eventos relevantes</CardTitle></CardHeader>
       <CardContent className="pt-2">
         <Timeline items={items} />
       </CardContent>

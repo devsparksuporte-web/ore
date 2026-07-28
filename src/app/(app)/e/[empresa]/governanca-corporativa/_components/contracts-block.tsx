@@ -1,9 +1,10 @@
 "use client";
 
 /**
- * CONTRATOS — índice executivo (não tabelão): nome + tipo + status + resumo de
- * uma linha; clicar abre o Drawer com o resumo executivo do contrato. Responde
- * "quais contratos exigem atenção?". Reusa <ExecutiveList/> + Drawer.
+ * DOCUMENTOS — índice executivo (não tabelão): nome + tipo + status + resumo de
+ * uma linha; clicar abre o Drawer com o resumo executivo. Responde "quais
+ * documentos exigem atenção?". Abrange contratos e demais instrumentos
+ * societários. Reusa <ExecutiveList/> + Drawer.
  */
 import * as React from "react";
 import { Badge, Card, CardContent, CardHeader, CardTitle, ExecutiveList, type ExecutiveListItem } from "@/components/ui";
@@ -30,7 +31,7 @@ export function ContractsBlock({ contracts }: { contracts: Contract[] }) {
 
   return (
     <Card>
-      <CardHeader><CardTitle>Contratos</CardTitle></CardHeader>
+      <CardHeader><CardTitle>Documentos</CardTitle></CardHeader>
       <CardContent className="pt-1">
         <ExecutiveList items={items} />
       </CardContent>

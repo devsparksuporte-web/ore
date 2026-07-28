@@ -46,7 +46,7 @@ export default function CompanyGovernancePage() {
 
   const kpis: MetricItem[] = [
     { label: "Representantes legais", value: String(d.representatives) },
-    { label: "Contratos ativos", value: String(d.activeContracts) },
+    { label: "Documentos ativos", value: String(d.activeContracts) },
     { label: "Obrigações críticas", value: String(d.criticalObligations), tone: d.criticalObligations > 0 ? "danger" : "default" },
     { label: "Status jurídico geral", value: status.label, tone: status.tone },
   ];
@@ -62,7 +62,7 @@ export default function CompanyGovernancePage() {
       />
 
       <p className="max-w-3xl text-body-sm leading-6 text-gray-500">
-        Acompanhe a estrutura societária, os contratos, as obrigações legais e o nível de conformidade da investida.
+        Acompanhe a estrutura societária, os documentos, as obrigações legais e o nível de conformidade da investida.
       </p>
 
       <MetricStrip items={kpis} />
