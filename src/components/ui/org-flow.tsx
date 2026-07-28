@@ -30,9 +30,9 @@ export function OrgFlow({ nodes, className }: { nodes: OrgFlowNode[]; className?
               n.emphasis ? "border-copper-500/35 bg-copper-500/[0.07]" : "bg-surface"
             )}
           >
-            <p className={cn("text-caption", n.emphasis ? "text-copper-500" : "text-gray-500")}>{n.label}</p>
-            <p className="mt-0.5 font-display text-base font-semibold tracking-snug text-navy-900">{n.value}</p>
-            {n.hint && <p className="mt-0.5 text-caption text-gray-500">{n.hint}</p>}
+            <p className="font-display text-base font-semibold tracking-snug text-navy-900">{n.value}</p>
+            <p className={cn("mt-0.5 text-caption", n.emphasis ? "text-copper-500" : "text-gray-500")}>{n.label}</p>
+            {n.hint && <p className="mt-0.5 text-caption text-gray-400">{n.hint}</p>}
           </div>
           {i < nodes.length - 1 && (
             <div className="flex justify-center py-0.5" aria-hidden>

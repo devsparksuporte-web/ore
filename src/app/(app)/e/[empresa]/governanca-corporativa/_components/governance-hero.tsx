@@ -1,42 +1,51 @@
 "use client";
 
 /**
- * ESTRUTURA DE GOVERNANÇA (HERO) — organograma executivo vertical: presidência
- * → diretoria estatutária → conselho → comitês. Responde "quem governa e quem
- * decide?" com visão institucional (não uma lista de pessoas). Reusa <OrgFlow/>.
+ * ESTRUTURA DE GOVERNANÇA (HERO) — organograma executivo: uma caixa por pessoa
+ * confirmada (nome em destaque, cargo abaixo), da presidência para baixo.
+ * Órgãos cujos membros ainda não foram confirmados NÃO são exibidos — a
+ * estrutura cresce conforme os nomes chegam, sem mostrar placeholder.
+ * Responde "quem governa e quem decide?". Reusa <OrgFlow/>.
  */
-import { Card, CardContent, CardHeader, CardTitle, OrgFlow, type OrgFlowNode } from "@/components/ui";
+import { Card, CardContent, CardHeader, CardTitle, EmptyState, OrgFlow, type OrgFlowNode } from "@/components/ui";
 import type { GovernanceBody } from "@modules/corporate-governance";
 
-export function GovernanceHero({ bodies }: { bodies: GovernanceBody[] }) {
-  const exec = bodies.find((b) => b.kind === "executive");
-  const board = bodies.find((b) => b.kind === "board");
-  const committees = bodies.filter((b) => b.kind === "committee");
-  const president = exec?.members.find((m) => m.isPresident) ?? exec?.members[0];
+/** Placeholder do dado: membro sem nome confirmado não entra no organograma. */
+const UNCONFIRMED = "a confirmar";
+const isConfirmed = (name: string) => name.trim().toLowerCase() !== UNCONFIRMED;
 
+/** Ordem hierárquica de leitura: executiva → conselho → comitês. */
+const ORDER: GovernanceBody["kind"][] = ["executive", "board", "committee"];
+
+export function GovernanceHero({ bodies }: { bodies: GovernanceBody[] }) {
   const nodes: OrgFlowNode[] = [];
-  if (president) nodes.push({ label: "Presidência executiva", value: president.name, hint: president.role, emphasis: true });
-  if (exec) {
-    const others = exec.members.filter((m) => !m.isPresident).map((m) => m.role);
-    nodes.push({ label: exec.name, value: `${exec.members.length} membros`, hint: others.length ? others.join(" · ") : undefined });
-  }
-  if (board) {
-    const mandate = board.members.find((m) => m.mandate)?.mandate;
-    nodes.push({ label: board.name, value: `${board.members.length} membros`, hint: mandate ? `mandato ${mandate}` : undefined });
-  }
-  if (committees.length) {
-    nodes.push({
-      label: "Comitês",
-      value: `${committees.length} ${committees.length === 1 ? "ativo" : "ativos"}`,
-      hint: committees.map((c) => c.name.replace(/^Comit[êe] de /i, "")).join(" · "),
-    });
+
+  for (const kind of ORDER) {
+    for (const body of bodies.filter((b) => b.kind === kind)) {
+      for (const m of body.members.filter((x) => isConfirmed(x.name))) {
+        nodes.push({
+          value: m.name,
+          label: m.role,
+          hint: m.mandate ? `Mandato ${m.mandate}` : undefined,
+          emphasis: m.isPresident === true,
+        });
+      }
+    }
   }
 
   return (
     <Card>
       <CardHeader><CardTitle>Estrutura de governança</CardTitle></CardHeader>
       <CardContent>
-        <OrgFlow nodes={nodes} />
+        {nodes.length > 0 ? (
+          <OrgFlow nodes={nodes} />
+        ) : (
+          <EmptyState
+            kind="not-configured"
+            title="Estrutura não informada"
+            description="Os membros dos órgãos de governança ainda não foram confirmados."
+          />
+        )}
       </CardContent>
     </Card>
   );

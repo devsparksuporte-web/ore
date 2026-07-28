@@ -2,8 +2,13 @@ import * as React from "react";
 import { cva, type VariantProps } from "class-variance-authority";
 import { cn } from "@/lib/utils";
 
+/**
+ * Selo compacto (Strata v1.2): tipografia menor, respiro reduzido e raio
+ * discreto — leitura de etiqueta editorial, não de "pill" de dashboard.
+ * Superfícies translúcidas para funcionar em claro e escuro.
+ */
 const badgeVariants = cva(
-  "inline-flex items-center gap-1 rounded-full px-2 py-0.5 text-caption font-medium leading-4",
+  "inline-flex items-center gap-1 rounded px-1.5 py-px text-[11px] font-medium leading-[1.45] whitespace-nowrap",
   {
     variants: {
       variant: {
@@ -13,8 +18,8 @@ const badgeVariants = cva(
         danger: "bg-danger-bg text-danger-fg",
         info: "bg-info-bg text-info-fg",
         navy: "bg-navy-100 text-navy-900",
-        copper: "bg-copper-100 text-copper-500",
-        outline: "border text-gray-700",
+        copper: "bg-copper-500/[0.12] text-copper-500",
+        outline: "border text-gray-600",
       },
     },
     defaultVariants: { variant: "default" },
@@ -28,7 +33,7 @@ export interface BadgeProps extends React.HTMLAttributes<HTMLSpanElement>, Varia
 function Badge({ className, variant, dot, children, ...props }: BadgeProps) {
   return (
     <span className={cn(badgeVariants({ variant }), className)} {...props}>
-      {dot && <span className="h-1.5 w-1.5 rounded-full bg-current" />}
+      {dot && <span className="h-1 w-1 shrink-0 rounded-full bg-current" />}
       {children}
     </span>
   );

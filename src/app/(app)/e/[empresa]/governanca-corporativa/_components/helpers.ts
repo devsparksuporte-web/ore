@@ -22,7 +22,7 @@ export const contractTypeLabel: Record<ContractType, string> = {
   other: "Outro",
 };
 
-type BadgeVariant = "success" | "warning" | "danger" | "info" | "default" | "outline" | "navy";
+type BadgeVariant = "success" | "warning" | "danger" | "info" | "default" | "outline" | "navy" | "copper";
 export const contractStatusMeta: Record<ContractStatus, { label: string; variant: BadgeVariant }> = {
   fulfilled: { label: "Em cumprimento", variant: "success" },
   pending: { label: "Pendência", variant: "warning" },
@@ -36,6 +36,10 @@ export const alertPriorityAccent: Record<AlertPriority, ExecutiveAccent> = { hig
 export const alertPriorityVariant: Record<AlertPriority, BadgeVariant> = { high: "danger", medium: "warning", low: "outline" };
 export const alertCategoryLabel: Record<AlertCategory, string> = {
   legal: "Jurídico", corporate: "Societário", contractual: "Contratual", compliance: "Compliance",
+};
+/** Cor por categoria: identifica o domínio de encaminhamento num relance. */
+export const alertCategoryVariant: Record<AlertCategory, BadgeVariant> = {
+  legal: "default", corporate: "navy", contractual: "info", compliance: "copper",
 };
 
 /* ── Timeline jurídica ── */
