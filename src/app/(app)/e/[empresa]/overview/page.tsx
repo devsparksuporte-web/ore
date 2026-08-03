@@ -12,7 +12,6 @@ import { buildAtivaInsightContext } from "@/lib/insight-context";
 import { mockSession } from "@/lib/session";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { FilterBar } from "@/components/shell/filter-bar";
 import { PageHeader } from "@/components/shell/page-header";
 import { ChartCard } from "@/components/data/chart-card";
@@ -31,6 +30,7 @@ import { formatMoney } from "@/lib/format";
 import { getCompany } from "@/mocks/companies";
 import { cn } from "@/lib/utils";
 import { DashboardLayout } from "@/components/layouts";
+import { EditorialSection } from "@/components/ui";
 
 /**
  * Dashboard Executivo · v2 — desenhado para a leitura diária do CEO.
@@ -174,9 +174,7 @@ export default function CompanyOverviewPage() {
             </ChartCard>
 
             <div className="space-y-4 xl:col-span-4">
-              <Card>
-                <CardHeader><CardTitle>Posição por conta</CardTitle></CardHeader>
-                <CardContent className="space-y-2.5">
+              <EditorialSection title="Posição por conta">
                   {bankAccounts.map((b) => (
                     <div key={b.bank} className="flex items-center gap-3 text-body-sm">
                       <span className="w-28 shrink-0 text-gray-700">{b.bank}</span>
@@ -186,11 +184,8 @@ export default function CompanyOverviewPage() {
                       <span className="w-20 shrink-0 text-right font-medium tnum">{formatMoney(b.balance, { compact: true })}</span>
                     </div>
                   ))}
-                </CardContent>
-              </Card>
-              <Card>
-                <CardHeader><CardTitle>Maiores saídas · 15 dias</CardTitle></CardHeader>
-                <CardContent className="space-y-2">
+              </EditorialSection>
+              <EditorialSection title="Maiores saídas · 15 dias">
                   {upcomingOutflows.slice(0, 4).map((o) => (
                     <div key={o.id} className="flex items-center justify-between gap-2 text-body-sm">
                       <div className="min-w-0">
@@ -200,8 +195,7 @@ export default function CompanyOverviewPage() {
                       <span className="shrink-0 font-medium tnum text-danger">({formatMoney(o.amount, { compact: true })})</span>
                     </div>
                   ))}
-                </CardContent>
-              </Card>
+              </EditorialSection>
             </div>
           </div>
         </section>
@@ -220,12 +214,8 @@ export default function CompanyOverviewPage() {
               <WaterfallChart data={oxrWaterfall} />
             </ChartCard>
 
-            <Card className="xl:col-span-5">
-              <CardHeader>
-                <CardTitle>Contas críticas</CardTitle>
-                <Badge variant="warning">2 sem justificativa</Badge>
-              </CardHeader>
-              <CardContent className="space-y-1">
+            <EditorialSection title="Contas críticas" className="xl:col-span-5" meta={<Badge variant="warning">2 sem justificativa</Badge>}>
+              <div className="space-y-1">
                 {topDeviations.map((d) => {
                   const isRevenue = d.label.toLowerCase().includes("receita");
                   const favorable = isRevenue ? d.dev >= 0 : d.dev <= 0;
@@ -248,12 +238,12 @@ export default function CompanyOverviewPage() {
                     </Link>
                   );
                 })}
-              </CardContent>
-              <CardFooter>
+              </div>
+              <div className="mt-4 flex items-center justify-between border-t pt-2.5">
                 <SourceCaption source="Limiar 5% · responsáveis notificados" />
                 <Link href={`${base}/financeiro/oxr`} className="text-body-sm font-medium text-action-600 hover:underline">Cobrar →</Link>
-              </CardFooter>
-            </Card>
+              </div>
+            </EditorialSection>
           </div>
         </section>
 
@@ -270,11 +260,8 @@ export default function CompanyOverviewPage() {
               <ForecastChart data={forecastSeries} height={200} />
             </ChartCard>
 
-            <Card className="xl:col-span-4">
-              <CardHeader>
-                <CardTitle>CAPEX — execução do ano</CardTitle>
-              </CardHeader>
-              <CardContent className="space-y-4">
+            <EditorialSection title="CAPEX — execução do ano" className="xl:col-span-4">
+              <div className="space-y-4">
                 <div>
                   <div className="flex items-baseline justify-between">
                     <span className="font-display text-2xl font-semibold tnum text-navy-900">R$ 14,1 mi</span>
@@ -292,28 +279,27 @@ export default function CompanyOverviewPage() {
                   <span className="font-medium">Aguardando decisão:</span> ampliação do pátio de estocagem
                   (R$ 2,4 mi) — na alçada da Diretoria Ore.
                 </div>
-              </CardContent>
-              <CardFooter><SourceCaption source="Projetos · jun/26 · completo na v1.1" /></CardFooter>
-            </Card>
+              </div>
+              <div className="mt-4 flex items-center justify-between border-t pt-2.5"><SourceCaption source="Projetos · jun/26 · completo na v1.1" /></div>
+            </EditorialSection>
 
             {/* Minhas pendências — a ação do dia */}
-            <Card className="xl:col-span-3">
-              <CardHeader><CardTitle>Decidir hoje</CardTitle></CardHeader>
-              <CardContent className="space-y-2.5">
+            <EditorialSection title="Decidir hoje" className="xl:col-span-3">
+              <div className="space-y-1">
                 <PendingItem icon={<ClipboardList className="h-4 w-4 text-warning-fg" />} text="7 aprovações" detail="R$ 2,3 mi · 2 fora do SLA" href={`${base}/governanca/aprovacoes`} />
                 <PendingItem icon={<FileWarning className="h-4 w-4 text-warning-fg" />} text="1 justificativa" detail="Energia · prazo 05/jul" href={`${base}/financeiro/oxr`} />
                 <PendingItem icon={<CheckCircle2 className="h-4 w-4 text-info-fg" />} text="Fechamento jul/26" detail="3 de 9 etapas" href={`${base}/config/periodos`} />
                 <Link href={`${base}/governanca/aprovacoes`} className="block">
                   <Button className="mt-1 w-full" size="sm">Ir para a fila <ArrowRight /></Button>
                 </Link>
-              </CardContent>
-            </Card>
+              </div>
+            </EditorialSection>
           </div>
         </section>
 
         {/* ── OPERAÇÃO · contexto de rodapé, enxuto ───────────────────── */}
         <section aria-label="Operação">
-          <div className="grid grid-cols-1 gap-4 rounded-md border bg-surface px-6 py-4 sm:grid-cols-3">
+          <div className="grid grid-cols-1 gap-4 border-y py-5 sm:grid-cols-3">
             {operationalKpis.slice(0, 1).concat(operationalKpis.slice(3, 4), operationalKpis.slice(5, 6)).map((k) => (
               <div key={k.label} className="flex items-center justify-between gap-3 sm:flex-col sm:items-start">
                 <span className="text-caption uppercase tracking-wider text-gray-500">{k.label}</span>

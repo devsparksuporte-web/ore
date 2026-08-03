@@ -2,7 +2,6 @@
 
 import Link from "next/link";
 import { AlertTriangle, ArrowRight, PlugZap } from "lucide-react";
-import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { IntegrationBadge } from "./status-badge";
 import { DeltaIndicator } from "./delta-indicator";
@@ -15,8 +14,7 @@ export function EntityCard({ company }: { company: Company }) {
   const isIntegrated = company.integrationStatus === "integrated";
 
   const body = (
-    <Card interactive={isIntegrated} className="group h-full">
-      <CardContent className="flex h-full flex-col p-6">
+    <section className="group flex h-full flex-col border-t-2 border-navy-900/85 pt-3.5">
         {/* Topo: identidade + status */}
         <div className="flex items-start justify-between gap-2">
           <div className="flex items-center gap-3">
@@ -90,15 +88,14 @@ export function EntityCard({ company }: { company: Company }) {
             <ArrowRight className="h-4 w-4 text-action-600 transition-transform duration-fast ease-standard group-hover:translate-x-0.5" />
           )}
         </div>
-      </CardContent>
-    </Card>
+    </section>
   );
 
   if (isIntegrated)
     return (
       <Link
         href={`/e/${company.slug}/overview`}
-        className="block h-full rounded-md focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
+        className="block h-full rounded-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
       >
         {body}
       </Link>
@@ -109,7 +106,7 @@ export function EntityCard({ company }: { company: Company }) {
 function MiniKpi({ label, value, delta }: { label: string; value: string; delta?: React.ReactNode }) {
   return (
     <div>
-      <p className="text-caption uppercase tracking-wide text-muted-foreground">{label}</p>
+      <p className="text-caption text-gray-500">{label}</p>
       {value && <p className="text-body-sm font-semibold tnum text-navy-900">{value}</p>}
       {delta}
     </div>

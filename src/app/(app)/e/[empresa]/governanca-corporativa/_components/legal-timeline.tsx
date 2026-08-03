@@ -5,7 +5,7 @@
  * (assembleias, aditivos, distratos, decisões, notificações). Reusa o
  * componente <Timeline/> do DS — mesmo fio condutor de Estratégia e Performance.
  */
-import { Badge, Card, CardContent, CardHeader, CardTitle, Timeline } from "@/components/ui";
+import { Badge, EditorialSection, Timeline } from "@/components/ui";
 import type { LegalEvent } from "@modules/corporate-governance";
 import { eventKindLabel, eventKindVariant } from "./helpers";
 
@@ -19,11 +19,8 @@ export function LegalTimeline({ events }: { events: LegalEvent[] }) {
     meta: <Badge variant={eventKindVariant[e.kind]}>{eventKindLabel[e.kind]}</Badge>,
   }));
   return (
-    <Card>
-      <CardHeader><CardTitle>Eventos relevantes</CardTitle></CardHeader>
-      <CardContent className="pt-2">
+    <EditorialSection title="Eventos relevantes">
         <Timeline items={items} />
-      </CardContent>
-    </Card>
+    </EditorialSection>
   );
 }

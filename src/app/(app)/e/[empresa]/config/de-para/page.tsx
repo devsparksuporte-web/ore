@@ -4,13 +4,13 @@ import * as React from "react";
 import { Check, Sparkles } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent } from "@/components/ui/card";
 import { PageHeader } from "@/components/shell/page-header";
 import { accountMappings, MAPPING_PROGRESS } from "@/mocks/plataforma";
 import type { AccountMapping } from "@/types/domain";
 import { toast } from "sonner";
 import { cn } from "@/lib/utils";
 import { SettingsLayout } from "@/components/layouts";
+import { EditorialSection } from "@/components/ui";
 
 export default function DeParaPage() {
   const [mappings, setMappings] = React.useState(accountMappings);
@@ -32,8 +32,8 @@ export default function DeParaPage() {
       />
 
       {/* Progresso */}
-      <Card>
-        <CardContent className="flex items-center gap-4 p-6">
+      <div className="border-t pt-4">
+        <div className="flex items-center gap-4">
           <div className="flex-1">
             <div className="flex items-baseline justify-between">
               <p className="text-sm font-medium text-gray-800">
@@ -48,8 +48,8 @@ export default function DeParaPage() {
               Contas não mapeadas aparecem na linha “Não mapeadas” da DRE — nunca somem silenciosamente.
             </p>
           </div>
-        </CardContent>
-      </Card>
+        </div>
+      </div>
 
       <label className="flex w-fit cursor-pointer items-center gap-2 text-body-sm text-gray-700">
         <input type="checkbox" checked={onlyUnmapped} onChange={(e) => setOnlyUnmapped(e.target.checked)} className="h-4 w-4 rounded border-gray-300 accent-action-600" />

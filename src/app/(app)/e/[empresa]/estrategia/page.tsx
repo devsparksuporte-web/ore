@@ -53,7 +53,7 @@ export default function CompanyEstrategiaPage() {
   const context = `Última atualização ${latestUpdate(decisions)} · Próximo marco ${nextDeadline(decisions)} · ${overallState(decisions)}`;
 
   return (
-    <DashboardLayout spacing="lg">
+    <DashboardLayout spacing="xl">
       <PageHeader
         title="Estratégia & Execução"
         description={context}
@@ -66,24 +66,18 @@ export default function CompanyEstrategiaPage() {
 
       <ExecutiveSummary items={summary} />
 
-      <div className="grid items-start gap-6 xl:grid-cols-3">
-        <div className="xl:col-span-2">
-          {map ? (
-            <StrategyHero map={map} />
-          ) : (
-            <EmptyState kind="not-configured" title="Estratégia não definida" description="Esta empresa ainda não possui estratégia cadastrada." />
-          )}
-        </div>
-        <div className="xl:col-span-1">
-          {map && (
-            <StrategicMonitor
-              risks={map.keyRisks}
-              attention={attentionPoints(decisions)}
-              indicators={keyIndicators(decisions)}
-            />
-          )}
-        </div>
-      </div>
+      {map ? (
+        <>
+          <StrategyHero map={map} />
+          <StrategicMonitor
+            risks={map.keyRisks}
+            attention={attentionPoints(decisions)}
+            indicators={keyIndicators(decisions)}
+          />
+        </>
+      ) : (
+        <EmptyState kind="not-configured" title="Estratégia não definida" description="Esta empresa ainda não possui estratégia cadastrada." />
+      )}
 
       <StrategyTimeline events={timeline} />
 

@@ -4,7 +4,7 @@ import * as React from "react";
 import Link from "next/link";
 import { useParams } from "next/navigation";
 import { AlertTriangle } from "lucide-react";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { EditorialSection } from "@/components/ui";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Sheet, SheetBody, SheetContent, SheetHeader, SheetTitle } from "@/components/ui/sheet";
 import { FilterBar } from "@/components/shell/filter-bar";
@@ -78,15 +78,12 @@ export default function DrePage() {
           </TabsContent>
 
           <TabsContent value="contabil">
-            <Card>
-              <CardHeader><CardTitle>Visão contábil (plano original do ERP)</CardTitle></CardHeader>
-              <CardContent>
+            <EditorialSection title="Visão contábil (plano original do ERP)">
                 <p className="text-sm text-muted-foreground">
                   Estrutura espelhada do plano de contas do Protheus, sem reclassificação gerencial.
                   Mesmos valores, hierarquia contábil original — disponível para conciliação com o balancete.
                 </p>
-              </CardContent>
-            </Card>
+            </EditorialSection>
           </TabsContent>
         </Tabs>
       </DashboardLayout>

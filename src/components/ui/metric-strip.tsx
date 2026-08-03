@@ -1,13 +1,12 @@
 "use client";
 
 /**
- * MetricStrip · Strata — componente reutilizável (Sprint 1.2).
- * Faixa leve de KPIs de topo (sem caixas individuais), dividida por fios.
- * Cor apenas quando há sinal. Agnóstico de domínio — qualquer módulo que
- * precise de um resumo executivo de 2 a 6 números. Responsivo (2 col → N col).
+ * MetricStrip · Strata — faixa de indicadores de topo (composição editorial).
+ * Números grandes em peso REGULAR (não negrito) com rótulo discreto abaixo,
+ * separados por fios verticais — leitura de relatório. Sem caixas: o dado
+ * assenta na página. Cor apenas quando há sinal.
  *
- * Generaliza o padrão nascido em Estratégia & Execução (executive-summary),
- * sem alterar aquele módulo; futuros módulos e o próprio E&E podem adotá-lo.
+ * Agnóstico de domínio: qualquer módulo com 2 a 6 números de topo.
  */
 import * as React from "react";
 import { cn } from "@/lib/utils";
@@ -40,14 +39,22 @@ const cols: Record<number, string> = {
 export function MetricStrip({ items, className }: { items: MetricItem[]; className?: string }) {
   const n = Math.min(6, Math.max(2, items.length));
   return (
-    <section className={cn("grid grid-cols-2 gap-y-5 border-y py-5 sm:gap-y-0 sm:divide-x", cols[n], className)}>
+    <section className={cn("grid grid-cols-2 gap-y-6 border-y py-6", cols[n], className)}>
       {items.map((it, i) => (
-        <div key={it.label} className={cn("px-6 first:pl-0", i % 2 === 1 && "border-l sm:border-l-0")}>
-          <p className={cn("font-display text-[26px] font-semibold leading-none tnum tracking-kpi", toneCls[it.tone ?? "default"])}>
+        <div
+          key={it.label}
+          className={cn("px-6 first:pl-0", i > 0 && "border-l", i % 2 === 0 && "max-sm:border-l-0 max-sm:pl-0")}
+        >
+          <p
+            className={cn(
+              "font-display text-[30px] font-normal leading-none tracking-[-0.02em] tnum",
+              toneCls[it.tone ?? "default"]
+            )}
+          >
             {it.value}
           </p>
-          <p className="mt-2 text-body-sm text-gray-500">{it.label}</p>
-          {it.hint && <p className="mt-0.5 text-caption tnum text-gray-500">{it.hint}</p>}
+          <p className="mt-2.5 text-caption text-gray-500">{it.label}</p>
+          {it.hint && <p className="mt-0.5 text-caption tnum text-gray-400">{it.hint}</p>}
         </div>
       ))}
     </section>

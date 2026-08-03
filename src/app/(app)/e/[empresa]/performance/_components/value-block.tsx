@@ -1,42 +1,45 @@
 "use client";
 
 /**
- * VALOR (HERO) — valuation atual, variação anual e evolução no tempo.
- * Responde "estamos criando valor?". Bloco mais nobre da tela.
- * Só componentes/tokens do DS + gráfico local sobre os primitivos de dataviz.
+ * VALOR — seção editorial (sem card): evolução do valuation na coluna de
+ * conteúdo e o múltiplo como NOTA DE MARGEM. Responde "estamos criando valor?".
  */
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui";
+import { EditorialSection } from "@/components/ui";
 import { DeltaIndicator } from "@/components/data/delta-indicator";
-import { SourceCaption } from "@/components/data/source-caption";
 import { formatMoney } from "@/lib/format";
 import type { PerformanceDerived, PerformanceSnapshot } from "@modules/performance";
-import { formatAsOf } from "./helpers";
+import { formatAsOf, moicLabel } from "./helpers";
 import { ValuationChart } from "./valuation-chart";
 
 export function ValueHero({ snap, derived }: { snap: PerformanceSnapshot; derived: PerformanceDerived }) {
   const v = snap.valuation;
   const up = derived.valuationVariationYoY >= 0;
+
   return (
-    <Card>
-      <CardHeader><CardTitle>Valor da participação</CardTitle></CardHeader>
-      <CardContent className="space-y-5">
-        <div className="flex flex-wrap items-end gap-x-8 gap-y-3">
-          <div>
-            <p className="text-body-sm text-gray-500">Valuation atual</p>
-            <p className="mt-1 font-display text-kpi tnum tracking-kpi text-navy-900">{formatMoney(v.current, { compact: true })}</p>
-          </div>
-          <div>
-            <p className="text-body-sm text-gray-500">Variação anual</p>
-            <div className="mt-2"><DeltaIndicator value={derived.valuationVariationYoY} favorable={up} label="a.a." /></div>
-          </div>
+    <EditorialSection
+      title="Valor da participação"
+      meta={`${v.method} · data-base ${formatAsOf(v.asOf)}`}
+      aside={
+        <div>
+          <p className="text-caption text-gray-500">Múltiplo sobre o capital</p>
+          <p className="mt-1.5 font-display text-[26px] font-normal leading-none tracking-[-0.02em] tnum text-navy-900">
+            {moicLabel(derived.moic)}
+          </p>
+          <p className="mt-3 text-caption leading-6 text-gray-500">
+            Sobre {formatMoney(v.investedCapital, { compact: true })} investidos. Marcação por {v.method},
+            comitê de valuation.
+          </p>
         </div>
+      }
+    >
+      <div className="mb-4 flex flex-wrap items-baseline gap-x-4 gap-y-1">
+        <span className="font-display text-kpi font-normal tracking-kpi tnum text-navy-900">
+          {formatMoney(v.current, { compact: true })}
+        </span>
+        <DeltaIndicator value={derived.valuationVariationYoY} favorable={up} label="a.a." />
+      </div>
 
-        <ValuationChart data={v.annualSeries} />
-
-        <div className="flex items-center justify-between border-t pt-3">
-          <SourceCaption source={`${v.method} · data-base ${formatAsOf(v.asOf)}`} />
-        </div>
-      </CardContent>
-    </Card>
+      <ValuationChart data={v.annualSeries} />
+    </EditorialSection>
   );
 }

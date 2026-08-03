@@ -7,7 +7,7 @@
  * societários. Reusa <ExecutiveList/> + Drawer.
  */
 import * as React from "react";
-import { Badge, Card, CardContent, CardHeader, CardTitle, ExecutiveList, type ExecutiveListItem } from "@/components/ui";
+import { Badge, EditorialSection, ExecutiveList, type ExecutiveListItem } from "@/components/ui";
 import type { Contract } from "@modules/corporate-governance";
 import { contractStatusMeta, contractTypeLabel } from "./helpers";
 import { ContractDrawer } from "./contract-drawer";
@@ -30,12 +30,9 @@ export function ContractsBlock({ contracts }: { contracts: Contract[] }) {
   }));
 
   return (
-    <Card>
-      <CardHeader><CardTitle>Documentos</CardTitle></CardHeader>
-      <CardContent className="pt-1">
+    <EditorialSection title="Documentos">
         <ExecutiveList items={items} />
-      </CardContent>
       <ContractDrawer contract={selected} open={open} onOpenChange={setOpen} />
-    </Card>
+    </EditorialSection>
   );
 }

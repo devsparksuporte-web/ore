@@ -30,7 +30,7 @@ export default function CompanyGovernancePage() {
 
   if (!snap) {
     return (
-      <DashboardLayout spacing="lg">
+      <DashboardLayout spacing="xl">
         <PageHeader
           title="Governança Corporativa"
           description={`Estrutura, contratos e conformidade — ${companyName}`}
@@ -54,7 +54,7 @@ export default function CompanyGovernancePage() {
   const context = `${snap.entityType} · ${snap.jurisdiction} · data-base ${formatDate(snap.asOf, "short")}`;
 
   return (
-    <DashboardLayout spacing="lg">
+    <DashboardLayout spacing="xl">
       <PageHeader
         title="Governança Corporativa"
         description={context}
@@ -67,10 +67,9 @@ export default function CompanyGovernancePage() {
 
       <MetricStrip items={kpis} />
 
-      <div className="grid items-start gap-6 xl:grid-cols-3">
-        <div className="xl:col-span-2"><GovernanceHero bodies={snap.bodies} /></div>
-        <div className="xl:col-span-1"><LegalStatusCard status={d.legalStatus} points={d.attentionPoints} /></div>
-      </div>
+      <GovernanceHero bodies={snap.bodies} />
+
+      <LegalStatusCard status={d.legalStatus} points={d.attentionPoints} />
 
       <ComplianceBlock compliance={snap.compliance} pct={d.compliancePct} />
 

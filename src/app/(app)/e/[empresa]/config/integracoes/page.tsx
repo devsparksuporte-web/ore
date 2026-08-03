@@ -4,7 +4,6 @@ import * as React from "react";
 import { Play, Plug, RefreshCw, Settings2, Unplug } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogTitle } from "@/components/ui/dialog";
 import { PageHeader } from "@/components/shell/page-header";
 import { DataTable, type Column } from "@/components/data/data-table";
@@ -13,6 +12,7 @@ import { connections, syncRuns } from "@/mocks/plataforma";
 import type { SyncRun } from "@/types/domain";
 import { toast } from "sonner";
 import { SettingsLayout } from "@/components/layouts";
+import { EditorialSection } from "@/components/ui";
 
 const statusConfig = {
   healthy: { label: "Saudável", variant: "success" as const },
@@ -62,18 +62,18 @@ export default function IntegracoesPage() {
         {ativaConnections.map((c) => {
           const cfg = statusConfig[c.status];
           return (
-            <Card key={c.id}>
-              <CardHeader>
+            <div key={c.id} className="border-t pt-3.5">
+              <div className="flex items-start justify-between gap-3 pb-3">
                 <div className="flex items-center gap-2.5">
                   <span className="flex h-9 w-9 items-center justify-center rounded-md bg-navy-100"><Plug className="h-4 w-4 text-navy-900" /></span>
                   <div>
-                    <CardTitle className="text-sm">{c.connector}</CardTitle>
-                    <p className="text-caption text-muted-foreground">{c.companyName}</p>
+                    <p className="font-display text-body-sm font-medium text-navy-900">{c.connector}</p>
+                    <p className="text-caption text-gray-500">{c.companyName}</p>
                   </div>
                 </div>
                 <Badge variant={cfg.variant} dot>{cfg.label}</Badge>
-              </CardHeader>
-              <CardContent className="space-y-1.5 text-body-sm text-gray-700">
+              </div>
+              <div className="space-y-1.5 text-body-sm text-gray-700">
                 <p className="text-muted-foreground">{c.detail}</p>
                 {c.lastSync && (
                   <div className="flex justify-between"><span className="text-muted-foreground">Última sync</span><span className="font-medium tnum">{c.lastSync}</span></div>
@@ -84,8 +84,8 @@ export default function IntegracoesPage() {
                 {c.recordsImported && (
                   <div className="flex justify-between"><span className="text-muted-foreground">Registros</span><span className="tnum">{c.recordsImported.toLocaleString("pt-BR")}</span></div>
                 )}
-              </CardContent>
-              <CardFooter className="gap-1.5">
+              </div>
+              <div className="mt-4 flex items-center justify-between border-t pt-2.5">
                 <Button size="sm" variant="outline" onClick={runSync} loading={syncing && c.id === "cn-1"}>
                   <Play /> Sincronizar
                 </Button>
@@ -95,8 +95,8 @@ export default function IntegracoesPage() {
                 <Button size="sm" variant="ghost" className="text-danger hover:bg-danger-bg" onClick={() => setDisconnecting(c.id)}>
                   <Unplug />
                 </Button>
-              </CardFooter>
-            </Card>
+              </div>
+            </div>
           );
         })}
       </section>

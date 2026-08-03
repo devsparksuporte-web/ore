@@ -6,7 +6,6 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Sheet, SheetBody, SheetContent, SheetFooter, SheetHeader, SheetTitle } from "@/components/ui/sheet";
 import { Input, Label } from "@/components/ui/input";
@@ -24,6 +23,7 @@ import type { OxrLine } from "@/types/domain";
 import { toast } from "sonner";
 import { cn } from "@/lib/utils";
 import { DashboardLayout } from "@/components/layouts";
+import { EditorialSection } from "@/components/ui";
 
 const justificationSchema = z.object({
   rootCause: z.string().min(1, "Selecione a causa raiz"),
@@ -208,11 +208,9 @@ function JustificationDrawer({ line, onDone }: { line: OxrLine; onDone: () => vo
 
 function StatCard({ label, value, tone }: { label: string; value: string; tone?: "danger" }) {
   return (
-    <Card>
-      <CardContent className="p-4">
-        <p className="text-caption font-medium uppercase tracking-wide text-muted-foreground">{label}</p>
-        <p className={cn("mt-1 font-display text-xl font-semibold tnum", tone === "danger" ? "text-danger" : "text-navy-900")}>{value}</p>
-      </CardContent>
-    </Card>
+    <div className="border-t pt-3">
+      <p className={cn("font-display text-h2 font-normal tnum", tone === "danger" ? "text-danger" : "text-navy-900")}>{value}</p>
+      <p className="mt-1.5 text-caption text-gray-500">{label}</p>
+    </div>
   );
 }

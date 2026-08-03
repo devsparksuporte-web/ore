@@ -80,7 +80,7 @@ export function deriveGovernance(s: GovernanceSnapshot): GovernanceDerived {
     alerts.push({
       id: `al-${o.id}`, priority: "high", category: "compliance", title: o.title,
       detail: late > 0 ? `Vencida há ${late} ${late === 1 ? "dia" : "dias"} — requer regularização.` : "Obrigação vencida — requer regularização.",
-      owner: o.owner, dueLabel: `Venceu ${o.dueDate}`,
+      owner: o.owner, dueLabel: o.dueDate, dueState: "overdue",
     });
   }
 
@@ -97,7 +97,7 @@ export function deriveGovernance(s: GovernanceSnapshot): GovernanceDerived {
       detail: days !== null
         ? `Vence em ${days} ${days === 1 ? "dia" : "dias"} — antecipar tratativa.`
         : "Prazo se aproximando — antecipar tratativa.",
-      owner: o.owner, dueLabel: `Vence ${o.dueDate}`,
+      owner: o.owner, dueLabel: o.dueDate, dueState: "due",
     });
   }
   for (const c of s.contracts.filter((x) => x.status === "at_risk")) {

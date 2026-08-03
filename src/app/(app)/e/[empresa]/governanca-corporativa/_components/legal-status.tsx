@@ -5,16 +5,14 @@
  * principais pontos que explicam o status. Responde "há risco jurídico
  * relevante?" com veredito, não com lista de riscos. Só tokens do DS.
  */
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui";
+import { EditorialSection } from "@/components/ui";
 import type { AttentionPoint, LegalStatus } from "@modules/corporate-governance";
 import { legalStatusMeta } from "./helpers";
 
 export function LegalStatusCard({ status, points }: { status: LegalStatus; points: AttentionPoint[] }) {
   const s = legalStatusMeta[status];
   return (
-    <Card>
-      <CardHeader><CardTitle>Situação jurídica</CardTitle></CardHeader>
-      <CardContent className="space-y-6">
+    <EditorialSection title="Situação jurídica">
         <div>
           <p className="text-body-sm text-gray-500">Status geral</p>
           <p className={`mt-1.5 flex items-center gap-2 font-display text-h2 font-semibold tracking-snug ${s.text}`}>
@@ -35,7 +33,6 @@ export function LegalStatusCard({ status, points }: { status: LegalStatus; point
             </ul>
           </div>
         )}
-      </CardContent>
-    </Card>
+    </EditorialSection>
   );
 }

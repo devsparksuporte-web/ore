@@ -3,7 +3,6 @@
 import * as React from "react";
 import { AlertTriangle } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Sheet, SheetBody, SheetContent, SheetHeader, SheetTitle } from "@/components/ui/sheet";
 import { FilterBar } from "@/components/shell/filter-bar";
@@ -17,6 +16,7 @@ import { formatDate, formatMoney } from "@/lib/format";
 import type { PurchaseOrder, Supplier } from "@/types/domain";
 import { cn } from "@/lib/utils";
 import { DashboardLayout } from "@/components/layouts";
+import { EditorialSection } from "@/components/ui";
 
 export default function ComprasPage() {
   const [selected, setSelected] = React.useState<PurchaseOrder | null>(null);
@@ -63,16 +63,14 @@ export default function ComprasPage() {
         {/* Funil + métricas */}
         <section className="grid grid-cols-2 gap-4 xl:grid-cols-6">
           {purchaseFunnel.map((f) => (
-            <Card key={f.stage}>
-              <CardContent className="p-4 text-center">
-                <p className="font-display text-xl font-semibold tnum text-navy-900">{f.count}</p>
-                <p className="text-caption text-muted-foreground">{f.stage}</p>
-                <p className="text-caption tnum text-gray-500">{formatMoney(f.value, { compact: true })}</p>
-              </CardContent>
-            </Card>
+            <div key={f.stage} className="border-t pt-3">
+              <p className="font-display text-h2 font-normal tnum text-navy-900">{f.count}</p>
+              <p className="mt-1.5 text-caption text-gray-500">{f.stage}</p>
+              <p className="text-caption tnum text-gray-400">{formatMoney(f.value, { compact: true })}</p>
+            </div>
           ))}
-          <Card><CardContent className="p-4 text-center"><p className="font-display text-xl font-semibold tnum text-navy-900">6,2d</p><p className="text-caption text-muted-foreground">Lead time médio</p></CardContent></Card>
-          <Card><CardContent className="p-4 text-center"><p className="font-display text-xl font-semibold tnum text-success">R$ 184 mil</p><p className="text-caption text-muted-foreground">Saving no mês</p></CardContent></Card>
+          <div className="border-t pt-3"><p className="font-display text-h2 font-normal tnum text-navy-900">6,2d</p><p className="mt-1.5 text-caption text-gray-500">Lead time médio</p></div>
+          <div className="border-t pt-3"><p className="font-display text-h2 font-normal tnum text-success">R$ 184 mil</p><p className="mt-1.5 text-caption text-gray-500">Saving no mês</p></div>
         </section>
 
         {/* Alerta de concentração (RF043) */}

@@ -368,3 +368,21 @@ body {
   animation: shimmer 1.6s infinite;
 }
 @keyframes shimmer { 100% { transform: translateX(100%); } }
+
+/* Halo pulsante do nó "atual" (timeline) — emana devagar e some. Discreto:
+   1px de borda em cobre, ciclo longo. Desativado por prefers-reduced-motion
+   (regra global no topo deste arquivo). Requer `position: relative` no nó. */
+.pulse-halo::after {
+  content: "";
+  position: absolute;
+  inset: -1px;
+  border-radius: var(--radius-full);
+  border: 1px solid rgb(var(--rgb-copper-500) / 0.6);
+  animation: pulse-halo 2.6s var(--ease-out) infinite;
+  pointer-events: none;
+}
+@keyframes pulse-halo {
+  0% { transform: scale(1); opacity: 0.6; }
+  70% { transform: scale(2.8); opacity: 0; }
+  100% { transform: scale(2.8); opacity: 0; }
+}

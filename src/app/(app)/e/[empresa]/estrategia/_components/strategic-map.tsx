@@ -5,7 +5,7 @@
  * atual), o caminho crítico (stepper), os objetivos e a decisão estratégica
  * (callout). Conteúdo mais nobre da página. Só tokens/componentes do DS.
  */
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui";
+import { EditorialSection } from "@/components/ui";
 import type { CriticalPathStep, StrategicMap } from "@modules/strategy";
 
 function Label({ children }: { children: React.ReactNode }) {
@@ -48,9 +48,8 @@ function CriticalPath({ steps }: { steps: CriticalPathStep[] }) {
 
 export function StrategyHero({ map }: { map: StrategicMap }) {
   return (
-    <Card>
-      <CardHeader><CardTitle>Estratégia da investida</CardTitle></CardHeader>
-        <CardContent className="space-y-6">
+    <EditorialSection title="Estratégia da investida">
+      <div className="space-y-6">
           <div className="grid gap-x-10 gap-y-6 md:grid-cols-2">
             {map.thesisOriginal && (
               <div>
@@ -89,7 +88,7 @@ export function StrategyHero({ map }: { map: StrategicMap }) {
             <div className="mb-1.5 text-body-sm text-copper-500">Decisão estratégica</div>
             <p className="max-w-prose text-body-sm font-medium leading-6 text-navy-900">{map.decision}</p>
           </div>
-        </CardContent>
-    </Card>
+      </div>
+    </EditorialSection>
   );
 }

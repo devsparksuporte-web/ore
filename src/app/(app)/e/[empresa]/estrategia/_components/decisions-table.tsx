@@ -9,7 +9,7 @@
 import * as React from "react";
 import { ArrowDown, ArrowUp, Search } from "lucide-react";
 import {
-  Button, Card, CardContent, CardHeader, CardTitle, DataTable, Input,
+  Button, EditorialSection, DataTable, Input,
   Select, SelectContent, SelectItem, SelectTrigger, SelectValue,
   type Column,
 } from "@/components/ui";
@@ -81,9 +81,7 @@ export function DecisionsTable({
   ];
 
   return (
-    <Card>
-      <CardHeader><CardTitle>{title}</CardTitle></CardHeader>
-      <CardContent className="pt-1">
+    <EditorialSection title={title} meta={`${rows.length} ${rows.length === 1 ? "registro" : "registros"}`}>
         {showToolbar && (
         <div className="mb-3 flex flex-wrap items-center gap-2">
         <div className="relative min-w-[200px] flex-1">
@@ -117,10 +115,9 @@ export function DecisionsTable({
         )}
 
         <DataTable columns={columns} rows={rows} onRowClick={openRow} dense exportable={false} />
-      </CardContent>
 
       <DecisionDrawer decision={selected} open={drawerOpen} onOpenChange={setDrawerOpen} />
-    </Card>
+    </EditorialSection>
   );
 }
 

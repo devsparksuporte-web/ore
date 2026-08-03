@@ -5,7 +5,7 @@
  * próximos passos e horizonte. Fecha a jornada ("Como pretendemos sair?").
  * Simples nesta Sprint, preparado para crescer. Só tokens/componentes do DS.
  */
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui";
+import { EditorialSection } from "@/components/ui";
 import type { ExitPlan } from "@modules/strategy";
 
 function Stepper({ stages, current }: { stages: { label: string }[]; current: number }) {
@@ -44,9 +44,8 @@ function Stepper({ stages, current }: { stages: { label: string }[]; current: nu
 
 export function ExitPlanSection({ plan }: { plan: ExitPlan }) {
   return (
-    <Card>
-      <CardHeader><CardTitle>Plano de saída</CardTitle></CardHeader>
-        <CardContent className="space-y-6">
+    <EditorialSection title="Plano de saída">
+      <div className="space-y-6">
           <div className="grid gap-x-10 gap-y-4 sm:grid-cols-2">
             <div>
               <div className="mb-1.5 text-body-sm text-gray-500">Estratégia de saída</div>
@@ -76,7 +75,7 @@ export function ExitPlanSection({ plan }: { plan: ExitPlan }) {
               </ul>
             </div>
           )}
-        </CardContent>
-    </Card>
+      </div>
+    </EditorialSection>
   );
 }

@@ -5,7 +5,7 @@
  * componente reutilizável <Timeline/> do DS, mapeando os eventos do port.
  * Nasce com poucos eventos e cresce (rolagem horizontal) sem refatorar.
  */
-import { Badge, Card, CardContent, CardHeader, CardTitle, Timeline } from "@/components/ui";
+import { Badge, EditorialSection, Timeline } from "@/components/ui";
 import type { StrategyEvent, StrategyEventKind } from "@modules/strategy";
 
 const kindLabel: Record<StrategyEventKind, string> = {
@@ -25,11 +25,8 @@ export function StrategyTimeline({ events }: { events: StrategyEvent[] }) {
     meta: <Badge variant={kindVariant[e.kind]}>{kindLabel[e.kind]}</Badge>,
   }));
   return (
-    <Card>
-      <CardHeader><CardTitle>Timeline de execução</CardTitle></CardHeader>
-      <CardContent className="pt-2">
+    <EditorialSection title="Timeline de execução">
         <Timeline items={items} />
-      </CardContent>
-    </Card>
+    </EditorialSection>
   );
 }

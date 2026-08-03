@@ -17,13 +17,14 @@ import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import type { WidgetConfig, WidgetTone } from "./types";
 
-const toneBorder: Record<WidgetTone, string> = {
+/** Tom do widget na REGRA superior (não em borda lateral de caixa). */
+const toneRule: Record<WidgetTone, string> = {
   default: "",
-  navy: "border-l-[3px] border-l-navy-900",
-  success: "border-l-[3px] border-l-success",
-  warning: "border-l-[3px] border-l-warning",
-  danger: "border-l-[3px] border-l-danger",
-  info: "border-l-[3px] border-l-info",
+  navy: "border-navy-900",
+  success: "border-success",
+  warning: "border-warning",
+  danger: "border-danger",
+  info: "border-info",
 };
 
 export function WidgetFrame({
@@ -79,26 +80,27 @@ export function WidgetFrame({
       aria-label={config.title ?? config.type}
       /* Entrada CSS por movimento — nunca opacidade (conteúdo sempre visível) */
       style={{ animationDelay: `${Math.min(index * 30, 240)}ms` }}
+      /* Composição editorial: sem moldura fechada — regra superior ancora o
+         widget e o conteúdo assenta na página (mesma gramática das seções). */
       className={cn(
         "widget-enter",
-        "group flex h-full flex-col rounded-md border bg-surface shadow-sm",
-        toneBorder[config.tone ?? "default"],
-        config.href &&
-          "cursor-pointer transition-[border-color,box-shadow,transform] duration-fast ease-standard hover:-translate-y-px hover:border-action-600/60 hover:shadow-md active:translate-y-0"
+        "group flex h-full flex-col border-t-2 border-navy-900/85 pt-3",
+        toneRule[config.tone ?? "default"],
+        config.href && "cursor-pointer transition-colors duration-fast ease-standard"
       )}
     >
       {(config.title || config.actions) && (
-        <header className="flex items-start justify-between gap-3 px-6 pb-3 pt-5">
+        <header className="flex items-start justify-between gap-3 pb-3">
           <div className="min-w-0">
-            {config.title && <h3 className="text-sm font-medium leading-5 text-gray-700">{config.title}</h3>}
-            {config.description && <p className="mt-0.5 text-caption text-muted-foreground">{config.description}</p>}
+            {config.title && <h3 className="font-display text-body-sm font-medium tracking-snug text-navy-900">{config.title}</h3>}
+            {config.description && <p className="mt-0.5 text-caption text-gray-500">{config.description}</p>}
           </div>
           {config.actions && <div className="flex shrink-0 items-center gap-2">{config.actions}</div>}
         </header>
       )}
-      <div className={cn("flex-1 px-6", config.title || config.actions ? "pb-5" : "py-6")}>{body}</div>
+      <div className="flex-1">{body}</div>
       {config.source && allowed && (
-        <footer className="flex items-center justify-between border-t px-6 py-2.5">
+        <footer className="mt-4 flex items-center justify-between border-t pt-2.5">
           <SourceCaption source={config.source} />
           {config.href && (
             <span aria-hidden className="text-gray-300 transition-transform duration-fast group-hover:translate-x-0.5 group-hover:text-action-600">→</span>
@@ -111,7 +113,7 @@ export function WidgetFrame({
   if (config.frameless) return <>{body}</>;
   if (config.href)
     return (
-      <Link href={config.href} className="block h-full rounded-md focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2">
+      <Link href={config.href} className="block h-full rounded-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2">
         {frame}
       </Link>
     );

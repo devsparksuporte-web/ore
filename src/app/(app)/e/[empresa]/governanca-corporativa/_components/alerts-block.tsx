@@ -6,7 +6,7 @@
  * própria. Responde "onde eu ajo agora?". Itens e prioridades derivados no
  * serviço (obrigações vencidas e A VENCER, contratos em risco, riscos-chave).
  */
-import { Badge, Card, CardContent, CardHeader, CardTitle, EmptyState } from "@/components/ui";
+import { Badge, EditorialSection, EmptyState } from "@/components/ui";
 import type { GovernanceAlert } from "@modules/corporate-governance";
 import { alertCategoryLabel, alertCategoryVariant, alertPriorityLabel } from "./helpers";
 import { cn } from "@/lib/utils";
@@ -19,29 +19,22 @@ const accent: Record<GovernanceAlert["priority"], string> = {
 };
 
 /** Tom do prazo: vencido em danger, a vencer em warning, demais neutro. */
-function dueTone(due?: string) {
-  if (!due) return "text-gray-500";
-  if (due.startsWith("Venceu")) return "text-danger";
-  if (due.startsWith("Vence")) return "text-warning";
-  return "text-gray-500";
-}
+const dueTone: Record<string, string> = {
+  overdue: "text-danger",
+  due: "text-warning",
+};
 
 export function AlertsBlock({ alerts }: { alerts: GovernanceAlert[] }) {
   if (alerts.length === 0) {
     return (
-      <Card>
-        <CardHeader><CardTitle>Ações requeridas</CardTitle></CardHeader>
-        <CardContent>
+      <EditorialSection title="Ações requeridas">
           <EmptyState kind="all-clear" title="Nenhuma ação pendente" description="Não há obrigações, documentos ou riscos exigindo tratativa no momento." />
-        </CardContent>
-      </Card>
+      </EditorialSection>
     );
   }
 
   return (
-    <Card>
-      <CardHeader><CardTitle>Ações requeridas</CardTitle></CardHeader>
-      <CardContent className="pt-1">
+    <EditorialSection title="Ações requeridas">
         <ul className="divide-y">
           {alerts.map((a) => (
             <li key={a.id} className="relative flex items-start gap-4 py-3.5 pl-4">
@@ -56,14 +49,17 @@ export function AlertsBlock({ alerts }: { alerts: GovernanceAlert[] }) {
                 {a.detail && <p className="mt-1 text-body-sm leading-snug text-gray-500">{a.detail}</p>}
               </div>
 
-              <div className="hidden w-44 shrink-0 text-right sm:block">
-                {a.dueLabel && <p className={cn("text-caption tnum", dueTone(a.dueLabel))}>{a.dueLabel}</p>}
-                {a.owner && <p className="mt-0.5 text-caption text-gray-500">{a.owner}</p>}
+              <div className="hidden w-40 shrink-0 text-right sm:block">
+                {a.dueLabel && (
+                  <p className={cn("text-micro tnum", a.dueState ? dueTone[a.dueState] : "text-gray-500")}>
+                    {a.dueLabel}
+                  </p>
+                )}
+                {a.owner && <p className="mt-0.5 text-micro text-gray-400">{a.owner}</p>}
               </div>
             </li>
           ))}
         </ul>
-      </CardContent>
-    </Card>
+    </EditorialSection>
   );
 }

@@ -3,7 +3,6 @@
 import * as React from "react";
 import { AlertTriangle } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Sheet, SheetBody, SheetContent, SheetHeader, SheetTitle } from "@/components/ui/sheet";
 import { FilterBar } from "@/components/shell/filter-bar";
@@ -19,6 +18,7 @@ import { formatDate, formatMoney } from "@/lib/format";
 import type { CashTitle } from "@/types/domain";
 import { cn } from "@/lib/utils";
 import { DashboardLayout } from "@/components/layouts";
+import { EditorialSection } from "@/components/ui";
 
 export default function CashFlowPage() {
   const [selected, setSelected] = React.useState<CashTitle | null>(null);
@@ -91,9 +91,7 @@ export default function CashFlowPage() {
             <ChartCard title="Evolução do caixa" subtitle="R$ mi · semanal · arraste a régua para dar zoom" source="Protheus · títulos + premissas v3 · hoje 06:15">
               <CashChart data={cashFlow} minimum={CASH_MINIMUM} zoomable />
             </ChartCard>
-            <Card>
-              <CardHeader><CardTitle>Posição por conta bancária</CardTitle></CardHeader>
-              <CardContent className="grid gap-3 sm:grid-cols-2 xl:grid-cols-4">
+            <EditorialSection title="Posição por conta bancária">
                 {bankAccounts.map((b) => (
                   <div key={b.bank} className="rounded-md border p-4">
                     <p className="text-caption uppercase tracking-wide text-muted-foreground">{b.bank}</p>
@@ -101,8 +99,7 @@ export default function CashFlowPage() {
                     <p className="text-caption text-muted-foreground tnum">{b.pct}% do total</p>
                   </div>
                 ))}
-              </CardContent>
-            </Card>
+            </EditorialSection>
           </TabsContent>
 
           <TabsContent value="movimentos" className="space-y-3">
@@ -128,12 +125,8 @@ export default function CashFlowPage() {
           </TabsContent>
 
           <TabsContent value="premissas">
-            <Card>
-              <CardHeader>
-                <CardTitle>Premissas de projeção — v3</CardTitle>
-                <Badge variant="outline">editadas por Bruna M. Cruz · 15/jun</Badge>
-              </CardHeader>
-              <CardContent className="space-y-2">
+            <EditorialSection title="Premissas de projeção — v3" meta="editadas por Bruna M. Cruz · 15/jun">
+              <div className="space-y-2">
                 {[
                   { name: "Recebimento contrato TitanTrade", value: "+R$ 4,6 mi/mês", kind: "Recorrente" },
                   { name: "Folha + encargos", value: "−R$ 3,1 mi/mês", kind: "Recorrente" },
@@ -149,8 +142,8 @@ export default function CashFlowPage() {
                   </div>
                 ))}
                 <p className="pt-1"><SourceCaption source="Premissas versionadas — histórico completo na auditoria" /></p>
-              </CardContent>
-            </Card>
+              </div>
+            </EditorialSection>
           </TabsContent>
         </Tabs>
       </DashboardLayout>
@@ -187,13 +180,11 @@ export default function CashFlowPage() {
 
 function MiniStat({ label, value, delta }: { label: string; value: string; delta?: React.ReactNode }) {
   return (
-    <Card>
-      <CardContent className="p-4">
-        <p className="text-caption font-medium uppercase tracking-wide text-muted-foreground">{label}</p>
-        <p className="mt-1 font-display text-xl font-semibold tnum text-navy-900">{value}</p>
-        {delta}
-      </CardContent>
-    </Card>
+    <div className="border-t pt-3">
+      <p className="font-display text-h2 font-normal tnum text-navy-900">{value}</p>
+      <p className="mt-1.5 text-caption text-gray-500">{label}</p>
+      {delta}
+    </div>
   );
 }
 

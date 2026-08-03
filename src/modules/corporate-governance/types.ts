@@ -140,7 +140,10 @@ export interface GovernanceAlert {
   title: string;
   detail?: string;
   owner?: string;
+  /** Data limite já formatada (sem prefixo — o estado vai em `dueState`). */
   dueLabel?: string;
+  /** Situação do prazo, para a UI decidir o tom sem interpretar texto. */
+  dueState?: "overdue" | "due";
 }
 
 export interface AttentionPoint {

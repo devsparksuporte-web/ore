@@ -5,7 +5,7 @@
  * pontos de atenção (derivados de bloqueios/atrasos) e indicadores-chave.
  * "O que merece atenção?" sem parecer checklist. Só tokens/componentes do DS.
  */
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui";
+import { EditorialSection } from "@/components/ui";
 import type { KeyRisk, RiskSeverity } from "@modules/strategy";
 import type { AttentionPoint, Indicator } from "./helpers";
 
@@ -29,9 +29,8 @@ export function StrategicMonitor({
   indicators: Indicator[];
 }) {
   return (
-    <Card>
-      <CardHeader><CardTitle>Monitoramento estratégico</CardTitle></CardHeader>
-        <CardContent className="space-y-6">
+    <EditorialSection title="Monitoramento estratégico">
+      <div className="space-y-6">
           <Section title="Riscos-chave">
             <ul className="space-y-2.5">
               {risks.map((r, i) => (
@@ -69,7 +68,7 @@ export function StrategicMonitor({
               ))}
             </dl>
           </Section>
-        </CardContent>
-    </Card>
+      </div>
+    </EditorialSection>
   );
 }

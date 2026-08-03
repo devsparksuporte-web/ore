@@ -4,7 +4,6 @@ import * as React from "react";
 import { Briefcase, FileText, Receipt, ScrollText } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent } from "@/components/ui/card";
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogTitle } from "@/components/ui/dialog";
 import { Sheet, SheetBody, SheetContent, SheetFooter, SheetHeader, SheetTitle } from "@/components/ui/sheet";
 import { FilterBar } from "@/components/shell/filter-bar";
@@ -17,6 +16,7 @@ import type { ApprovalItem } from "@/types/domain";
 import { toast } from "sonner";
 import { cn } from "@/lib/utils";
 import { DashboardLayout } from "@/components/layouts";
+import { EditorialSection } from "@/components/ui";
 
 const typeIcon = { purchase: Receipt, capex: Briefcase, justification: FileText, document: ScrollText };
 const typeLabel = { purchase: "Compra", capex: "CAPEX", justification: "Justificativa", document: "Documento" };
@@ -85,9 +85,9 @@ export default function AprovacoesPage() {
 
         {/* Resumo */}
         <section className="grid grid-cols-3 gap-4">
-          <Card><CardContent className="p-4"><p className="text-caption uppercase tracking-wide text-muted-foreground">Pendentes</p><p className="mt-1 font-display text-xl font-semibold tnum text-navy-900">{queue.length}</p></CardContent></Card>
-          <Card><CardContent className="p-4"><p className="text-caption uppercase tracking-wide text-muted-foreground">Valor total</p><p className="mt-1 font-display text-xl font-semibold tnum text-navy-900">{formatMoney(totalValue, { compact: true })}</p></CardContent></Card>
-          <Card><CardContent className="p-4"><p className="text-caption uppercase tracking-wide text-muted-foreground">Fora do SLA</p><p className={cn("mt-1 font-display text-xl font-semibold tnum", overdueCount ? "text-danger" : "text-navy-900")}>{overdueCount}</p></CardContent></Card>
+          <div className="border-t pt-3"><p className="font-display text-h2 font-normal tnum text-navy-900">{queue.length}</p><p className="mt-1.5 text-caption text-gray-500">Pendentes</p></div>
+          <div className="border-t pt-3"><p className="font-display text-h2 font-normal tnum text-navy-900">{formatMoney(totalValue, { compact: true })}</p><p className="mt-1.5 text-caption text-gray-500">Valor total</p></div>
+          <div className="border-t pt-3"><p className={cn("font-display text-h2 font-normal tnum", overdueCount ? "text-danger" : "text-navy-900")}>{overdueCount}</p><p className="mt-1.5 text-caption text-gray-500">Fora do SLA</p></div>
         </section>
 
         {/* Fila */}

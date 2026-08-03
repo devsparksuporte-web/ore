@@ -7,7 +7,7 @@
  */
 import * as React from "react";
 import { CalendarClock, User } from "lucide-react";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui";
+import { EditorialSection } from "@/components/ui";
 import { icon as dsIcon } from "@/design-system";
 import { isDecisionOverdue } from "@modules/strategy";
 import type { Decision, Priority } from "@modules/strategy";
@@ -35,9 +35,7 @@ export function CriticalActions({ actions }: { actions: Decision[] }) {
   const openRow = (d: Decision) => { setSelected(d); setOpen(true); };
 
   return (
-    <Card>
-      <CardHeader><CardTitle>Ações críticas</CardTitle></CardHeader>
-      <CardContent className="pt-1">
+    <EditorialSection title="Ações críticas">
         <ul className="divide-y">
           {rows.map((d) => (
             <li key={d.id}>
@@ -65,9 +63,8 @@ export function CriticalActions({ actions }: { actions: Decision[] }) {
             </li>
           ))}
         </ul>
-      </CardContent>
 
       <DecisionDrawer decision={selected} open={open} onOpenChange={setOpen} />
-    </Card>
+    </EditorialSection>
   );
 }

@@ -1,10 +1,11 @@
 "use client";
 
 /**
- * Timeline · Strata — componente reutilizável da plataforma (Sprint 1.1).
+ * Timeline · Strata — componente reutilizável (Sprint 1.1, refinado 1.3).
  * Rail horizontal de eventos, preparado para crescer (rolagem horizontal
- * quando os eventos passam da largura). Só tokens do DS; sem dependência de
- * domínio — recebe itens genéricos. Estados: done · current · upcoming.
+ * quando os eventos passam da largura). Rótulos ALINHADOS À ESQUERDA sob cada
+ * nó — leitura editorial e sem quebras órfãs, ao contrário do texto centrado.
+ * Só tokens do DS. Estados: done · current · upcoming.
  *
  * Uso: qualquer módulo que precise narrar execução ao longo do tempo.
  */
@@ -38,25 +39,38 @@ export function Timeline({ items, className }: { items: TimelineItem[]; classNam
   if (items.length === 0) return null;
   return (
     <div className={cn("overflow-x-auto pb-1", className)}>
-      <ol className="flex min-w-full gap-0" role="list">
+      <ol className="flex min-w-full" role="list">
         {items.map((it, i) => {
           const state = it.state ?? "upcoming";
-          const first = i === 0;
           const last = i === items.length - 1;
           return (
-            <li key={it.id} className="relative flex min-w-[168px] flex-1 flex-col px-1">
-              {/* Linha + nó */}
-              <div className="relative flex h-5 items-center">
-                <span className={cn("absolute left-0 top-1/2 h-px w-1/2 -translate-y-1/2 bg-gray-200", first && "opacity-0")} aria-hidden />
-                <span className={cn("absolute right-0 top-1/2 h-px w-1/2 -translate-y-1/2 bg-gray-200", last && "opacity-0")} aria-hidden />
-                <span className={cn("relative z-10 mx-auto block h-2.5 w-2.5 rounded-full border-2", dot[state])} aria-hidden />
+            <li key={it.id} className="min-w-[172px] flex-1 pr-5">
+              {/* Nó + conector (linha à direita, exceto no último) */}
+              <div className="relative flex h-2.5 items-center">
+                <span
+                  className={cn(
+                    "relative z-10 block h-2.5 w-2.5 shrink-0 rounded-full border-2",
+                    dot[state],
+                    // O evento atual "emana" um halo lento — orienta o olho
+                    // para o agora sem competir com o conteúdo.
+                    state === "current" && "pulse-halo"
+                  )}
+                  aria-hidden
+                />
+                {!last && <span className="ml-1 h-px flex-1 bg-gray-200" aria-hidden />}
               </div>
-              {/* Rótulos */}
-              <div className="mt-3 text-center">
-                <div className={cn("text-caption tnum", dateTone[state])}>{it.dateLabel}</div>
-                <div className={cn("mx-auto mt-1 max-w-[150px] text-body-sm leading-snug", state === "upcoming" ? "text-gray-500" : "text-navy-900")}>
+
+              <div className="mt-2.5">
+                <div className={cn("text-micro tnum", dateTone[state])}>{it.dateLabel}</div>
+                <div
+                  className={cn(
+                    "mt-0.5 text-body-sm leading-snug",
+                    state === "upcoming" ? "text-gray-500" : "text-navy-900"
+                  )}
+                >
                   {it.title}
                 </div>
+                {it.meta && <div className="mt-1.5">{it.meta}</div>}
               </div>
             </li>
           );
