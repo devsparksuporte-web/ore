@@ -27,6 +27,11 @@ export default function CompanyPerformancePage() {
   const companyName = company?.shortName ?? company?.name ?? empresa;
   const snap = getPerformanceByCompany(empresa);
 
+  /* Regra dos Hooks: o estado do drill-down precisa ser declarado ANTES de
+     qualquer early return, senão a ordem dos hooks muda entre um render com
+     snapshot e um sem — o ESLint quebra o build (react-hooks/rules-of-hooks). */
+  const [detalhe, setDetalhe] = React.useState<DetailDrawerProps | null>(null);
+
   if (!snap) {
     return (
       <DashboardLayout spacing="lg">
@@ -56,7 +61,6 @@ export default function CompanyPerformancePage() {
   /* Drill-down dos indicadores (§13): o que o número significa, de onde veio,
      quando foi apurado e o que se espera do leitor. Definido aqui, ao lado do
      próprio indicador, para não haver risco de explicação descolar do dado. */
-  const [detalhe, setDetalhe] = React.useState<DetailDrawerProps | null>(null);
   const fonte = snap.sourceLabel ?? "Fonte não declarada";
   const abrir = (d: Omit<DetailDrawerProps, "open" | "onOpenChange">) => () =>
     setDetalhe({ ...d, open: true, onOpenChange: () => setDetalhe(null) });
