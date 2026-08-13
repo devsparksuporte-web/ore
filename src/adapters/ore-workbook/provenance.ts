@@ -12,19 +12,18 @@
  * ⚠️ REGRA: nenhum número aqui pode ser estimado, arredondado por conveniência
  * ou completado por inferência. Dado que a ORE não forneceu é `null` — e a tela
  * mostra "não disponibilizado", nunca um valor plausível.
+ *
+ * Sprint 1.4 · item 2 — os TIPOS de estado e proveniência (`DataStatus`,
+ * `SourceRef`, `Fornecido`) foram promovidos para `@modules/data-source`, por
+ * serem conceito do produto Crystal e não da ORE. Este arquivo passa a conter
+ * apenas o que é específico deste cliente: o catálogo de fontes documentais e
+ * o câmbio de referência. Os tipos seguem re-exportados aqui para não quebrar
+ * imports existentes.
  */
+export type { DataStatus, Fornecido, SourceRef } from "@modules/data-source";
+export { DATA_STATUS_LABEL, ORIGEM_INDEFINIDA } from "@modules/data-source";
 
-/** Origem de um conjunto de campos — sempre exibível ao usuário. */
-export interface SourceRef {
-  /** Rótulo curto para a UI (rodapé de bloco, tooltip). */
-  label: string;
-  /** Arquivo de origem. */
-  file: string;
-  /** Aba/planilha de origem. */
-  sheet?: string;
-  /** Data-base do dado (ISO). */
-  asOf: string;
-}
+import type { SourceRef } from "@modules/data-source";
 
 const WORKBOOK = "Workbook de Gestão — Ore Mining PE I FIP";
 const FORECAST = "Forecast operacional — Ativa";
@@ -63,8 +62,5 @@ export const FX_SOURCE: SourceRef = {
 /** Motivo padronizado para dado que a ORE ainda não disponibilizou. */
 export const NAO_DISPONIBILIZADO = "Não disponibilizado pela ORE" as const;
 
-/**
- * Campo que pode não existir na fonte. `null` NUNCA é 0 nem "vazio": é uma
- * declaração de que o dado não foi fornecido, e a UI é obrigada a dizer isso.
- */
-export type Fornecido<T> = T | null;
+/* `Fornecido<T>`, `SourceRef` e `DataStatus` vêm de @modules/data-source
+   (re-exportados no topo deste arquivo). */

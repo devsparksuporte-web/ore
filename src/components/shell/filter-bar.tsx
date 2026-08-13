@@ -59,12 +59,14 @@ export function FilterBar({
         </SelectContent>
       </Select>
 
+      {/* Sprint 1.4 · Data Truth — o selo "Dados atualizados hoje às 06:15"
+          foi REMOVIDO. Era um horário fixo em código, exibido em toda tela com
+          filtros, afirmando uma sincronização que não existe. Não foi
+          substituído por outra data de propósito: frescor de dado é por BLOCO
+          (cada um declara sua fonte e data-base via SourceCaption), nunca
+          global — um carimbo único no topo mentiria sobre os demais blocos. */}
       <div className="ml-auto flex items-center gap-3">
         {right}
-        <span className="hidden items-center gap-1.5 text-caption text-muted-foreground sm:flex">
-          <span className="h-1.5 w-1.5 rounded-full bg-success" />
-          Dados atualizados hoje às 06:15
-        </span>
         <Button
           variant="ghost" size="sm"
           onClick={() => toast.info("Modo apresentação", { description: "Tela cheia com tipografia ampliada — reunião de conselho sem PowerPoint." })}

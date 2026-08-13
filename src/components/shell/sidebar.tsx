@@ -9,7 +9,6 @@
  */
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { RefreshCw } from "lucide-react";
 import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
 import { ContextSwitcher } from "./context-switcher";
 import { companyNav, portfolioNav, type NavGroup } from "./nav-config";
@@ -114,15 +113,14 @@ export function Sidebar() {
         ))}
       </nav>
 
-      {/* Rodapé: sync + usuário */}
+      {/* Rodapé: usuário.
+          Sprint 1.4 · Data Truth — a linha "Dados sincronizados" (com ícone de
+          refresh e ponto verde) foi REMOVIDA: afirmava sincronização ativa em
+          todas as telas. O fio separador permanece para preservar o ritmo
+          vertical do rodapé. */}
       <div className="px-5 pb-5 pt-0">
         <div className="sidebar-hairline mb-4" aria-hidden />
-        <p className="flex items-center gap-1.5 text-caption tracking-wide text-white/55">
-          <RefreshCw className="h-3 w-3" strokeWidth={dsIcon.stroke.regular} />
-          Dados sincronizados
-          <span className="ml-auto h-1.5 w-1.5 rounded-full bg-success shadow-[0_0_6px_1px_rgb(24_128_73/0.5)]" />
-        </p>
-        <div className="mt-3.5 flex items-center gap-3">
+        <div className="flex items-center gap-3">
           <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-gradient-to-br from-copper-500 to-[#8F4E24] text-caption font-semibold text-white ring-2 ring-white/10 shadow-sm">
             {mockSession.user.initials}
           </span>
