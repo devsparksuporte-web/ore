@@ -10,7 +10,7 @@ import {
   Area, CartesianGrid, ComposedChart, Label, Line, ReferenceDot, ResponsiveContainer, Tooltip, XAxis, YAxis,
 } from "recharts";
 import { animationProps, axisProps, chartColors, cursorLine, gradientIds, gridProps, strokeWidths } from "@/components/charts/chart-tokens";
-import { ChartDefs, rechartsTooltip } from "@/components/charts/chart-primitives";
+import { rechartsTooltip } from "@/components/charts/chart-primitives";
 import { formatMoney } from "@/lib/format";
 import type { ValuationPoint } from "@modules/performance";
 
@@ -31,7 +31,6 @@ export function ValuationChart({ data }: { data: ValuationPoint[] }) {
   return (
     <ResponsiveContainer width="100%" height={216}>
       <ComposedChart data={data} margin={{ top: 20, right: 64, left: 4, bottom: 0 }}>
-        <ChartDefs />
         <CartesianGrid {...gridProps} />
         <XAxis dataKey="year" {...axisProps} />
         <YAxis {...axisProps} width={66} tickCount={3} tickFormatter={short} />

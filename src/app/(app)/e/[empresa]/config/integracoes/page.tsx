@@ -107,7 +107,7 @@ export default function IntegracoesPage() {
           <h2 className="font-display text-lg font-semibold text-navy-900">Logs de sincronização — Protheus</h2>
         </div>
         <DataTable columns={logCols} rows={syncRuns} />
-        <p className="mt-2"><SourceCaption source="Cada execução registra contagens por entidade, erros com payload e id de linhagem" /></p>
+        <div className="mt-2"><SourceCaption source="Cada execução registra contagens por entidade, erros com payload e id de linhagem" /></div>
       </section>
 
       {/* Desconexão: destrutivo com consequências explícitas */}

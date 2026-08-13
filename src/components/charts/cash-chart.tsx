@@ -4,7 +4,7 @@ import {
   Area, Bar, Brush, ComposedChart, CartesianGrid, Line, ReferenceLine, ResponsiveContainer, Tooltip, XAxis, YAxis,
 } from "recharts";
 import { animationProps, axisProps, chartColors, cursorLine, gridProps, gradientIds, strokeWidths } from "./chart-tokens";
-import { ChartDefs, ChartLegend, rechartsTooltip } from "./chart-primitives";
+import { ChartLegend, rechartsTooltip } from "./chart-primitives";
 import type { CashPoint } from "@/types/domain";
 
 const fmt = (v: number) => `R$ ${Math.abs(v).toLocaleString("pt-BR", { maximumFractionDigits: 1 })} mi`;
@@ -49,11 +49,12 @@ export function CashChart({
   return (
     <div>
       <ResponsiveContainer width="100%" height={zoomable ? 320 : 280}>
-        <ComposedChart data={enriched} margin={{ top: 12, right: 8, left: -16, bottom: 0 }}>
-          <ChartDefs />
+        {/* left ≥ 0 e width folgada: margem negativa cortava o 1º dígito do
+            tick ("60" virava "0") — mesma classe de bug corrigida em 0.13.1. */}
+        <ComposedChart data={enriched} margin={{ top: 12, right: 8, left: 0, bottom: 0 }}>
           <CartesianGrid {...gridProps} />
           <XAxis dataKey="label" {...axisProps} />
-          <YAxis {...axisProps} tickFormatter={(v: number) => `${v}`} width={40} />
+          <YAxis {...axisProps} tickFormatter={(v: number) => `${v}`} width={44} />
           <Tooltip content={tooltip} cursor={cursorLine} />
 
           {/* Contexto: entradas/saídas — finas, sem competir com o saldo */}

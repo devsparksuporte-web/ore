@@ -18,29 +18,12 @@ function burn(avgMi: number, jitter: number[]): BurnPoint[] {
   return labels.map((label, i) => ({ label, value: Math.round((avgMi + (jitter[i] ?? 0)) * 100) / 100 * 1_000_000 }));
 }
 
+/* Sprint 1.4 — a Ativa vem do ADAPTADOR do workbook da ORE; as demais
+   investidas seguem demonstrativas até a ORE fornecer as planilhas. */
+import { ativaPerformance } from "@/adapters/ore-workbook";
+
 export const performanceSnapshots: PerformanceSnapshot[] = [
-  {
-    assetId: "c-ativa", companySlug: "ativa-mineracao", currency: "BRL", ownershipPct: 32, asOf: "2026-06-30",
-    valuation: {
-      current: mi(412), asOf: "2026-06-30", method: "DCF", investedCapital: mi(180),
-      annualSeries: [
-        { year: 2022, value: mi(150) }, { year: 2023, value: mi(210) },
-        { year: 2024, value: mi(300) }, { year: 2025, value: mi(361) }, { year: 2026, value: mi(412) },
-      ],
-      history: [
-        { asOf: "2026-06-30", value: mi(412), method: "DCF", source: "Comitê de valuation" },
-        { asOf: "2025-12-31", value: mi(361), method: "DCF", source: "Auditoria anual" },
-        { asOf: "2024-12-31", value: mi(300), method: "Múltiplos", source: "Comitê de valuation" },
-        { asOf: "2023-12-31", value: mi(210), method: "Rodada", source: "Ata de investimento" },
-        { asOf: "2022-12-31", value: mi(150), method: "Custo", source: "Aporte inicial" },
-      ],
-    },
-    capital: { committed: mi(250), called: mi(180), availableBalance: mi(23) },
-    liquidity: {
-      cash: mi(23), contingencies: mi(12), burnMonthly: mi(2.7), burnQuarterly: mi(8.1), burnAnnual: mi(32),
-      burnSeries: burn(2.7, [0.3, -0.2, 0.1, 0.4, -0.1, 0.2, 0.5, -0.3, 0.2, 0.1, -0.2, 0.3]),
-    },
-  },
+  ativaPerformance,
   {
     assetId: "c-morroverde", companySlug: "morro-verde", currency: "BRL", ownershipPct: 58, asOf: "2026-06-30",
     valuation: {

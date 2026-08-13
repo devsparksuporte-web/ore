@@ -39,10 +39,10 @@ export function ComparisonBars({
   return (
     <div>
       <ResponsiveContainer width="100%" height={height}>
-        <BarChart data={data} margin={{ top: 8, right: 8, left: -20, bottom: 0 }} barGap={3}>
+        <BarChart data={data} margin={{ top: 8, right: 8, left: 0, bottom: 0 }} barGap={3}>
           <CartesianGrid {...gridProps} />
           <XAxis dataKey="month" {...axisProps} />
-          <YAxis {...axisProps} width={38} />
+          <YAxis {...axisProps} width={44} />
           <Tooltip content={tooltip} cursor={cursorBand} />
           <Bar dataKey="actual" fill={chartColors.actual} radius={[3, 3, 0, 0]} barSize={14} {...animationProps} />
           <Bar

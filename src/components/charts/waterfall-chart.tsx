@@ -49,10 +49,10 @@ export function WaterfallChart({ data, height = 240 }: { data: WaterfallItem[]; 
   return (
     <div>
       <ResponsiveContainer width="100%" height={height}>
-        <BarChart data={bars} margin={{ top: 20, right: 8, left: -16, bottom: 0 }}>
+        <BarChart data={bars} margin={{ top: 20, right: 8, left: 0, bottom: 0 }}>
           <CartesianGrid {...gridProps} />
           <XAxis dataKey="name" {...axisProps} interval={0} tick={{ ...axisProps.tick, fontSize: 10 }} />
-          <YAxis {...axisProps} width={38} />
+          <YAxis {...axisProps} width={44} />
           <Tooltip content={tooltip} cursor={cursorBand} />
           <Bar dataKey="base" stackId="wf" fill="transparent" isAnimationActive={false} />
           <Bar dataKey="size" stackId="wf" radius={[3, 3, 0, 0]} {...animationProps}>

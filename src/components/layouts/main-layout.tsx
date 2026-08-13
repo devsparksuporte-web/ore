@@ -7,10 +7,14 @@
  */
 import { Sidebar } from "@/components/shell/sidebar";
 import { Topbar } from "@/components/shell/topbar";
+import { ChartGradients } from "@/components/charts/chart-primitives";
 
 export function MainLayout({ children }: { children: React.ReactNode }) {
   return (
     <div className="min-h-screen">
+      {/* Paint servers dos gráficos — montados uma única vez, fora de qualquer
+          gráfico (ver regra em chart-primitives.tsx). */}
+      <ChartGradients />
       <a
         href="#conteudo"
         className="sr-only z-toast rounded-md bg-navy-900 px-4 py-2 text-sm font-medium text-white focus:not-sr-only focus:fixed focus:left-4 focus:top-4"

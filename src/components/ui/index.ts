@@ -45,3 +45,4 @@ export * from "./metric-strip";
 export * from "./org-flow";
 export * from "./executive-list";
 export * from "./editorial-section";
+export * from "./detail-drawer";

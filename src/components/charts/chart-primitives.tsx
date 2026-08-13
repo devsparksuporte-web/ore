@@ -10,10 +10,21 @@ import * as React from "react";
 import { chartColors, gradientIds } from "./chart-tokens";
 import { cn } from "@/lib/utils";
 
-/* ── Gradientes discretos (topo ≤10% → 0) — assinatura Stripe/Vercel ── */
-export function ChartDefs() {
+/* ── Gradientes discretos (topo ≤10% → 0) — assinatura Stripe/Vercel ──
+ *
+ * ⚠️ REGRA (0.17.1): os gradientes vivem num <svg> OCULTO montado UMA vez no
+ * MainLayout, nunca dentro do gráfico. O Recharts filtra os filhos de
+ * <ComposedChart>/<BarChart> pelos componentes que ele conhece e DESCARTA
+ * silenciosamente componentes próprios — um <ChartDefs/> aninhado no gráfico
+ * nunca chegava ao DOM e todo fill `url(#strata-*)` resolvia para vazio
+ * (barras invisíveis no cash burn; áreas sem preenchimento nos demais).
+ * Paint servers de SVG são resolvidos por id em todo o documento, então
+ * defini-los fora do gráfico funciona e é à prova desse filtro.
+ * NUNCA reintroduzir <ChartGradients/> como filho de um gráfico. */
+export function ChartGradients() {
   return (
-    <defs>
+    <svg aria-hidden="true" focusable="false" width="0" height="0" className="absolute h-0 w-0 overflow-hidden">
+      <defs>
       <linearGradient id={gradientIds.navy} x1="0" y1="0" x2="0" y2="1">
         <stop offset="0%" stopColor={chartColors.actual} stopOpacity={0.1} />
         <stop offset="100%" stopColor={chartColors.actual} stopOpacity={0} />
@@ -36,7 +47,8 @@ export function ChartDefs() {
         <stop offset="0%" stopColor={chartColors.actual} stopOpacity={0.55} />
         <stop offset="100%" stopColor={chartColors.actual} stopOpacity={0.3} />
       </linearGradient>
-    </defs>
+      </defs>
+    </svg>
   );
 }
 

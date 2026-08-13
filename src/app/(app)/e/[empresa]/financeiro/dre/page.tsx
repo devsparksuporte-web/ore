@@ -67,7 +67,7 @@ export default function DrePage() {
                   lines={dreTree}
                   onLineClick={(l) => setDrillLine(l)}
                 />
-                <p className="mt-2"><SourceCaption source="Protheus CT2 → plano canônico Strata · publicado jun/26 · snapshot #s-0626" /></p>
+                <div className="mt-2"><SourceCaption source="Protheus CT2 → plano canônico Strata · publicado jun/26 · snapshot #s-0626" /></div>
               </div>
               <div className="xl:col-span-4">
                 <ChartCard title="Ponte EBITDA → Resultado" subtitle="R$ mi · jun/26" source="DRE gerencial">

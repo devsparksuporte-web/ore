@@ -2,7 +2,7 @@
 
 import { Area, CartesianGrid, ComposedChart, Line, ResponsiveContainer, Tooltip, XAxis, YAxis } from "recharts";
 import { animationProps, axisProps, chartColors, cursorLine, gridProps, gradientIds, strokeWidths } from "./chart-tokens";
-import { ChartDefs, ChartLegend, rechartsTooltip } from "./chart-primitives";
+import { ChartLegend, rechartsTooltip } from "./chart-primitives";
 
 const fmt = (v: number | null) =>
   v == null ? "—" : `R$ ${Number(v).toLocaleString("pt-BR", { maximumFractionDigits: 1 })} mi`;
@@ -35,11 +35,10 @@ export function ForecastChart({
   return (
     <div>
       <ResponsiveContainer width="100%" height={height}>
-        <ComposedChart data={data} margin={{ top: 8, right: 8, left: -20, bottom: 0 }}>
-          <ChartDefs />
+        <ComposedChart data={data} margin={{ top: 8, right: 8, left: 0, bottom: 0 }}>
           <CartesianGrid {...gridProps} />
           <XAxis dataKey="month" {...axisProps} />
-          <YAxis {...axisProps} width={38} />
+          <YAxis {...axisProps} width={44} />
           <Tooltip content={tooltip} cursor={cursorLine} />
           <Area dataKey="actual" stroke="none" fill={`url(#${gradientIds.navy})`} type="monotone" connectNulls={false} {...animationProps} />
           <Line dataKey="budget" stroke={chartColors.budget} strokeWidth={strokeWidths.secondary} strokeDasharray="6 4" type="monotone" dot={false} {...animationProps} />

@@ -14,8 +14,19 @@ import type { PerformanceDerived, PerformanceSnapshot, RunwayZone } from "../typ
 
 export type {
   BurnPoint, CapitalPosition, Liquidity, PerformanceDerived, PerformanceSnapshot,
-  RunwayZone, Valuation, ValuationPoint, ValuationRecord,
+  ReturnScenarios, RunwayZone, Valuation, ValuationPoint, ValuationRecord,
 } from "../types";
+
+/**
+ * Sprint 1.4 — ausência de dado é dado. Quando a fonte não fornece um insumo,
+ * o derivado correspondente é `null` e a tela DIZ que não foi disponibilizado.
+ * Nunca substituir por 0, Infinity ou média: um runway estimado numa tela de
+ * investimento é pior que runway nenhum.
+ */
+function ratio(a: number | null | undefined, b: number | null | undefined): number | null {
+  if (a === null || a === undefined || b === null || b === undefined || b <= 0) return null;
+  return a / b;
+}
 
 /** Limiares de runway (meses) — donos da regra no port. */
 export const RUNWAY_CRITICAL_MONTHS = 6;
@@ -39,13 +50,15 @@ export function derivePerformance(s: PerformanceSnapshot): PerformanceDerived {
   const series = v.annualSeries;
   const last = series[series.length - 1]?.value ?? v.current;
   const prev = series[series.length - 2]?.value ?? last;
-  const runwayMonths = l.burnMonthly > 0 ? l.cash / l.burnMonthly : Infinity;
+  const runwayMonths = ratio(l.cash, l.burnMonthly);
+  const calledRatio = ratio(c.called, c.committed);
   return {
     moic: v.investedCapital > 0 ? v.current / v.investedCapital : 0,
     valuationVariationYoY: prev > 0 ? ((last - prev) / prev) * 100 : 0,
-    uncalled: c.committed - c.called,
-    calledPct: c.committed > 0 ? (c.called / c.committed) * 100 : 0,
+    uncalled: c.committed !== null && c.called !== null ? c.committed - c.called : null,
+    calledPct: calledRatio === null ? null : calledRatio * 100,
     runwayMonths,
-    runwayZone: runwayZone(runwayMonths),
+    runwayZone: runwayMonths === null ? null : runwayZone(runwayMonths),
+    baseCaseMultiple: s.scenarios ? ratio(s.scenarios.base, v.investedCapital) : null,
   };
 }

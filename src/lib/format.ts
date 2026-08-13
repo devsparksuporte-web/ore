@@ -3,12 +3,16 @@
 export function formatMoney(value: number, opts?: { compact?: boolean; currency?: string }) {
   const { compact = false, currency = "BRL" } = opts ?? {};
   if (compact) {
+    /* Sprint 1.4: o modo compacto ignorava `currency` e escrevia "R$" sempre —
+       com a Ativa marcada em USD, isso rotularia dólar como real. O símbolo
+       agora acompanha a moeda pedida. */
+    const symbol = currency === "BRL" ? "R$" : currency === "USD" ? "US$" : `${currency} `;
     const abs = Math.abs(value);
     const sign = value < 0 ? "-" : "";
-    if (abs >= 1_000_000_000) return `${sign}R$ ${(abs / 1_000_000_000).toLocaleString("pt-BR", { maximumFractionDigits: 1 })} bi`;
-    if (abs >= 1_000_000) return `${sign}R$ ${(abs / 1_000_000).toLocaleString("pt-BR", { maximumFractionDigits: 1 })} mi`;
-    if (abs >= 1_000) return `${sign}R$ ${(abs / 1_000).toLocaleString("pt-BR", { maximumFractionDigits: 0 })} mil`;
-    return `${sign}R$ ${abs.toLocaleString("pt-BR", { maximumFractionDigits: 0 })}`;
+    if (abs >= 1_000_000_000) return `${sign}${symbol} ${(abs / 1_000_000_000).toLocaleString("pt-BR", { maximumFractionDigits: 1 })} bi`;
+    if (abs >= 1_000_000) return `${sign}${symbol} ${(abs / 1_000_000).toLocaleString("pt-BR", { maximumFractionDigits: 1 })} mi`;
+    if (abs >= 1_000) return `${sign}${symbol} ${(abs / 1_000).toLocaleString("pt-BR", { maximumFractionDigits: 0 })} mil`;
+    return `${sign}${symbol} ${abs.toLocaleString("pt-BR", { maximumFractionDigits: 0 })}`;
   }
   return new Intl.NumberFormat("pt-BR", { style: "currency", currency, maximumFractionDigits: 2 }).format(value);
 }

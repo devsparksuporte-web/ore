@@ -31,6 +31,18 @@ export interface KeyRisk {
   severity: RiskSeverity;
 }
 
+/** O que está por trás de uma etapa do caminho crítico (drill-down). */
+export interface CriticalPathItem {
+  id: string;
+  title: string;
+  /** Responsável como a fonte registra (pessoa, órgão ou empresa). */
+  owner: string;
+  /** Prazo/alvo — nem sempre é data fechada ("Pós-SBLC"). */
+  target: string;
+  status: string;
+  notes?: string;
+}
+
 /** Etapa do caminho crítico (stepper de execução da tese). */
 export interface CriticalPathStep {
   label: string;
@@ -38,6 +50,12 @@ export interface CriticalPathStep {
   done?: boolean;
   /** Etapa em curso (destaque). */
   current?: boolean;
+  /**
+   * Sprint 1.4 — marcos reais que sustentam a etapa. Alimenta o drill-down:
+   * clicar numa etapa mostra POR QUE ela está nesse estado. Opcional: fontes
+   * sem esse detalhe seguem funcionando (a etapa apenas não abre).
+   */
+  items?: CriticalPathItem[];
 }
 
 /** Painel da Estratégia da Investida (bloco HERO). */

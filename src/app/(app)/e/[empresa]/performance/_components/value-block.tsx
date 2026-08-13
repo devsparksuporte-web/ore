@@ -14,6 +14,10 @@ import { ValuationChart } from "./valuation-chart";
 export function ValueHero({ snap, derived }: { snap: PerformanceSnapshot; derived: PerformanceDerived }) {
   const v = snap.valuation;
   const up = derived.valuationVariationYoY >= 0;
+  /* A moeda vem da FONTE (o fundo marca em USD) — nunca assumir BRL. */
+  const money = (n: number) => formatMoney(n, { compact: true, currency: snap.currency });
+  /* Uma marcação só: sem série anual, a variação a.a. não tem o que comparar. */
+  const temSerie = v.annualSeries.length > 1;
 
   return (
     <EditorialSection
@@ -26,20 +30,32 @@ export function ValueHero({ snap, derived }: { snap: PerformanceSnapshot; derive
             {moicLabel(derived.moic)}
           </p>
           <p className="mt-3 text-caption leading-6 text-gray-500">
-            Sobre {formatMoney(v.investedCapital, { compact: true })} investidos. Marcação por {v.method},
-            comitê de valuation.
+            Sobre {money(v.investedCapital)} investidos · {v.method}.
           </p>
+          {snap.sourceLabel && (
+            <p className="mt-1.5 text-caption leading-6 text-gray-400">{snap.sourceLabel}</p>
+          )}
         </div>
       }
     >
       <div className="mb-4 flex flex-wrap items-baseline gap-x-4 gap-y-1">
         <span className="font-display text-kpi font-normal tracking-kpi tnum text-navy-900">
-          {formatMoney(v.current, { compact: true })}
+          {money(v.current)}
         </span>
-        <DeltaIndicator value={derived.valuationVariationYoY} favorable={up} label="a.a." />
+        {temSerie && <DeltaIndicator value={derived.valuationVariationYoY} favorable={up} label="a.a." />}
       </div>
 
-      <ValuationChart data={v.annualSeries} />
+      {temSerie ? (
+        <ValuationChart data={v.annualSeries} />
+      ) : (
+        /* Marcação única na fonte: um gráfico de um ponto só sugere uma
+           tendência que não existe. O histórico completo vem abaixo. */
+        <p className="border-t pt-4 text-body-sm leading-6 text-gray-500">
+          A fonte registra uma única marcação para esta investida — não há série
+          histórica para desenhar evolução. As marcações disponíveis estão no
+          histórico ao final da página.
+        </p>
+      )}
     </EditorialSection>
   );
 }

@@ -5,23 +5,50 @@
  * atual), o caminho crítico (stepper), os objetivos e a decisão estratégica
  * (callout). Conteúdo mais nobre da página. Só tokens/componentes do DS.
  */
-import { EditorialSection } from "@/components/ui";
+import * as React from "react";
+import { DetailDrawer, EditorialSection } from "@/components/ui";
 import type { CriticalPathStep, StrategicMap } from "@modules/strategy";
+
+/** Tom da etiqueta de status do marco, a partir do texto do workbook. */
+function toneDoStatus(status: string) {
+  if (status === "Concluído") return "success" as const;
+  if (status === "Bloqueado") return "danger" as const;
+  if (status === "Em andamento" || status === "Agendado") return "warning" as const;
+  return "neutral" as const;
+}
 
 function Label({ children }: { children: React.ReactNode }) {
   return <div className="mb-1.5 text-body-sm text-gray-500">{children}</div>;
 }
 
 function CriticalPath({ steps }: { steps: CriticalPathStep[] }) {
+  /* Drill-down (§15): a etapa continua um stepper executivo — quem tem marcos
+     por trás vira botão; quem não tem segue como texto, sem afordância falsa. */
+  const [aberta, setAberta] = React.useState<CriticalPathStep | null>(null);
+
   return (
+    <>
     <ol className="flex flex-wrap items-center gap-x-1 gap-y-2">
       {steps.map((s, i) => {
         const state = s.done ? "done" : s.current ? "current" : "upcoming";
+        const temDetalhe = (s.items?.length ?? 0) > 0;
+        const Chip = temDetalhe ? "button" : "span";
         return (
           <li key={i} className="flex items-center gap-1">
-            <span
+            <Chip
+              {...(temDetalhe
+                ? {
+                    type: "button" as const,
+                    onClick: () => setAberta(s),
+                    "aria-haspopup": "dialog" as const,
+                    "aria-label": `${s.label} — ver os ${s.items!.length} marcos desta etapa`,
+                  }
+                : {})}
               className={
                 "inline-flex items-center gap-1.5 rounded-full px-2.5 py-1 text-caption font-medium " +
+                (temDetalhe
+                  ? "cursor-pointer transition-colors duration-fast ease-standard hover:brightness-95 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 "
+                  : "") +
                 (state === "current"
                   ? "bg-copper-500/[0.12] text-copper-500"
                   : state === "done"
@@ -37,12 +64,38 @@ function CriticalPath({ steps }: { steps: CriticalPathStep[] }) {
                 aria-hidden
               />
               {s.label}
-            </span>
+            </Chip>
             {i < steps.length - 1 && <span className="text-gray-300" aria-hidden>›</span>}
           </li>
         );
       })}
     </ol>
+
+    <DetailDrawer
+      open={aberta !== null}
+      onOpenChange={(o) => !o && setAberta(null)}
+      kicker="Caminho crítico"
+      title={aberta?.label ?? ""}
+      summary={
+        aberta?.done
+          ? "Etapa concluída — todos os marcos que a sustentam estão fechados na fonte."
+          : aberta?.current
+            ? "Etapa atual: é o primeiro elo ainda aberto do caminho crítico. Enquanto ela não fechar, as seguintes não avançam."
+            : "Etapa futura — depende do fechamento das anteriores."
+      }
+      items={(aberta?.items ?? []).map((m) => ({
+        id: m.id,
+        title: m.title,
+        owner: m.owner,
+        meta: `Prazo · ${m.target}`,
+        status: m.status,
+        tone: toneDoStatus(m.status),
+        note: m.notes,
+      }))}
+      itemsLabel="Marcos desta etapa"
+      source="Workbook de gestão · KPI Ativa"
+    />
+    </>
   );
 }
 

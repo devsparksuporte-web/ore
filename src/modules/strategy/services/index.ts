@@ -14,7 +14,7 @@ import type {
 } from "../types";
 
 export type {
-  AssetRef, CriticalPathStep, Decision, DecisionFilters, DecisionStatus, DecisionType,
+  AssetRef, CriticalPathItem, CriticalPathStep, Decision, DecisionFilters, DecisionStatus, DecisionType,
   ExitPlan, ExitStage, KeyRisk, Priority, RiskSeverity, StrategicMap, StrategyEvent,
   StrategyEventKind, StrategyEventState, StrategyKpis,
 } from "../types";

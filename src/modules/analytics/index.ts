@@ -8,7 +8,7 @@ export { WaterfallChart } from "@/components/charts/waterfall-chart";
 export { ForecastChart } from "@/components/charts/forecast-chart";
 export { ComparisonBars } from "@/components/charts/comparison-bars";
 export { DeviationHeatmap } from "@/components/charts/heatmap";
-export { ChartDefs, ChartLegend, PremiumTooltip, rechartsTooltip } from "@/components/charts/chart-primitives";
+export { ChartGradients, ChartLegend, PremiumTooltip, rechartsTooltip } from "@/components/charts/chart-primitives";
 export { chartColors } from "@/components/charts/chart-tokens";
 
 /* ANALYTICS ENGINE (ADR-019): dashboards como especificação JSON */

@@ -7,7 +7,7 @@
  */
 import { Bar, BarChart, ResponsiveContainer, Tooltip, XAxis } from "recharts";
 import { animationProps, axisProps, chartColors, cursorBand, gradientIds } from "@/components/charts/chart-tokens";
-import { ChartDefs, rechartsTooltip } from "@/components/charts/chart-primitives";
+import { rechartsTooltip } from "@/components/charts/chart-primitives";
 import { formatMoney } from "@/lib/format";
 import type { BurnPoint } from "@modules/performance";
 
@@ -24,7 +24,6 @@ export function BurnChart({ data }: { data: BurnPoint[] }) {
   return (
     <ResponsiveContainer width="100%" height={132}>
       <BarChart data={data} margin={{ top: 8, right: 0, left: 0, bottom: 0 }}>
-        <ChartDefs />
         <XAxis dataKey="label" {...axisProps} interval={1} />
         <Tooltip content={tooltip} cursor={cursorBand} />
         <Bar dataKey="value" fill={`url(#${gradientIds.barMuted})`} radius={[3, 3, 0, 0]} barSize={10} {...animationProps} />

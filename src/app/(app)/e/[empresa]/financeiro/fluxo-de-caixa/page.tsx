@@ -141,7 +141,7 @@ export default function CashFlowPage() {
                     <span className="font-medium tnum text-gray-700">{p.value}</span>
                   </div>
                 ))}
-                <p className="pt-1"><SourceCaption source="Premissas versionadas — histórico completo na auditoria" /></p>
+                <div className="pt-1"><SourceCaption source="Premissas versionadas — histórico completo na auditoria" /></div>
               </div>
             </EditorialSection>
           </TabsContent>

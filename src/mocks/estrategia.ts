@@ -10,6 +10,12 @@
 import type {
   AssetRef, Decision, ExitPlan, StrategicMap, StrategyEvent,
 } from "@/modules/strategy/types";
+/* Sprint 1.4 — a Ativa deixou de ser demonstrativa: seus registros vêm do
+   ADAPTADOR do workbook da ORE. As demais investidas seguem com dados de
+   demonstração até que a ORE forneça as planilhas correspondentes. */
+import {
+  ativaDecisions, ativaExitPlan, ativaStrategicMap, ativaTimeline,
+} from "@/adapters/ore-workbook";
 
 /* ───────────────────────────── Ativos ───────────────────────────── */
 
@@ -55,35 +61,7 @@ export const strategicMaps: StrategicMap[] = [
     decision:
       "Aprovar plano de negócios e orçamento 2026. Definir 3–5 KPIs chave do Conselho e gatilhos de correção.",
   },
-  {
-    id: "map-ativa",
-    asset: A.ativa,
-    thesisOriginal:
-      "Desenvolver o projeto Floresta (planta + mina) como ativo produtor, financiado por BNB e estruturado para venda a trader e mercado.",
-    thesis:
-      "Planta Floresta: obter garantia, alocar financiamento BNB, construir e operar. Mina: LP e LI, CAPEX via caixa/equity/dívida. Aquisições complementares por veículo separado. Venda ~50% trader / ~50% mercado.",
-    criticalPath: [
-      { label: "EIA/RIMA e vistoria CPRH", done: true },
-      { label: "Audiência pública", current: true },
-      { label: "Destravar SBLC → desembolso BNB" },
-      { label: "CAPEX fase 1 (construção)" },
-      { label: "Operação e ramp-up" },
-    ],
-    objectives: [
-      "Resolver licenças-chave e audiência pública",
-      "Destravar funding e garantias (SBLC / BNB)",
-      "Definir arquitetura de implantação e estratégia de capital",
-    ],
-    keyRisks: [
-      { label: "Gargalo de garantias / funding atrasar o cronograma (Planta Floresta)", severity: "critical" },
-      { label: "Licenciamento, condicionantes e temas fundiários no caminho crítico", severity: "high" },
-      { label: "Risco técnico-comercial (recuperação / qualidade, demanda / preço)", severity: "high" },
-    ],
-    success:
-      "Licenças-chave e audiência pública resolvidas. Funding e garantias destravados. CAPEX fase 1 iniciado com cronograma realista. Exit logic definida (quem compra, em que estágio, qual gatilho).",
-    decision:
-      "Escolher formalmente a arquitetura de implantação (modular vs escala). Definir estratégia de capital (caixa / dívida / equity / M&A). Iniciar racional de saída no longo prazo.",
-  },
+  ativaStrategicMap,
   {
     id: "map-nzr",
     asset: A.nzr,
@@ -209,13 +187,7 @@ export const exitPlans: ExitPlan[] = [
     nextSteps: ["Concluir integração e capturar sinergias", "Atingir break-even e estabilizar caixa", "Preparar narrativa e métricas comparáveis"],
     horizon: "2029–2030",
   },
-  {
-    id: "exit-ativa", asset: A.ativa, strategy: "Venda a estratégico (~50% trader / ~50% mercado)",
-    stages: [{ label: "Licenciamento" }, { label: "Funding" }, { label: "Construção" }, { label: "Operação" }, { label: "Saída" }],
-    currentStageIndex: 1,
-    nextSteps: ["Resolver audiência pública e condicionantes", "Destravar SBLC e desembolso BNB", "Definir arquitetura de implantação e racional de saída"],
-    horizon: "2030–2032",
-  },
+  ativaExitPlan,
   {
     id: "exit-nzr", asset: A.nzr, strategy: "Venda do pacote / JV / farm-out",
     stages: [{ label: "Estudos" }, { label: "Business plan" }, { label: "Market sounding" }, { label: "Transação" }],
@@ -249,13 +221,7 @@ export const exitPlans: ExitPlan[] = [
 /* ───────────────────────── Timeline (execução) ───────────────────────── */
 
 export const strategyTimeline: Record<string, StrategyEvent[]> = {
-  "ativa-mineracao": [
-    { id: "tl-ativa-1", dateISO: "2026-01-29", dateLabel: "Jan/2026", title: "Vistoria CPRH concluída", kind: "delivery", state: "done" },
-    { id: "tl-ativa-2", dateISO: "2026-02-28", dateLabel: "Fev/2026", title: "Audiência pública (pós EIA/RIMA)", kind: "milestone", state: "current" },
-    { id: "tl-ativa-3", dateISO: "2026-04-30", dateLabel: "Abr/2026", title: "Destravar SBLC para desembolso BNB", kind: "milestone", state: "upcoming" },
-    { id: "tl-ativa-4", dateISO: "2026-06-30", dateLabel: "Jun/2026", title: "Escolher arquitetura de implantação", kind: "decision", state: "upcoming" },
-    { id: "tl-ativa-5", dateISO: "2026-09-30", dateLabel: "Set/2026", title: "Iniciar racional de saída", kind: "decision", state: "upcoming" },
-  ],
+  "ativa-mineracao": ativaTimeline,
   "morro-verde": [
     { id: "tl-mv-1", dateISO: "2026-01-15", dateLabel: "Jan/2026", title: "Transação Massari assinada", kind: "delivery", state: "done" },
     { id: "tl-mv-2", dateISO: "2026-03-31", dateLabel: "Mar/2026", title: "Aprovar plano de negócios e orçamento 2026", kind: "decision", state: "current" },
@@ -285,19 +251,15 @@ export const strategyTimeline: Record<string, StrategyEvent[]> = {
 /* ───────────────────────── Decisões & Ações ───────────────────────── */
 
 export const decisions: Decision[] = [
+  ...ativaDecisions,
   { id: "dec-1", ref: 1, asset: A.morroverde, title: "Integração Massari — plano 100 dias", context: "Capturar sinergias de receita/custos, otimizar estrutura de capital. Transação assinada Jan/2026.", type: "action", priority: "high", owner: "CEO NewCo (Saurin)", dueDate: "30/04/2026", dueDateISO: "2026-04-30", status: "in_progress", lastUpdate: "Abr/2026" },
   { id: "dec-2", ref: 2, asset: A.morroverde, title: "Rolagem de dívida e redução de alavancagem", context: "Reperfilamento pós-deal Massari. Target: <3.0x Net Debt/EBITDA.", type: "action", priority: "high", owner: "CFO NewCo", dueDate: "30/06/2026", dueDateISO: "2026-06-30", status: "in_progress", lastUpdate: "Abr/2026" },
-  { id: "dec-3", ref: 3, asset: A.ativa, title: "Destravar SBLC (carta fiança) para desbloquear BNB", context: "Roadshow com bancos brasileiros. Sem SBLC, não sai desembolso BNB.", type: "action", priority: "high", owner: "CEO Ativa + Ore", dueDate: "30/04/2026", dueDateISO: "2026-04-30", status: "in_progress", lastUpdate: "Abr/2026" },
-  { id: "dec-4", ref: 4, asset: A.ativa, title: "Audiência pública CPRH (pós EIA/RIMA)", context: "Agendada provisoriamente para Fev/2026. Vistoria CPRH 28–29/Jan/2026.", type: "action", priority: "high", owner: "Ativa + consultores", dueDate: "28/02/2026", dueDateISO: "2026-02-28", status: "in_progress", lastUpdate: "Abr/2026" },
   { id: "dec-5", ref: 5, asset: A.nzr, title: "Concluir trade-off studies (DMT) e definir configuração", context: "Open-pit + heap leach low-CAPEX é a hipótese atual.", type: "action", priority: "high", owner: "Equipe técnica + DMT", dueDate: "30/06/2026", dueDateISO: "2026-06-30", status: "in_progress", lastUpdate: "Abr/2026" },
   { id: "dec-6", ref: 6, asset: A.nzr, title: "Market sounding — 2+ interessados em paralelo", context: "Aura, Jaguar, Cerrado Gold, Goldmining como alvos potenciais.", type: "action", priority: "medium", owner: "Sócios Ore", dueDate: "30/06/2026", dueDateISO: "2026-06-30", status: "in_progress", lastUpdate: "Abr/2026" },
   { id: "dec-7", ref: 7, asset: A.iocg, title: "Formalizar ANM — cessão de direitos para Centaurus", context: "Processo formal em curso após deal Out/2025.", type: "action", priority: "medium", owner: "Jurídico Ore", dueDate: "30/06/2026", dueDateISO: "2026-06-30", status: "in_progress", lastUpdate: "Abr/2026" },
   { id: "dec-8", ref: 8, asset: A.fundo1, title: "Plano de comunicação aos cotistas sobre redução de valuation MV", context: "Carta já enviada Jan/2026. Manter cadência de updates.", type: "action", priority: "medium", owner: "IR Ore", dueDate: "Contínuo", status: "in_progress", lastUpdate: "Abr/2026" },
   { id: "dec-9", ref: 9, asset: A.morroverde, title: "Aprovar plano de negócios e orçamento 2026", context: "Novo plano elaborado pela nova gestão pós-turnaround 2H25. Aprovar em Conselho.", type: "decision", priority: "high", owner: "Conselho MV", dueDate: "31/03/2026", dueDateISO: "2026-03-31", status: "open", lastUpdate: "Mar/2026" },
   { id: "dec-10", ref: 10, asset: A.morroverde, title: "Definir 3–5 KPIs chave do Conselho e gatilhos de correção", context: "Reporting institucional auditável; metas anuais; exit readiness.", type: "decision", priority: "high", owner: "CFO Ore + MV", dueDate: "31/03/2026", dueDateISO: "2026-03-31", status: "open", lastUpdate: "Mar/2026" },
-  { id: "dec-11", ref: 11, asset: A.ativa, title: "Escolher arquitetura de implantação (modular vs escala)", context: "Definir formalmente + estratégia de capital (caixa/dívida/equity/M&A).", type: "decision", priority: "high", owner: "BoD Ativa", dueDate: "30/06/2026", dueDateISO: "2026-06-30", status: "open", lastUpdate: "Mar/2026" },
-  { id: "dec-12", ref: 12, asset: A.ativa, title: "Regularização fundiária Fazenda Panamá", context: "Pausado aguardando clarificação de limites. Retomada início 2026.", type: "action", priority: "medium", owner: "Ativa", dueDate: "31/03/2026", dueDateISO: "2026-03-31", status: "blocked", lastUpdate: "Mar/2026" },
-  { id: "dec-13", ref: 13, asset: A.ativa, title: "Iniciar racional de saída (quem compra, em que estágio, qual gatilho)", context: "Lista de potenciais estratégicos, narrativa de venda, timing.", type: "decision", priority: "medium", owner: "Sócios Ore", dueDate: "30/09/2026", dueDateISO: "2026-09-30", status: "open", lastUpdate: "Mar/2026" },
   { id: "dec-14", ref: 14, asset: A.nzr, title: "Escolher estratégia: desenvolvimento vs venda do pacote", context: "Decisão formal após conclusão dos estudos.", type: "decision", priority: "high", owner: "Sócios Ore", dueDate: "30/09/2026", dueDateISO: "2026-09-30", status: "open", lastUpdate: "Mar/2026" },
   { id: "dec-15", ref: 15, asset: A.iocg, title: "Definir critérios 'em dia vs fora do trilho' Centaurus", context: "Monitorar via relatórios semestrais. Gatilhos para pressionar/cobrar/reverter.", type: "decision", priority: "medium", owner: "Sócios Ore", dueDate: "30/06/2026", dueDateISO: "2026-06-30", status: "open", lastUpdate: "Mar/2026" },
   { id: "dec-16", ref: 16, asset: A.alvo, title: "Decidir: hold com gatilhos vs rota de saída", context: "Posição 9,56%. Definir se 0,5–1,0x capital é sucesso aceitável.", type: "decision", priority: "medium", owner: "Sócios Ore", dueDate: "30/06/2026", dueDateISO: "2026-06-30", status: "open", lastUpdate: "Mar/2026" },

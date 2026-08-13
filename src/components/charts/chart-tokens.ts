@@ -56,7 +56,8 @@ export const animationProps = {
 export const cursorLine = { stroke: "var(--chart-axis)", strokeWidth: 1, strokeDasharray: "3 4", strokeOpacity: 0.55 };
 export const cursorBand = { fill: "var(--chart-actual)", fillOpacity: 0.05 };
 
-/** IDs dos gradientes compartilhados (definidos em <ChartDefs/>). */
+/** IDs dos gradientes compartilhados (definidos em <ChartGradients/>, montado
+ *  uma única vez no MainLayout — nunca dentro de um gráfico). */
 export const gradientIds = {
   navy: "strata-grad-navy",
   blue: "strata-grad-blue",
