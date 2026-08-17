@@ -18,6 +18,7 @@ import { ChartCard } from "@/components/data/chart-card";
 import { DeltaIndicator } from "@/components/data/delta-indicator";
 import { PeriodBadge } from "@/components/data/status-badge";
 import { SourceCaption } from "@/components/data/source-caption";
+import type { DataStatus } from "@modules/data-source";
 import { Sparkline } from "@/components/data/sparkline";
 import { CashChart } from "@/components/charts/cash-chart";
 import { WaterfallChart } from "@/components/charts/waterfall-chart";
@@ -86,7 +87,7 @@ export default function CompanyOverviewPage() {
               delta={<DeltaIndicator value={6.4} favorable label="vs mai" />}
               spark={[39.5, 41.2, 40.1, 43.8, 45.3, 48.2]}
               href={`${base}/financeiro/fluxo-de-caixa`}
-              source="Protheus · hoje 06:15"
+              source="Posição de caixa" dataStatus="DEMONSTRATIVO"
             />
             {/* Como está o EBITDA? */}
             <HeroCard
@@ -163,7 +164,7 @@ export default function CompanyOverviewPage() {
               className="xl:col-span-8"
               title="Fluxo de caixa"
               subtitle="R$ mi · semanal · realizado + projetado"
-              source="Protheus · títulos abertos + premissas v3 · hoje 06:15"
+              source="Projeção de caixa" dataStatus="DEMONSTRATIVO"
               actions={
                 <Link href={`${base}/financeiro/fluxo-de-caixa`}>
                   <Button variant="ghost" size="sm">Ver completo <ArrowRight /></Button>
@@ -240,7 +241,7 @@ export default function CompanyOverviewPage() {
                 })}
               </div>
               <div className="mt-4 flex items-center justify-between border-t pt-2.5">
-                <SourceCaption source="Limiar 5% · responsáveis notificados" />
+                <SourceCaption source="Limiar de desvio 5%" dataStatus="DEMONSTRATIVO" />
                 <Link href={`${base}/financeiro/oxr`} className="text-body-sm font-medium text-action-600 hover:underline">Cobrar →</Link>
               </div>
             </EditorialSection>
@@ -280,7 +281,7 @@ export default function CompanyOverviewPage() {
                   (R$ 2,4 mi) — na alçada da Diretoria Ore.
                 </div>
               </div>
-              <div className="mt-4 flex items-center justify-between border-t pt-2.5"><SourceCaption source="Projetos · jun/26 · completo na v1.1" /></div>
+              <div className="mt-4 flex items-center justify-between border-t pt-2.5"><SourceCaption source="Projetos" dataStatus="DEMONSTRATIVO" /></div>
             </EditorialSection>
 
             {/* Minhas pendências — a ação do dia */}
@@ -315,7 +316,7 @@ export default function CompanyOverviewPage() {
             ))}
           </div>
           <p className="mt-2 text-caption text-muted-foreground">
-            Régua operacional completa (6 indicadores) no catálogo da empresa · fonte: planilha jun/26 + Protheus
+            Régua operacional completa (6 indicadores) no catálogo da empresa
           </p>
         </section>
       </DashboardLayout>
@@ -336,7 +337,7 @@ function Eyebrow({ icon, label }: { icon: React.ReactNode; label: string }) {
 
 /** Card vital da tríade executiva — valor grande + leitura em uma linha. */
 function HeroCard({
-  eyebrow, question, value, reading, delta, spark, href, source, tone,
+  eyebrow, question, value, reading, delta, spark, href, source, dataStatus, tone,
 }: {
   eyebrow: string;
   question: string;
@@ -346,6 +347,8 @@ function HeroCard({
   spark?: number[];
   href: string;
   source: string;
+  /** Sprint 1.4 · item 5 — estado do dado deste indicador. */
+  dataStatus?: DataStatus;
   tone?: "warning" | "danger";
 }) {
   return (
@@ -374,7 +377,7 @@ function HeroCard({
           {spark && <Sparkline data={spark} className="shrink-0 text-navy-900 opacity-70 transition-opacity duration-fast group-hover:opacity-100" />}
         </div>
         <div className="mt-auto flex items-center justify-between pt-4">
-          <SourceCaption source={source} />
+          <SourceCaption source={source} dataStatus={dataStatus} />
           <span aria-hidden className="text-gray-300 transition-transform duration-fast group-hover:translate-x-0.5 group-hover:text-action-600">→</span>
         </div>
       </div>

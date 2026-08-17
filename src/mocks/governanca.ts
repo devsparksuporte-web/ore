@@ -29,7 +29,6 @@ export const alerts: Alert[] = [
 ];
 
 export const feed: FeedItem[] = [
-  { id: "f-1", time: "06:15", kind: "sync", text: "Sincronização Ativa concluída — 1.204 títulos importados", company: "Ativa" },
   { id: "f-2", time: "ontem", kind: "publish", text: "Junho/2026 publicado — snapshot disponível ao fundo", company: "Ativa" },
   { id: "f-3", time: "ontem", kind: "justification", text: "Justificativa enviada — Manutenção +26% (C. Duarte)", company: "Ativa" },
   { id: "f-4", time: "2d", kind: "document", text: "Novo documento: ata do conselho — reunião de mai/26", company: "Ativa" },
@@ -41,7 +40,6 @@ export const feed: FeedItem[] = [
 export const auditEvents: AuditEvent[] = [
   { id: "ae-1", occurredAt: "2026-07-01 18:42", actor: "Bruna M. Cruz", action: "periodo.publicar", entity: "Período jun/2026", company: "Ativa", origin: "ui", before: "status: em fechamento", after: "status: publicado · snapshot #s-0626" },
   { id: "ae-2", occurredAt: "2026-07-01 14:30", actor: "C. Duarte", action: "justificativa.enviar", entity: "OxR · Manutenção jun/26", company: "Ativa", origin: "ui", after: "causa: quebra não prevista moinho SAG" },
-  { id: "ae-3", occurredAt: "2026-07-01 06:15", actor: "sistema", action: "sync.executar", entity: "Conexão Protheus — Ativa", company: "Ativa", origin: "sync", after: "1.204 títulos · 342 lançamentos · 28 pedidos" },
   { id: "ae-4", occurredAt: "2026-06-30 16:20", actor: "Bruna M. Cruz", action: "alcada.alterar", entity: "Política Compras > 500k", company: "Ativa", origin: "ui", before: "aprovador: CFO", after: "aprovador: CFO + Diretoria Ore (> 1mi)" },
   { id: "ae-5", occurredAt: "2026-06-30 11:05", actor: "Mauro Barros", action: "aprovacao.decidir", entity: "PC-2201 · Locação HeavyMaq", company: "Ativa", origin: "ui", after: "decisão: aprovado" },
   { id: "ae-6", occurredAt: "2026-06-28 09:40", actor: "M. Botaro", action: "usuario.convidar", entity: "g.kiefer@ore… (Analista)", company: "—", origin: "ui" },

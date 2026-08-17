@@ -94,6 +94,7 @@ function CriticalPath({ steps }: { steps: CriticalPathStep[] }) {
       }))}
       itemsLabel="Marcos desta etapa"
       source="Workbook de gestão · KPI Ativa"
+      dataStatus="REAL"
     />
     </>
   );

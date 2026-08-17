@@ -169,7 +169,7 @@ export default function CompanyPerformancePage() {
 
       <LiquiditySection liquidity={snap.liquidity} derived={d} />
 
-      <ValuationHistory history={snap.valuation.history} />
+      <ValuationHistory history={snap.valuation.history} currency={cur} />
 
       {detalhe && <DetailDrawer {...detalhe} />}
     </DashboardLayout>

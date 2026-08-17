@@ -67,7 +67,7 @@ export default function DrePage() {
                   lines={dreTree}
                   onLineClick={(l) => setDrillLine(l)}
                 />
-                <div className="mt-2"><SourceCaption source="Protheus CT2 → plano canônico Strata · publicado jun/26 · snapshot #s-0626" /></div>
+                <div className="mt-2"><SourceCaption source="Estrutura da DRE gerencial" dataStatus="DEMONSTRATIVO" /></div>
               </div>
               <div className="xl:col-span-4">
                 <ChartCard title="Ponte EBITDA → Resultado" subtitle="R$ mi · jun/26" source="DRE gerencial">
@@ -80,7 +80,7 @@ export default function DrePage() {
           <TabsContent value="contabil">
             <EditorialSection title="Visão contábil (plano original do ERP)">
                 <p className="text-sm text-muted-foreground">
-                  Estrutura espelhada do plano de contas do Protheus, sem reclassificação gerencial.
+                  Estrutura espelhada do plano de contas contábil, sem reclassificação gerencial.
                   Mesmos valores, hierarquia contábil original — disponível para conciliação com o balancete.
                 </p>
             </EditorialSection>
@@ -95,7 +95,7 @@ export default function DrePage() {
             <>
               <SheetHeader>
                 <SheetTitle>Lançamentos · {drillLine.label}</SheetTitle>
-                <p className="mt-1 text-body-sm text-muted-foreground">Junho/2026 · valores do Protheus (CT2)</p>
+                <p className="mt-1 text-body-sm text-muted-foreground">Junho/2026 · visão contábil</p>
               </SheetHeader>
               <SheetBody>
                 <div className="space-y-2">
@@ -110,7 +110,7 @@ export default function DrePage() {
                   ))}
                 </div>
                 <div className="mt-4 rounded-md bg-sunken p-3">
-                  <SourceCaption source="Drill preserva filtros: período jun/26 · todas as unidades · valores idênticos ao ERP" />
+                  <SourceCaption source="O drill preserva os filtros aplicados" dataStatus="DEMONSTRATIVO" />
                 </div>
               </SheetBody>
             </>

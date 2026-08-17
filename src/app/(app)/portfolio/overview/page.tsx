@@ -45,7 +45,7 @@ export default function PortfolioOverviewPage() {
     },
     {
       id: "integrated-progress", type: "progress", title: "Integradas", span: { base: 6, md: 4, xl: 2 },
-      source: "Ativa · Protheus",
+      source: "Ativa",
       data: ready<ProgressWidgetData>({
         value: summary.integrated, max: summary.total,
         format: (v) => String(v),
@@ -110,7 +110,7 @@ export default function PortfolioOverviewPage() {
     {
       id: "ebitda-forecast", type: "forecast", title: "EBITDA — realizado × forecast × orçado",
       description: "R$ mi · 2026", span: { base: 12, xl: 6 }, skeleton: "chart",
-      source: "Protheus · Ativa · fc jun/26",
+      source: "Ativa · forecast jun/26",
       data: ready<ForecastWidgetData>({
         series: getForecastSeries(),
         summary: [
@@ -123,7 +123,7 @@ export default function PortfolioOverviewPage() {
     {
       id: "revenue-vs-budget", type: "chart", title: "Receita × Orçado",
       description: "R$ mi · últimos 6 meses", span: { base: 12, xl: 6 }, skeleton: "chart",
-      source: "Protheus · Ativa · publicado jun/26",
+      source: "Ativa · publicado jun/26",
       data: ready<ChartWidgetData>({ chart: <ComparisonBars data={revenueVsBudget} /> }),
     },
   ];
@@ -131,13 +131,17 @@ export default function PortfolioOverviewPage() {
   /* ── Faixa 5 · Integrações + Marcos + Pipeline ─────────────────── */
   const opsWidgets: WidgetConfig<any>[] = [
     {
-      id: "integrations", type: "status", title: "Status das integrações", span: { base: 12, md: 6, xl: 4 },
-      href: "/e/ativa-mineracao/config/integracoes", source: "Sync diária 05:00 · logs por execução",
+      /* Sprint 1.4 · item 3 — era "Status das integrações", com "Sync diária
+         05:00" no rodapé e o horário da última sincronização em cada linha.
+         Passa a representar a PROVENIÊNCIA: de onde vêm os dados que o Crystal
+         mostra. Mesmo widget, mesma posição, mesmo span — só o significado
+         mudou. Sem `meta`: não há timestamp verdadeiro a exibir. */
+      id: "integrations", type: "status", title: "Fontes de dados", span: { base: 12, md: 6, xl: 4 },
+      href: "/e/ativa-mineracao/config/integracoes", source: "Documentos fornecidos pela Ore",
       data: ready<StatusWidgetData>({
         items: listConnections().map((c) => ({
           label: c.connector, detail: c.companyName,
-          state: c.status === "healthy" ? "ok" : c.status === "error" ? "error" : c.status === "configuring" ? "warn" : "off",
-          meta: c.lastSync ?? "—",
+          state: c.dataStatus === "REAL" ? "ok" : c.dataStatus === "AGUARDANDO_DADOS" ? "warn" : "off",
         })),
       }),
     },

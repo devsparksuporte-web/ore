@@ -1,3 +1,5 @@
+import type { DataStatus } from "@modules/data-source";
+
 /** Tipos de domínio — espelham o Data Dictionary (doc 11), versão mock. */
 
 export type IntegrationStatus = "integrated" | "implementing" | "not_integrated";
@@ -11,7 +13,24 @@ export interface Company {
   region: string;
   ownershipPct: number;
   investedSince: string;
+  /**
+   * Estado TÉCNICO da integração — se existe pipeline de dados montado.
+   * Independente de `dataStatus`: uma investida pode ter dados reais vindos de
+   * documento sem que exista qualquer integração automática.
+   */
   integrationStatus: IntegrationStatus;
+  /**
+   * Estado GERAL de disponibilidade de dados da investida (Sprint 1.4 · item 4).
+   *
+   * `REAL` NÃO significa que todos os módulos são reais — significa que existem
+   * dados sustentados por fonte documental rastreável nesta investida. O estado
+   * por módulo/bloco é assunto do SourceCaption, não deste campo.
+   *
+   * Deliberadamente separado de `integrationStatus`: um responde "existe
+   * pipeline?", o outro "o que está na tela é verdade?". Fundir os dois faria a
+   * plataforma tratar ausência de integração como ausência de dado.
+   */
+  dataStatus: DataStatus;
   onboardingStep?: { current: number; total: number; label: string; goLiveEstimate: string };
   alerts: number;
   kpis?: { cash: number; revenueMonth: number; revenueDelta: number; oxrDeviation: number };
@@ -147,15 +166,40 @@ export interface AuditEvent {
   after?: string;
 }
 
+/**
+ * FONTE DE DADOS do Crystal (Sprint 1.4 · item 3).
+ *
+ * Este contrato descrevia uma INTEGRAÇÃO técnica (conector, saúde, última
+ * sincronização, registros importados). Nenhuma integração existe — a ORE
+ * fornece documentos. O contrato passa a descrever PROVENIÊNCIA.
+ *
+ * Nome do tipo e do campo `connector` preservados de propósito: `listConnections`
+ * é consumido pela Home e pelo Analytics Engine, e renomear tudo agora seria
+ * refatoração ampla sem ganho para o usuário. O que mudou é o SIGNIFICADO e,
+ * principalmente, os dados — nenhum campo de sincronização é mais preenchido.
+ *
+ * ⚠️ `lastSync`, `nextSync` e `recordsImported` permanecem no tipo apenas como
+ * compatibilidade e NÃO devem voltar a ser preenchidos enquanto não existir
+ * ingestão real. Preenchê-los é reintroduzir a ficção que esta sprint removeu.
+ */
 export interface Connection {
   id: string;
+  /** Nome da fonte (documento, sistema ou canal). */
   connector: string;
   companyName: string;
-  status: "healthy" | "error" | "configuring" | "not_started";
-  lastSync?: string;
-  nextSync?: string;
-  recordsImported?: number;
+  /** Estado do dado que a fonte sustenta — vocabulário de @modules/data-source. */
+  dataStatus: DataStatus;
   detail: string;
+  /** Módulos do Crystal que consomem esta fonte, quando a relação é comprovada. */
+  usedBy?: string[];
+  /** @deprecated sem ingestão real. Ver nota acima. */
+  status?: "healthy" | "error" | "configuring" | "not_started";
+  /** @deprecated sem ingestão real. */
+  lastSync?: string;
+  /** @deprecated sem ingestão real. */
+  nextSync?: string;
+  /** @deprecated sem ingestão real. */
+  recordsImported?: number;
 }
 
 export interface SyncRun {

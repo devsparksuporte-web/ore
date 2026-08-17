@@ -1,19 +1,66 @@
-import type { AccountMapping, Connection, Notification, SyncRun, User } from "@/types/domain";
+import type { AccountMapping, Connection, Notification, User } from "@/types/domain";
 
+/**
+ * FONTES DE DADOS do Crystal (Sprint 1.4 · item 3).
+ *
+ * Antes: catálogo de conectores com saúde, última/próxima sincronização e
+ * contagem de registros — narrativa completa de uma integração TOTVS Protheus
+ * que nunca existiu. Reprovou a auditoria de aceite.
+ *
+ * Agora: proveniência. Cada entrada declara o que É a fonte, seu estado e,
+ * quando comprovado, quais partes do Crystal a consomem. Nenhum campo de
+ * sincronização é preenchido — e não deve voltar a ser enquanto não houver
+ * ingestão real.
+ *
+ * ⚠️ `usedBy` só é preenchido quando a relação está comprovada no código. Os
+ * demais documentos do escopo da ORE existem, mas ainda não foram lidos pela
+ * plataforma — associá-los a indicadores seria inventar rastreabilidade.
+ */
 export const connections: Connection[] = [
-  { id: "cn-1", connector: "TOTVS Protheus (API)", companyName: "Ativa Mineração", status: "healthy", lastSync: "hoje 06:15", nextSync: "amanhã 05:00", recordsImported: 1_574, detail: "Títulos, lançamentos, pedidos, fornecedores, CCs, filiais" },
-  { id: "cn-2", connector: "Planilha — Orçamento", companyName: "Ativa Mineração", status: "healthy", lastSync: "28/jun", recordsImported: 1_118, detail: "Orçamento 2026 v2 (versão ativa)" },
-  { id: "cn-3", connector: "Planilha — KPIs operacionais", companyName: "Ativa Mineração", status: "healthy", lastSync: "01/jul", recordsImported: 36, detail: "Produção, teor, disponibilidade — jun/26" },
-  { id: "cn-4", connector: "TOTVS Protheus (API)", companyName: "Nazareno Gold", status: "configuring", detail: "Em configuração — etapa 3 de 5 (de-para)" },
-  { id: "cn-5", connector: "Planilhas", companyName: "Morro Verde", status: "configuring", detail: "Template enviado, aguardando primeiro arquivo" },
-];
-
-export const syncRuns: SyncRun[] = [
-  { id: "sr-1", startedAt: "02/07 06:15", duration: "11 min", records: 1_574, status: "success" },
-  { id: "sr-2", startedAt: "01/07 06:15", duration: "12 min", records: 1_538, status: "success" },
-  { id: "sr-3", startedAt: "30/06 06:15", duration: "14 min", records: 1_602, status: "success" },
-  { id: "sr-4", startedAt: "29/06 06:15", duration: "9 min", records: 214, status: "partial", error: "SE2: timeout na página 4 — 38 títulos reprocessados na execução seguinte" },
-  { id: "sr-5", startedAt: "28/06 06:15", duration: "12 min", records: 1_490, status: "success" },
+  {
+    id: "cn-1",
+    connector: "Workbook de gestão — Ore Mining PE I FIP",
+    companyName: "Ativa Mineração",
+    dataStatus: "REAL",
+    detail: "Tese, riscos, decisões e ações, marcos, valor da participação e cenários de saída.",
+    usedBy: ["Estratégia & Execução", "Performance do Investimento"],
+  },
+  {
+    id: "cn-2",
+    connector: "Forecast operacional — Ativa",
+    companyName: "Ativa Mineração",
+    dataStatus: "REAL",
+    detail: "Realizado × orçado por atividade. Sustenta o consumo mensal em Performance.",
+    usedBy: ["Performance do Investimento"],
+  },
+  {
+    id: "cn-3",
+    connector: "Demais documentos do escopo da ORE",
+    companyName: "Ativa Mineração",
+    dataStatus: "AGUARDANDO_DADOS",
+    detail: "Documentos disponibilizados pela ORE que a plataforma ainda não incorporou.",
+  },
+  {
+    id: "cn-4",
+    connector: "OneDrive corporativo",
+    companyName: "Todas as investidas",
+    dataStatus: "PLANEJADO",
+    detail: "Ingestão automatizada dos documentos da ORE. Não implementada nesta fase.",
+  },
+  {
+    id: "cn-5",
+    connector: "TOTVS Protheus",
+    companyName: "Todas as investidas",
+    dataStatus: "PLANEJADO",
+    detail: "Integração com o ERP. Não implementada nesta fase.",
+  },
+  {
+    id: "cn-6",
+    connector: "Documentos das demais investidas",
+    companyName: "Nazareno Gold, Morro Verde e outras",
+    dataStatus: "AGUARDANDO_DADOS",
+    detail: "Sem fonte documental disponibilizada. Os módulos exibem dados demonstrativos.",
+  },
 ];
 
 export const accountMappings: AccountMapping[] = [
@@ -43,5 +90,8 @@ export const notifications: Notification[] = [
   { id: "n-2", kind: "approval", title: "7 aprovações aguardam você", body: "2 fora do SLA — PC-2214 há 8 dias", time: "3h", read: false, href: "/e/ativa-mineracao/governanca/aprovacoes" },
   { id: "n-3", kind: "publish", title: "Junho/2026 publicado", body: "Snapshot da Ativa disponível para o fundo", time: "ontem", read: true, href: "/e/ativa-mineracao/financeiro/dre" },
   { id: "n-4", kind: "justification", title: "Justificativa enviada", body: "Manutenção +26% — aguardando seu aceite", time: "ontem", read: true, href: "/e/ativa-mineracao/financeiro/oxr" },
-  { id: "n-5", kind: "sync", title: "Sincronização concluída", body: "1.204 títulos importados da Ativa", time: "hoje 06:15", read: true, href: "/e/ativa-mineracao/config/integracoes" },
+  /* Sprint 1.4 · item 3 — removida a notificação "Sincronização concluída ·
+     1.204 títulos importados da Ativa · hoje 06:15". Anunciava um evento que
+     nunca ocorreu. Não foi substituída: não há evento verdadeiro de ingestão
+     a notificar enquanto a atualização das fontes for feita pela própria Ore. */
 ];

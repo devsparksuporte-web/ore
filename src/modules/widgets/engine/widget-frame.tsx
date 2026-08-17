@@ -101,7 +101,7 @@ export function WidgetFrame({
       <div className="flex-1">{body}</div>
       {config.source && allowed && (
         <footer className="mt-4 flex items-center justify-between border-t pt-2.5">
-          <SourceCaption source={config.source} />
+          <SourceCaption source={config.source} dataStatus={config.dataStatus} />
           {config.href && (
             <span aria-hidden className="text-gray-300 transition-transform duration-fast group-hover:translate-x-0.5 group-hover:text-action-600">→</span>
           )}

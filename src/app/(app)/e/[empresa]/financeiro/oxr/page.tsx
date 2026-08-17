@@ -114,7 +114,7 @@ export default function OxrPage() {
           </TabsContent>
 
           <TabsContent value="heatmap">
-            <ChartCard title="Desvio por linha × mês" subtitle="% vs orçado · vermelho = desfavorável" source="Orçamento 2026 v2 × realizado Protheus">
+            <ChartCard title="Desvio por linha × mês" subtitle="% vs orçado · vermelho = desfavorável" source="Orçamento 2026 v2 × realizado" dataStatus="DEMONSTRATIVO">
               <DeviationHeatmap months={months} rows={oxrLines.map((l) => ({ label: l.label, values: l.monthly }))} />
             </ChartCard>
           </TabsContent>

@@ -42,7 +42,7 @@ export function CashChart({
         { name: "Entradas", value: fmt(p.inflow), color: chartColors.inflow, muted: true },
         { name: "Saídas", value: `(${fmt(p.outflow)})`, color: chartColors.outflow, muted: true },
       ],
-      footer: p.projected ? "títulos em aberto + premissas v3" : "realizado · Protheus",
+      footer: p.projected ? "Projetado" : "Realizado",
     };
   });
 

@@ -15,6 +15,8 @@
 import * as React from "react";
 import { Drawer, DrawerBody, DrawerContent, DrawerFooter, DrawerHeader, DrawerTitle } from "./drawer";
 import { cn } from "@/lib/utils";
+import { SourceCaption } from "@/components/data/source-caption";
+import type { DataStatus } from "@modules/data-source";
 
 export interface DetailField {
   label: string;
@@ -51,6 +53,8 @@ export interface DetailDrawerProps {
   itemsLabel?: string;
   /** Origem do dado — sempre visível: o leitor precisa saber de onde veio. */
   source?: string;
+  /** Estado do dado (Sprint 1.4 · item 5). Opcional: sem ela, nada muda. */
+  dataStatus?: DataStatus;
   /** Ação recomendada / o que se espera do leitor. */
   action?: React.ReactNode;
   children?: React.ReactNode;
@@ -74,7 +78,7 @@ function Field({ label, value, wide }: DetailField) {
 }
 
 export function DetailDrawer({
-  open, onOpenChange, kicker, title, summary, fields, items, itemsLabel, source, action, children,
+  open, onOpenChange, kicker, title, summary, fields, items, itemsLabel, source, dataStatus, action, children,
 }: DetailDrawerProps) {
   return (
     <Drawer open={open} onOpenChange={onOpenChange}>
@@ -143,7 +147,7 @@ export function DetailDrawer({
 
         {source && (
           <DrawerFooter>
-            <span className="text-caption text-gray-500">{source}</span>
+            <SourceCaption source={source} dataStatus={dataStatus} />
           </DrawerFooter>
         )}
       </DrawerContent>

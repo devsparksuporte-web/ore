@@ -65,7 +65,13 @@ registerDataset("bank_position", (): AnalyticsResult => ({
   })),
 }));
 
-/* integrations_health — saúde das conexões */
+/* integrations_health — estado das FONTES DE DADOS.
+ *
+ * Sprint 1.4 · item 3: o dataset descrevia "saúde de integração", conceito que
+ * não existe (não há integração). Passa a descrever o estado da fonte. A CHAVE
+ * do registro foi preservada para não quebrar dashboards que já a referenciem;
+ * o formato de retorno (`statuses`) também é o mesmo. `meta` deixou de ser
+ * enviado — não há timestamp de sincronização verdadeiro. */
 registerDataset("integrations_health", (q): AnalyticsResult => ({
   kind: "statuses",
   items: listConnections()
@@ -73,8 +79,7 @@ registerDataset("integrations_health", (q): AnalyticsResult => ({
     .map((c) => ({
       label: c.connector,
       detail: c.companyName,
-      state: c.status === "healthy" ? "ok" : c.status === "error" ? "error" : c.status === "configuring" ? "warn" : "off",
-      meta: c.lastSync ?? "—",
+      state: c.dataStatus === "REAL" ? "ok" : c.dataStatus === "AGUARDANDO_DADOS" ? "warn" : "off",
     })),
 }));
 

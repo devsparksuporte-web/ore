@@ -92,7 +92,7 @@ export default function PeriodosPage() {
               disabled={confirmText !== "PUBLICAR"}
               onClick={() => {
                 toast.success(`${publishing?.month} publicado`, {
-                  description: "Snapshot #s-0726 gerado · diretoria Ore notificada · evento registrado na auditoria.",
+                  description: "Período publicado · evento registrado na auditoria.",
                   icon: <Lock className="h-4 w-4" />,
                 });
                 setPublishing(null);

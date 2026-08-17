@@ -58,7 +58,7 @@ export default function ComprasPage() {
     <>
       <FilterBar showCompare={false} />
       <DashboardLayout>
-        <PageHeader title="Compras" description="Espelho do Protheus · funil, pedidos e fornecedores" />
+        <PageHeader title="Compras" description="Funil, pedidos e fornecedores" />
 
         {/* Funil + métricas */}
         <section className="grid grid-cols-2 gap-4 xl:grid-cols-6">
@@ -160,7 +160,7 @@ export default function ComprasPage() {
                 </section>
 
                 <div className="rounded-md bg-sunken p-3">
-                  <SourceCaption source="Protheus SC7 · sync hoje 06:15 · decisões sincronizam com o ERP" />
+                  <SourceCaption source="Pedidos de compra" dataStatus="DEMONSTRATIVO" />
                 </div>
               </SheetBody>
             </>

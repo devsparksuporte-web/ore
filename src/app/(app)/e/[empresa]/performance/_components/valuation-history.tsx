@@ -9,7 +9,16 @@ import { formatMoney, formatDate, formatPct } from "@/lib/format";
 import type { ValuationRecord } from "@modules/performance";
 import { cn } from "@/lib/utils";
 
-export function ValuationHistory({ history }: { history: ValuationRecord[] }) {
+/**
+ * Sprint 1.4 · item 6 — a moeda passa a vir da FONTE, via prop.
+ *
+ * Antes, `formatMoney` era chamado sem `currency` e caía no padrão "R$": a
+ * mesma marcação da Ativa aparecia como `US$ 11,3 mi` no card acima e
+ * `R$ 11,3 mi` nesta tabela. Dois símbolos para o mesmo número, na mesma tela.
+ * Nenhum VALOR foi alterado — só o símbolo passou a acompanhar a moeda em que
+ * a fonte registra.
+ */
+export function ValuationHistory({ history, currency }: { history: ValuationRecord[]; currency: string }) {
   const rows = history.map((r, i) => {
     const prev = history[i + 1]?.value;
     return { ...r, deltaPct: prev ? ((r.value - prev) / prev) * 100 : null };
@@ -31,7 +40,7 @@ export function ValuationHistory({ history }: { history: ValuationRecord[] }) {
           {rows.map((r) => (
             <tr key={r.asOf} className="border-b last:border-b-0">
               <td className="py-2.5 tnum text-gray-600">{formatDate(r.asOf, "short")}</td>
-              <td className="py-2.5 text-right font-medium tnum text-navy-900">{formatMoney(r.value, { compact: true })}</td>
+              <td className="py-2.5 text-right font-medium tnum text-navy-900">{formatMoney(r.value, { compact: true, currency })}</td>
               <td className="py-2.5 pl-6 text-gray-600">{r.method}</td>
               <td className={cn("py-2.5 text-right tnum", r.deltaPct === null ? "text-gray-400" : r.deltaPct >= 0 ? "text-success" : "text-danger")}>
                 {r.deltaPct === null ? "—" : formatPct(r.deltaPct, { signed: true })}

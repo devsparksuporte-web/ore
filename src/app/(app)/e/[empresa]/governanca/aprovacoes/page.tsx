@@ -40,7 +40,7 @@ export default function AprovacoesPage() {
     setRejectComment("");
     const undo = () => setQueue((q) => [item, ...q]);
     toast.success(decision === "approve" ? `Aprovado: ${item.description.split("·")[0]}` : `Reprovado com comentário`, {
-      description: decision === "approve" ? "Sincronizando status com o Protheus…" : comment,
+      description: decision === "approve" ? "Decisão registrada." : comment,
       action: { label: "Desfazer", onClick: undo },
       duration: 10_000,
     });
@@ -55,7 +55,7 @@ export default function AprovacoesPage() {
     toast.success(`${eligible.length} itens aprovados em lote`, {
       description: excluded.length
         ? `${excluded.length} item excluído: acima da sua alçada (segue ao próximo nível).`
-        : "Status sincronizando com o Protheus.",
+        : "Decisão registrada.",
       duration: 10_000,
     });
   };

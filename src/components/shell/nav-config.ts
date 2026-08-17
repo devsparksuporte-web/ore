@@ -90,7 +90,7 @@ export function companyNav(slug: string, pendingApprovals: number): NavGroup[] {
     {
       label: "Configurações",
       items: [
-        { label: "Integrações", href: `${base}/config/integracoes`, icon: Link2 },
+        { label: "Fontes de dados", href: `${base}/config/integracoes`, icon: Link2 },
         { label: "De-Para de Contas", href: `${base}/config/de-para`, icon: GitBranch },
         { label: "Períodos", href: `${base}/config/periodos`, icon: Settings },
       ],

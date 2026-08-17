@@ -10,7 +10,7 @@ const labels: Record<string, string> = {
   portfolio: "Portfólio Ore", overview: "Dashboard", investidas: "Investidas",
   financeiro: "Financeiro", "fluxo-de-caixa": "Fluxo de Caixa", dre: "DRE", oxr: "Orçado x Realizado",
   operacoes: "Operações", compras: "Compras", governanca: "Governança", aprovacoes: "Aprovações",
-  auditoria: "Auditoria", config: "Configurações", integracoes: "Integrações", "de-para": "De-Para de Contas",
+  auditoria: "Auditoria", config: "Configurações", integracoes: "Fontes de dados", "de-para": "De-Para de Contas",
   periodos: "Períodos", admin: "Administração", usuarios: "Usuários", notificacoes: "Notificações",
 };
 

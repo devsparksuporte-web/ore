@@ -5,6 +5,7 @@ import {
   DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { SourceCaption } from "./source-caption";
+import type { DataStatus } from "@modules/data-source";
 import { toast } from "sonner";
 import { cn } from "@/lib/utils";
 
@@ -17,6 +18,7 @@ export function ChartCard({
   title,
   subtitle,
   source,
+  dataStatus,
   children,
   actions,
   className,
@@ -24,6 +26,9 @@ export function ChartCard({
   title: string;
   subtitle?: string;
   source: string;
+  /** Sprint 1.4 · item 5 — estado do dado deste gráfico. Opcional: sem ela o
+   *  rodapé renderiza como antes. */
+  dataStatus?: DataStatus;
   children: React.ReactNode;
   actions?: React.ReactNode;
   className?: string;
@@ -59,7 +64,7 @@ export function ChartCard({
       <div className="flex-1">{children}</div>
 
       <div className="mt-4 border-t pt-2.5">
-        <SourceCaption source={source} />
+        <SourceCaption source={source} dataStatus={dataStatus} />
       </div>
     </section>
   );

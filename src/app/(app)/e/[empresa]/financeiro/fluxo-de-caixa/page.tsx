@@ -88,7 +88,7 @@ export default function CashFlowPage() {
           </TabsList>
 
           <TabsContent value="realizado" className="space-y-4">
-            <ChartCard title="Evolução do caixa" subtitle="R$ mi · semanal · arraste a régua para dar zoom" source="Protheus · títulos + premissas v3 · hoje 06:15">
+            <ChartCard title="Evolução do caixa" subtitle="R$ mi · semanal · arraste a régua para dar zoom" source="Evolução de caixa" dataStatus="DEMONSTRATIVO">
               <CashChart data={cashFlow} minimum={CASH_MINIMUM} zoomable />
             </ChartCard>
             <EditorialSection title="Posição por conta bancária">
@@ -141,7 +141,7 @@ export default function CashFlowPage() {
                     <span className="font-medium tnum text-gray-700">{p.value}</span>
                   </div>
                 ))}
-                <div className="pt-1"><SourceCaption source="Premissas versionadas — histórico completo na auditoria" /></div>
+                <div className="pt-1"><SourceCaption source="Premissas de projeção" dataStatus="DEMONSTRATIVO" /></div>
               </div>
             </EditorialSection>
           </TabsContent>
@@ -167,7 +167,7 @@ export default function CashFlowPage() {
                   {selected.orderRef && <Field label="Pedido de origem" value={selected.orderRef} link />}
                 </div>
                 <div className="rounded-md bg-sunken p-3">
-                  <SourceCaption source="Protheus · SE1/SE2 · sync hoje 06:15 · execução #sr-1" />
+                  <SourceCaption source="Movimentos de caixa" dataStatus="DEMONSTRATIVO" />
                 </div>
               </SheetBody>
             </>

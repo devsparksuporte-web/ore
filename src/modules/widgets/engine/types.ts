@@ -1,3 +1,4 @@
+import type { DataStatus } from "@modules/data-source";
 /**
  * WIDGET ENGINE · tipos (Sprint 2.1 · ADR-018)
  *
@@ -36,7 +37,9 @@ export interface WidgetConfig<T = unknown> {
   type: string;                    // chave no registry
   title?: string;                  // título discreto do frame (opcional)
   description?: string;
-  source?: string;                 // origem do dado (SourceCaption no rodapé)
+  source?: string;
+  /** Sprint 1.4 · item 5 — estado do dado exibido pelo widget. */
+  dataStatus?: DataStatus;                 // origem do dado (SourceCaption no rodapé)
   href?: string;                   // widget inteiro clicável (drill)
   actions?: React.ReactNode;       // ações no header do frame
   tone?: WidgetTone;               // tema/ênfase semântica

@@ -12,6 +12,9 @@ export const companies: Company[] = [
     ownershipPct: 62,
     investedSince: "2021",
     integrationStatus: "integrated",
+    /* Workbook de gestão + forecast operacional sustentam Estratégia e
+       Performance. Demais módulos ainda demonstrativos — ver item 5. */
+    dataStatus: "REAL",
     alerts: 2,
     kpis: { cash: 48_200_000, revenueMonth: 18_900_000, revenueDelta: -3.1, oxrDeviation: -5.2 },
     cashSpark: [39.5, 41.2, 40.1, 43.8, 45.3, 48.2],
@@ -26,6 +29,8 @@ export const companies: Company[] = [
     ownershipPct: 55,
     investedSince: "2020",
     integrationStatus: "implementing",
+    /* Nenhuma fonte documental disponibilizada pela Ore. */
+    dataStatus: "DEMONSTRATIVO",
     onboardingStep: { current: 3, total: 5, label: "De-para do plano de contas", goLiveEstimate: "ago/2026" },
     alerts: 0,
   },
@@ -39,6 +44,8 @@ export const companies: Company[] = [
     ownershipPct: 48,
     investedSince: "2022",
     integrationStatus: "implementing",
+    /* Nenhuma fonte documental disponibilizada pela Ore. */
+    dataStatus: "DEMONSTRATIVO",
     onboardingStep: { current: 1, total: 5, label: "Credenciais e teste de conexão", goLiveEstimate: "set/2026" },
     alerts: 0,
   },
@@ -52,6 +59,8 @@ export const companies: Company[] = [
     ownershipPct: 40,
     investedSince: "2023",
     integrationStatus: "not_integrated",
+    /* Nenhuma fonte documental disponibilizada pela Ore. */
+    dataStatus: "DEMONSTRATIVO",
     alerts: 0,
   },
   {
@@ -64,6 +73,8 @@ export const companies: Company[] = [
     ownershipPct: 25,
     investedSince: "2024",
     integrationStatus: "not_integrated",
+    /* Nenhuma fonte documental disponibilizada pela Ore. */
+    dataStatus: "DEMONSTRATIVO",
     alerts: 0,
   },
   {
@@ -76,6 +87,8 @@ export const companies: Company[] = [
     ownershipPct: 35,
     investedSince: "2023",
     integrationStatus: "not_integrated",
+    /* Nenhuma fonte documental disponibilizada pela Ore. */
+    dataStatus: "DEMONSTRATIVO",
     alerts: 0,
   },
 ];
