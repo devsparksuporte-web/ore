@@ -11,12 +11,20 @@ export interface Company {
   shortName: string;
   commodity: string;
   region: string;
-  ownershipPct: number;
+  /** Participação da Ore (%). Sprint 1.5: `null` quando os documentos
+   *  conflitam sem explicação — ver CONFLITOS em adapters/ore-workbook. */
+  ownershipPct: number | null;
   investedSince: string;
   /**
    * Estado TÉCNICO da integração — se existe pipeline de dados montado.
    * Independente de `dataStatus`: uma investida pode ter dados reais vindos de
    * documento sem que exista qualquer integração automática.
+   *
+   * ⚠️ Sprint 1.4 · B-01 — NÃO RENDERIZAR. Hoje nenhuma investida tem pipeline:
+   * qualquer selo, ponto colorido ou barra derivada deste campo afirma algo
+   * falso. O campo permanece porque a capacidade de integração é real como
+   * ROADMAP, e o dia em que existir ingestão o valor volta a significar algo.
+   * Enquanto isso, quem responde ao usuário é `dataStatus`.
    */
   integrationStatus: IntegrationStatus;
   /**
@@ -31,6 +39,12 @@ export interface Company {
    * plataforma tratar ausência de integração como ausência de dado.
    */
   dataStatus: DataStatus;
+  /**
+   * ⚠️ Sprint 1.4 · B-01 — NÃO POPULAR nem renderizar. Descrevia um onboarding
+   * de integração em andamento, com etapa "3 de 5" e go-live estimado, nenhum
+   * dos dois confirmado pela ORE. O campo segue no contrato para quando houver
+   * um processo real de implantação a acompanhar.
+   */
   onboardingStep?: { current: number; total: number; label: string; goLiveEstimate: string };
   alerts: number;
   kpis?: { cash: number; revenueMonth: number; revenueDelta: number; oxrDeviation: number };
@@ -202,14 +216,12 @@ export interface Connection {
   recordsImported?: number;
 }
 
-export interface SyncRun {
-  id: string;
-  startedAt: string;
-  duration: string;
-  records: number;
-  status: "success" | "failed" | "partial";
-  error?: string;
-}
+/* Fase 5.1 — `SyncRun` REMOVIDO. Descrevia execuções de sincronização (início,
+   duração, registros importados, falha) de um pipeline que nunca existiu. Seu
+   único consumidor, `listSyncRuns`, foi removido na Sprint 1.4 · item 3; o tipo
+   ficou órfão desde então. Não é capacidade futura preservada: é resíduo do
+   modelo de ingestão que a auditoria de aceite reprovou. Quando houver ingestão
+   real, o contrato será desenhado a partir do que ela de fato produzir. */
 
 export interface AccountMapping {
   id: string;

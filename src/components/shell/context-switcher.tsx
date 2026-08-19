@@ -6,7 +6,6 @@ import { usePathname } from "next/navigation";
 import { ArrowLeft, Building2, Check, ChevronsUpDown, Landmark } from "lucide-react";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuSeparator, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
 import { companies } from "@/mocks/companies";
-import { cn } from "@/lib/utils";
 
 /**
  * Seletor de contexto (padrão Stripe — doc 01 §5.1): alterna entre
@@ -55,31 +54,21 @@ export function ContextSwitcher() {
         )}
         <p className="px-2 py-1 text-caption uppercase tracking-wide text-muted-foreground">Investidas</p>
         {companies.map((c) => {
-          const integrated = c.integrationStatus === "integrated";
+          /* Sprint 1.4 · B-01 — o ponto e o rótulo liam `integrationStatus`:
+             verde "integrada", âmbar "implantação", cinza "sem dados". Não há
+             pipeline em nenhuma delas. Passam a ler `dataStatus`.
+             Fase 5.2 · ORE-51-001 — cinco investidas apareciam desabilitadas e
+             rotuladas "demonstrativo" no seletor, embora tenham fonte
+             documental. Todas abrem; a cobertura por módulo é dita dentro de
+             cada tela, onde tem contexto para significar algo. */
           const item = (
-            <DropdownMenuItem key={c.id} disabled={!integrated} className={cn(!integrated && "opacity-60")}>
-              <span
-                className={cn(
-                  "h-1.5 w-1.5 rounded-full",
-                  c.integrationStatus === "integrated" && "bg-success",
-                  c.integrationStatus === "implementing" && "bg-warning",
-                  c.integrationStatus === "not_integrated" && "bg-gray-300"
-                )}
-              />
+            <DropdownMenuItem key={c.id}>
+              <span className="h-1.5 w-1.5 rounded-full bg-success" />
               <span className="flex-1 truncate">{c.name}</span>
               {c.slug === activeSlug && <Check className="h-3.5 w-3.5 text-action-600" />}
-              {!integrated && (
-                <span className="text-micro text-muted-foreground">
-                  {c.integrationStatus === "implementing" ? "implantação" : "sem dados"}
-                </span>
-              )}
             </DropdownMenuItem>
           );
-          return integrated ? (
-            <Link key={c.id} href={`/e/${c.slug}/overview`}>{item}</Link>
-          ) : (
-            item
-          );
+          return <Link key={c.id} href={`/e/${c.slug}/overview`}>{item}</Link>;
         })}
       </DropdownMenuContent>
     </DropdownMenu>

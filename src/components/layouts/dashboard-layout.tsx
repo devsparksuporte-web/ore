@@ -4,7 +4,10 @@
  * largura, respiro vertical e ritmo entre seções — em um único lugar.
  * Páginas NUNCA repetem "mx-auto max-w-content px-6 py-6 space-y-*".
  */
+"use client";
+
 import * as React from "react";
+import { HiddenBlocksNotice } from "@modules/presentation";
 import { cn } from "@/lib/utils";
 
 const spacings = {
@@ -42,6 +45,9 @@ export function DashboardLayout({
 }: DashboardLayoutProps) {
   return (
     <div className={cn("mx-auto px-6", widths[width], paddings[padY], spacings[spacing], className)}>
+      {/* Fase 5.2 — enquanto houver bloco fora da composição, a página diz.
+          Uma tela editada não pode se apresentar como tela completa. */}
+      <HiddenBlocksNotice />
       {children}
     </div>
   );

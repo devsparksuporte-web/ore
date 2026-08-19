@@ -134,7 +134,10 @@ export const dataFreshnessRule: InsightRule = (ctx) => {
   if (!ctx.dataFreshness.stale) return null;
   return make({
     id: "data-stale", category: "data-quality", tone: "critical", priority: 90,
-    text: `Dados desatualizados (última sincronização: ${ctx.dataFreshness.lastSyncLabel}) · as leituras acima refletem a última versão válida.`,
+    /* Sprint 1.4 · Fase 5 — o texto afirmava "última sincronização", evento que
+       não existe sem ingestão. Passa a falar da data-base da fonte, que é o
+       que caracteriza dado desatualizado numa plataforma documental. */
+    text: `Dados desatualizados (${ctx.dataFreshness.lastSyncLabel}) · as leituras acima refletem a última versão válida da fonte.`,
     href: `/e/${ctx.companySlug}/config/integracoes`,
   });
 };

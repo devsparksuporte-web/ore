@@ -144,6 +144,20 @@ export const tese = {
    * tese de entrada — não será inventada.
    */
   original: null as Fornecido<string>,
+  /**
+   * Sprint 1.4 · item 7 — POR QUE `original` é `null`, em texto EXIBÍVEL.
+   *
+   * Até aqui a ausência só existia no comentário acima, e a tela reagia sumindo
+   * com o bloco. Sumir é a pior das saídas: a investida com dados reais
+   * aparecia menos documentada que as demonstrativas. A ausência passa a ser
+   * dado — declarada aqui, na camada que conhece a fonte, e apenas lida pela UI.
+   *
+   * O texto é para o LEITOR EXECUTIVO, não para o desenvolvedor: sem jargão de
+   * implementação. E diz apenas que a informação não foi disponibilizada — não
+   * descreve, resume nem insinua a tese de entrada, que seria a invenção que
+   * esta sprint existe para corrigir.
+   */
+  originalMotivo: "A Tese Original ainda não foi disponibilizada pela ORE.",
   source: SOURCES.mapa,
 };
 

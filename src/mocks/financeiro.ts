@@ -1,20 +1,29 @@
 import type { CashPoint, CashTitle, DreLine, KpiData, OxrLine } from "@/types/domain";
 
+/*
+ * Sprint 1.4 · Fase 5 — três KPIs declaravam origem "Protheus", um deles com
+ * carimbo de horário ("hoje 06:15"). Não existe integração com o ERP: o rótulo
+ * afirmava um pipeline inexistente e repetia, no rodapé do indicador, o mesmo
+ * timestamp fixo que o item 1 removeu da FilterBar. Os rótulos passam a
+ * descrever o CONTEÚDO, como os demais deste arquivo ("DRE gerencial · jun/26",
+ * "Projetos · jun/26"). Os dados seguem demonstrativos — o que se corrigiu foi
+ * a afirmação de origem, não a natureza do dado.
+ */
+
 /* ── KPIs do Dashboard Ativa (doc 04 §3) ─────────────────────────── */
 export const ativaKpis: KpiData[] = [
   {
-    key: "cash", label: "Caixa disponível", value: "R$ 48,2 mi",
-    subMetric: "4,2 meses de operação",
-    delta: { value: 6.4, label: "vs mai", favorable: true },
-    spark: [39.5, 41.2, 40.1, 43.8, 45.3, 48.2],
-    href: "financeiro/fluxo-de-caixa", source: "Protheus · hoje 06:15",
+    /* Sprint 1.5 · AUD-001 — o caixa da Ativa NÃO existe nos documentos da ORE. Busca exaustiva no workbook e nos três relatórios: nenhum atribui saldo de caixa à investida. O único saldo próximo é o do FUNDO (USD 1.679k em 31/12/2025), que não é dela e não pode preenchê-la. */
+    key: "cash", label: "Caixa disponível", value: "Não disponibilizado",
+    subMetric: "Aguardando disponibilização pela ORE",
+    href: "financeiro/fluxo-de-caixa", source: "Posição de caixa",
   },
   {
     key: "revenue", label: "Receita (mês)", value: "R$ 18,9 mi",
     subMetric: "YTD R$ 112,7 mi",
     delta: { value: -3.1, label: "vs orçado", favorable: false },
     spark: [17.2, 18.8, 19.5, 18.1, 19.6, 18.9],
-    href: "financeiro/dre", source: "Protheus · publicado jun/26",
+    href: "financeiro/dre", source: "DRE gerencial · publicado jun/26",
   },
   {
     key: "ebitda", label: "EBITDA (mês)", value: "R$ 5,4 mi",
@@ -28,7 +37,7 @@ export const ativaKpis: KpiData[] = [
     subMetric: "R$ 78,90/t",
     delta: { value: 10.4, label: "vs orçado", favorable: false },
     spark: [9.8, 10.1, 10.4, 10.9, 11.0, 11.2],
-    href: "financeiro/oxr", source: "Protheus · jun/26",
+    href: "financeiro/oxr", source: "Orçado × realizado · jun/26",
   },
   {
     key: "capex", label: "Execução CAPEX (ano)", value: "R$ 14,1 mi",

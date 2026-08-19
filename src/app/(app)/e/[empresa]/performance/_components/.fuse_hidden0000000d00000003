@@ -1,0 +1,64 @@
+"use client";
+
+/**
+ * Evolução do valuation — leitura editorial (Bloomberg/Carta): grade mínima
+ * (3 níveis), série protagonista com área discreta, marcador e rótulo apenas
+ * no ponto atual (o executivo não precisa "ler o eixo"). Sobre os primitivos
+ * de dataviz do DS.
+ */
+import {
+  Area, CartesianGrid, ComposedChart, Label, Line, ReferenceDot, ResponsiveContainer, Tooltip, XAxis, YAxis,
+} from "recharts";
+import { animationProps, axisProps, chartColors, cursorLine, gradientIds, gridProps, strokeWidths } from "@/components/charts/chart-tokens";
+import { ChartDefs, rechartsTooltip } from "@/components/charts/chart-primitives";
+import { formatMoney } from "@/lib/format";
+import type { ValuationPoint } from "@modules/performance";
+
+const short = (v: number) => formatMoney(v, { compact: true }).replace("R$ ", "");
+
+export function ValuationChart({ data }: { data: ValuationPoint[] }) {
+  const last = data[data.length - 1];
+
+  const tooltip = rechartsTooltip((label, payload) => {
+    const p = payload[0]?.payload as ValuationPoint | undefined;
+    if (!p) return null;
+    return {
+      label: String(label),
+      rows: [{ name: "Valuation", value: formatMoney(p.value, { compact: true }), color: chartColors.actual }],
+    };
+  });
+
+  return (
+    <ResponsiveContainer width="100%" height={216}>
+      <ComposedChart data={data} margin={{ top: 20, right: 64, left: 4, bottom: 0 }}>
+        <ChartDefs />
+        <CartesianGrid {...gridProps} />
+        <XAxis dataKey="year" {...axisProps} />
+        <YAxis {...axisProps} width={66} tickCount={3} tickFormatter={short} />
+        <Tooltip content={tooltip} cursor={cursorLine} />
+        <Area dataKey="value" stroke="none" fill={`url(#${gradientIds.navy})`} type="monotone" {...animationProps} />
+        <Line
+          dataKey="value"
+          stroke={chartColors.actual}
+          strokeWidth={strokeWidths.primary}
+          type="monotone"
+          dot={false}
+          activeDot={{ r: 3.5, strokeWidth: strokeWidths.primary, stroke: "var(--bg-surface)" }}
+          {...animationProps}
+        />
+        {last && (
+          <ReferenceDot x={last.year} y={last.value} r={3.5} fill={chartColors.actual} stroke="var(--bg-surface)" strokeWidth={2} isFront>
+            <Label
+              value={short(last.value)}
+              position="right"
+              offset={10}
+              fill={chartColors.actual}
+              fontSize={12}
+              fontWeight={600}
+            />
+          </ReferenceDot>
+        )}
+      </ComposedChart>
+    </ResponsiveContainer>
+  );
+}

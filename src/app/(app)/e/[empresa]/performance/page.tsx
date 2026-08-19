@@ -13,13 +13,15 @@ import { Badge, DetailDrawer, type DetailDrawerProps, EmptyState, MetricStrip, t
 import { PageHeader } from "@/components/shell/page-header";
 import { DashboardLayout } from "@/components/layouts";
 import { getCompanyBySlug } from "@modules/organizations";
-import { derivePerformance, getPerformanceByCompany } from "@modules/performance";
+import {
+  derivePerformance, getPerformanceByCompany, RUNWAY_FORMULA_LABEL, RUNWAY_PERIOD_UNDEFINED,
+} from "@modules/performance";
 import { formatMoney, formatPct } from "@/lib/format";
 import { ValueHero } from "./_components/value-block";
 import { CapitalBlock } from "./_components/capital-block";
 import { LiquiditySection } from "./_components/liquidity-block";
 import { ValuationHistory } from "./_components/valuation-history";
-import { formatAsOf, moicLabel, opcional, runwayLabel } from "./_components/helpers";
+import { formatAsOf, moicLabel, opcional, ownershipLabel, runwayLabel, SEM_DADO } from "./_components/helpers";
 
 export default function CompanyPerformancePage() {
   const { empresa } = useParams<{ empresa: string }>();
@@ -62,6 +64,11 @@ export default function CompanyPerformancePage() {
      quando foi apurado e o que se espera do leitor. Definido aqui, ao lado do
      próprio indicador, para não haver risco de explicação descolar do dado. */
   const fonte = snap.sourceLabel ?? "Fonte não declarada";
+  /* Fase 5.2 · ORE-51-010 — `fieldStatus` existia no contrato desde a Sprint
+     1.5 e nenhuma tela o lia: o estado do dado era por investida, e a mesma
+     tela mostrava valuation em conflito e cenários documentais com a mesma
+     aparência. Cada drawer passa a declarar o estado do SEU campo. */
+  const fs = snap.fieldStatus;
   const abrir = (d: Omit<DetailDrawerProps, "open" | "onOpenChange">) => () =>
     setDetalhe({ ...d, open: true, onOpenChange: () => setDetalhe(null) });
 
@@ -69,9 +76,9 @@ export default function CompanyPerformancePage() {
     kicker: "Indicador",
     title: "Valor da participação",
     summary:
-      `Marcação a fair value da fatia de ${snap.ownershipPct}% da Ore na investida. É quanto a participação vale hoje segundo o comitê de valuation — não é preço de venda nem oferta recebida.`,
+      `Marcação a fair value da fatia de ${ownershipLabel(snap.ownershipPct)} da Ore na investida. É quanto a participação vale hoje segundo o método de marcação declarado pela fonte — não é preço de venda nem oferta recebida.`,
     fields: [
-      { label: "Valor", value: money(snap.valuation.current) },
+      { label: "Valor", value: opcional(snap.valuation.current, money) },
       { label: "Data-base", value: formatAsOf(snap.valuation.asOf) },
       { label: "Método", value: snap.valuation.method },
       { label: "Capital investido", value: opcional(snap.capital.invested, money) },
@@ -79,6 +86,7 @@ export default function CompanyPerformancePage() {
     ],
     action: "Reavaliar a marcação quando a SBLC destravar o financiamento — é o evento que muda a tese de valor.",
     source: fonte,
+    dataStatus: fs?.valuation,
   });
 
   const detCapital = abrir({
@@ -89,12 +97,13 @@ export default function CompanyPerformancePage() {
       : "Custo de aquisição da participação — a base sobre a qual o múltiplo é calculado.",
     fields: [
       { label: "Valor", value: opcional(snap.capital.invested ?? snap.capital.called, money) },
-      { label: "Participação", value: `${snap.ownershipPct}%` },
+      { label: "Participação", value: ownershipLabel(snap.ownershipPct) },
       ...(snap.capital.unavailableReason
         ? [{ label: "Posição de capital por investida", value: snap.capital.unavailableReason, wide: true }]
         : []),
     ],
     source: fonte,
+    dataStatus: fs?.capital,
   });
 
   const detCenario = snap.scenarios
@@ -112,9 +121,16 @@ export default function CompanyPerformancePage() {
         ],
         action: "Definir o racional de saída em 2026: quem compra, em que estágio e sob qual gatilho.",
         source: "Workbook de gestão · Timeline de Saída",
+        dataStatus: fs?.scenarios,
       })
     : undefined;
 
+  /* Item 8 — o drawer do runway precisa responder as cinco perguntas que
+     sustentam o número: QUANTO (caixa e consumo), COMO (fórmula), SOBRE QUAL
+     PERÍODO, EM QUE DATA e DE ONDE. Antes explicava significado, caixa e burn
+     e calava sobre cálculo, período e data-base — o leitor via um valor sem
+     poder auditá-lo. Cada campo abaixo sai da fonte ou do port; nenhum é
+     arbitrado aqui. */
   const detRunway = abrir({
     kicker: "Indicador",
     title: "Runway",
@@ -124,8 +140,16 @@ export default function CompanyPerformancePage() {
         : "Quantos meses a investida opera com o caixa atual, ao ritmo de consumo atual.",
     fields: [
       { label: "Runway", value: runwayLabel(d.runwayMonths) },
+      { label: "Fórmula", value: RUNWAY_FORMULA_LABEL },
       { label: "Consumo mensal", value: opcional(snap.liquidity.burnMonthly, (n) => formatMoney(n, { compact: true, currency: snap.liquidity.currency ?? "BRL" })) },
       { label: "Caixa", value: opcional(snap.liquidity.cash, money) },
+      /* ORE-51-004 — o saldo tem data-base própria; sem ela o leitor assume a
+         do snapshot (três meses antes, no caso da Morro Verde). */
+      { label: "Data-base do caixa", value: snap.liquidity.cashAsOf ? formatAsOf(snap.liquidity.cashAsOf) : SEM_DADO },
+      /* Período e data-base do CONSUMO — não do snapshot. Sem metodologia
+         definida pela fonte, "Aguardando definição"; nunca um período suposto. */
+      { label: "Período considerado", value: snap.liquidity.burnPeriodLabel ?? RUNWAY_PERIOD_UNDEFINED },
+      { label: "Data-base do consumo", value: snap.liquidity.burnAsOf ? formatAsOf(snap.liquidity.burnAsOf) : SEM_DADO },
       { label: "Contingências", value: opcional(snap.liquidity.contingencies, money) },
       ...(snap.liquidity.unavailableReason
         ? [{ label: "Por que não é calculável", value: snap.liquidity.unavailableReason, wide: true }]
@@ -136,10 +160,12 @@ export default function CompanyPerformancePage() {
         ? "Solicitar à ORE o saldo de caixa da investida — sem ele, a plataforma não consegue antecipar necessidade de aporte."
         : undefined,
     source: "Forecast operacional · Apresentação",
+    dataStatus: fs?.runway,
   });
 
   const kpis: MetricItem[] = [
-    { label: "Valor da participação", value: money(snap.valuation.current), hint: `Múltiplo ${moicLabel(d.moic)}`, onSelect: detValor },
+    { label: "Valor da participação", value: opcional(snap.valuation.current, money), muted: snap.valuation.current === null,
+      hint: d.moic === null ? undefined : `Múltiplo ${moicLabel(d.moic)}`, onSelect: detValor },
     temCapital
       ? { label: "Capital chamado", value: opcional(snap.capital.called, money), hint: d.calledPct !== null ? `${formatPct(d.calledPct, { digits: 0 })} do comprometido` : undefined, onSelect: detCapital }
       : { label: "Capital investido", value: opcional(snap.capital.invested, money), hint: "custo de aquisição", onSelect: detCapital },
@@ -153,7 +179,14 @@ export default function CompanyPerformancePage() {
     <DashboardLayout spacing="xl">
       <PageHeader
         title="Performance do Investimento"
-        description={`Participação ${snap.ownershipPct}% · ${snap.currency} · data-base ${formatAsOf(snap.asOf)}`}
+        /* Participação omitida quando os documentos conflitam: "Participação
+           Não disponibilizado" no header lê pior que simplesmente não afirmar.
+           A ausência segue declarada no drawer do indicador. */
+        description={[
+          snap.ownershipPct === null ? null : `Participação ${ownershipLabel(snap.ownershipPct)}`,
+          snap.currency,
+          `data-base ${formatAsOf(snap.asOf)}`,
+        ].filter(Boolean).join(" · ")}
         badge={<Badge variant="outline">{companyName}</Badge>}
       />
 
@@ -169,7 +202,7 @@ export default function CompanyPerformancePage() {
 
       <LiquiditySection liquidity={snap.liquidity} derived={d} />
 
-      <ValuationHistory history={snap.valuation.history} currency={cur} />
+      <ValuationHistory history={snap.valuation.history} currency={cur} note={snap.valuation.seriesNote} />
 
       {detalhe && <DetailDrawer {...detalhe} />}
     </DashboardLayout>

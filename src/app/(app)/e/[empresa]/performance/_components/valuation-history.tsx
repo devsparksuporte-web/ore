@@ -18,14 +18,20 @@ import { cn } from "@/lib/utils";
  * Nenhum VALOR foi alterado — só o símbolo passou a acompanhar a moeda em que
  * a fonte registra.
  */
-export function ValuationHistory({ history, currency }: { history: ValuationRecord[]; currency: string }) {
+export function ValuationHistory({
+  history, currency, note,
+}: { history: ValuationRecord[]; currency: string; note?: string }) {
   const rows = history.map((r, i) => {
     const prev = history[i + 1]?.value;
     return { ...r, deltaPct: prev ? ((r.value - prev) / prev) * 100 : null };
   });
 
   return (
-    <EditorialSection title="Histórico de valuation" meta={`${rows.length} marcações`}>
+    <EditorialSection title="Histórico de valuation" meta={`${rows.length} ${rows.length === 1 ? "marcação" : "marcações"}`}>
+      {/* Fase 5.2 · ORE-51-002 — a tabela listava as marcações da Alvo sem
+          qualquer sinal de que a última está em conflito documental aberto. */}
+      {note && <p className="mb-3 max-w-prose text-caption leading-6 text-warning-fg">{note}</p>}
+
       <table className="w-full text-body-sm">
         <thead>
           <tr className="border-b text-caption text-gray-500">

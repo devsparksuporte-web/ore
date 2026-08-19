@@ -15,15 +15,22 @@ import type { AccountMapping, Connection, Notification, User } from "@/types/dom
  * ⚠️ `usedBy` só é preenchido quando a relação está comprovada no código. Os
  * demais documentos do escopo da ORE existem, mas ainda não foram lidos pela
  * plataforma — associá-los a indicadores seria inventar rastreabilidade.
+ *
+ * Fase 5.2 · ORE-51-009 — o catálogo atribuía o workbook só à Ativa e listava
+ * as demais como "sem fonte documental disponibilizada". Falso desde a Sprint
+ * 1.5: a aba Base de Dados traz posição, série trimestral e participação das
+ * SEIS, e cada investida tem sua própria aba de KPI. As entradas passam a
+ * refletir o alcance real de cada documento.
  */
 export const connections: Connection[] = [
   {
     id: "cn-1",
     connector: "Workbook de gestão — Ore Mining PE I FIP",
-    companyName: "Ativa Mineração",
+    companyName: "Todas as investidas",
     dataStatus: "REAL",
-    detail: "Tese, riscos, decisões e ações, marcos, valor da participação e cenários de saída.",
-    usedBy: ["Estratégia & Execução", "Performance do Investimento"],
+    detail:
+      "Base de Dados, Mapa Estratégico e as abas de KPI de cada investida: tese, riscos, decisões e ações, marcos, capital investido, valor justo, participação, série trimestral e cenários de saída.",
+    usedBy: ["Estratégia & Execução", "Performance do Investimento", "Valuation"],
   },
   {
     id: "cn-2",
@@ -35,10 +42,12 @@ export const connections: Connection[] = [
   },
   {
     id: "cn-3",
-    connector: "Demais documentos do escopo da ORE",
-    companyName: "Ativa Mineração",
-    dataStatus: "AGUARDANDO_DADOS",
-    detail: "Documentos disponibilizados pela ORE que a plataforma ainda não incorporou.",
+    connector: "Relatórios trimestrais Q4 2025 e Q1 2026 e Assembleia Geral 2026",
+    companyName: "Todas as investidas",
+    dataStatus: "REAL",
+    detail:
+      "Participação, marcos e leitura operacional por investida. O relatório do Q1 2026 sustenta o caixa da Morro Verde, com data-base própria de 31/03/2026.",
+    usedBy: ["Performance do Investimento", "Caixa"],
   },
   {
     id: "cn-4",
@@ -56,10 +65,11 @@ export const connections: Connection[] = [
   },
   {
     id: "cn-6",
-    connector: "Documentos das demais investidas",
-    companyName: "Nazareno Gold, Morro Verde e outras",
+    connector: "Demonstrações financeiras e extratos de caixa",
+    companyName: "Investidas exceto Morro Verde",
     dataStatus: "AGUARDANDO_DADOS",
-    detail: "Sem fonte documental disponibilizada. Os módulos exibem dados demonstrativos.",
+    detail:
+      "Os módulos Financeiro e Caixa dependem destes documentos. Enquanto não chegam, exibem dados demonstrativos.",
   },
 ];
 

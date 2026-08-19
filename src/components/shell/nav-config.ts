@@ -3,6 +3,7 @@ import {
   Link2, ListChecks, Landmark, Receipt, Scale, ScrollText, Settings, ShieldCheck, TrendingUp,
   Users, Wallet, type LucideIcon,
 } from "lucide-react";
+import type { ModuleAvailability } from "@modules/data-source";
 
 export interface NavItem {
   label: string;
@@ -11,6 +12,21 @@ export interface NavItem {
   badge?: number;
   disabled?: boolean;
   disabledReason?: string;
+  /**
+   * Sprint 1.4 · item 9 — disponibilidade do MÓDULO, distinta do estado de um
+   * dado (`DataStatus`).
+   *
+   * O módulo permanece no menu: some-lo esconderia a arquitetura do produto e
+   * faria o Crystal parecer menor do que é. O que muda é o que se promete. Os
+   * itens marcados aqui diziam "Disponível na v1.1" e "Disponível com 2+
+   * investidas integradas" — o primeiro é promessa de prazo que ninguém firmou,
+   * o segundo alude a uma integração que não existe. `no_data_source` diz o que
+   * é verdade: o módulo existe e ainda não tem de onde ler.
+   *
+   * Quando declarada, esta propriedade é a dona do texto exibido — o rótulo sai
+   * de `MODULE_AVAILABILITY_LABEL`, nunca de string solta na tela.
+   */
+  availability?: ModuleAvailability;
 }
 export interface NavGroup {
   label: string;
@@ -30,14 +46,14 @@ export const portfolioNav: NavGroup[] = [
     label: "Portfólio",
     items: [
       { label: "Investidas", href: "/portfolio/investidas", icon: Building2 },
-      { label: "Pipeline", href: "/portfolio/pipeline", icon: FolderKanban, disabled: true, disabledReason: "Disponível na Fase 3" },
+      { label: "Pipeline", href: "/portfolio/pipeline", icon: FolderKanban, disabled: true, availability: "no_data_source" },
     ],
   },
   {
     label: "Financeiro",
     items: [
-      { label: "DRE Consolidada", href: "/portfolio/dre", icon: BarChart3, disabled: true, disabledReason: "Disponível com 2+ investidas integradas" },
-      { label: "Caixa do Portfólio", href: "/portfolio/caixa", icon: Wallet, disabled: true, disabledReason: "Disponível com 2+ investidas integradas" },
+      { label: "DRE Consolidada", href: "/portfolio/dre", icon: BarChart3, disabled: true, availability: "no_data_source" },
+      { label: "Caixa do Portfólio", href: "/portfolio/caixa", icon: Wallet, disabled: true, availability: "no_data_source" },
     ],
   },
   {
@@ -67,16 +83,16 @@ export function companyNav(slug: string, pendingApprovals: number): NavGroup[] {
       items: [
         { label: "Fluxo de Caixa", href: `${base}/financeiro/fluxo-de-caixa`, icon: Wallet },
         { label: "DRE", href: `${base}/financeiro/dre`, icon: BarChart3 },
-        { label: "Balanço", href: `${base}/financeiro/balanco`, icon: Landmark, disabled: true, disabledReason: "Disponível na v1.1" },
+        { label: "Balanço", href: `${base}/financeiro/balanco`, icon: Landmark, disabled: true, availability: "no_data_source" },
         { label: "Orçado x Realizado", href: `${base}/financeiro/oxr`, icon: TrendingUp },
-        { label: "Forecast", href: `${base}/financeiro/forecast`, icon: GitBranch, disabled: true, disabledReason: "Disponível na v1.1" },
+        { label: "Forecast", href: `${base}/financeiro/forecast`, icon: GitBranch, disabled: true, availability: "no_data_source" },
       ],
     },
     {
       label: "Operações",
       items: [
         { label: "Compras", href: `${base}/operacoes/compras`, icon: Receipt, badge: pendingApprovals },
-        { label: "CAPEX", href: `${base}/operacoes/capex`, icon: Briefcase, disabled: true, disabledReason: "Disponível na v1.1" },
+        { label: "CAPEX", href: `${base}/operacoes/capex`, icon: Briefcase, disabled: true, availability: "no_data_source" },
       ],
     },
     {
@@ -84,7 +100,7 @@ export function companyNav(slug: string, pendingApprovals: number): NavGroup[] {
       items: [
         { label: "Aprovações", href: `${base}/governanca/aprovacoes`, icon: FileCheck2, badge: pendingApprovals },
         { label: "Auditoria", href: `${base}/governanca/auditoria`, icon: ShieldCheck },
-        { label: "Documentos", href: `${base}/governanca/documentos`, icon: ScrollText, disabled: true, disabledReason: "Disponível na v1.1" },
+        { label: "Documentos", href: `${base}/governanca/documentos`, icon: ScrollText, disabled: true, availability: "no_data_source" },
       ],
     },
     {

@@ -21,11 +21,10 @@ export const alerts: Alert[] = [
     company: "Ativa", companySlug: "ativa-mineracao", timeAgo: "3h",
     action: { label: "Ver fila", href: "/e/ativa-mineracao/governanca/aprovacoes" }, status: "active",
   },
-  {
-    id: "al-5", severity: "warning", title: "Onboarding Nazareno sem avanço há 10 dias (etapa 3/5)",
-    company: "Nazareno", timeAgo: "4h",
-    action: { label: "Ver integração", href: "/portfolio/investidas" }, status: "active",
-  },
+  /* Sprint 1.4 · B-02 — removido o alerta "Onboarding Nazareno sem avanço há
+     10 dias (etapa 3/5)", com ação "Ver integração". Não existe onboarding de
+     integração em curso: nem a etapa, nem o atraso, nem o processo. Não foi
+     substituído — não há evento verdadeiro a alertar no lugar. */
 ];
 
 export const feed: FeedItem[] = [
@@ -64,7 +63,10 @@ export const pipelineMini = [
 export const milestones = [
   { date: "15/jul", label: "Reunião de conselho — Ativa", kind: "board", upcoming: true },
   { date: "31/jul", label: "Fechamento contábil jul/26 — Ativa", kind: "closing", upcoming: true },
-  { date: "ago/26", label: "Go-live integração — Nazareno Gold", kind: "golive", upcoming: true },
+  /* Sprint 1.4 · B-02 — removido "Go-live integração — Nazareno Gold · ago/26".
+     Anunciava, na Home do portfólio, um cronograma de integração que a ORE
+     nunca confirmou. Não substituído por outra data: não há prazo acordado, e
+     inventar um novo rótulo com prazo seria repetir o defeito. */
   { date: "set/26", label: "Abertura ciclo orçamentário 2027", kind: "budget", upcoming: true },
   { date: "jun/26", label: "Publicação junho — Ativa ✓", kind: "done", upcoming: false },
 ];

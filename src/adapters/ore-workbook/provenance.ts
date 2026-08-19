@@ -27,6 +27,13 @@ import type { SourceRef } from "@modules/data-source";
 
 const WORKBOOK = "Workbook de Gestão — Ore Mining PE I FIP";
 const FORECAST = "Forecast operacional — Ativa";
+/* Sprint 1.5 — relatórios trimestrais e AGM entram como fontes documentais.
+   Cada um tem data-base PRÓPRIA: nada aqui é normalizado para uma data única
+   (D1). Um valor mais recente não sobrescreve um mais antigo — convivem como
+   histórico temporal. */
+const Q4_2025 = "Relatório trimestral Q4 2025 — 260310";
+const Q1_2026 = "Relatório trimestral Q1 2026 — 260601";
+const AGM_2026 = "Assembleia Geral 2026 — 260626";
 
 export const SOURCES = {
   /** Aba "1. Capa" — snapshot do fundo. */
@@ -43,6 +50,28 @@ export const SOURCES = {
   kpiAtiva: { label: "Workbook de gestão · KPI Ativa", file: WORKBOOK, sheet: "8. KPI Ativa", asOf: "2025-12-31" },
   /** Forecast operacional — recorte confirmado pelo PO: aba "Apresentação". */
   forecast: { label: "Forecast operacional · Apresentação", file: FORECAST, sheet: "Apresentação", asOf: "2026-05-31" },
+
+  /* ── Sprint 1.5 · fontes acrescentadas ───────────────────────────────── */
+
+  /** Aba "3. Dashboard" — cockpit executivo por ativo + evolução do fair value. */
+  dashboard: { label: "Workbook de gestão · Dashboard do portfólio", file: WORKBOOK, sheet: "3. Dashboard", asOf: "2025-12-31" },
+  /** Aba "13. Base de Dados" — fonte única do workbook: posição por investida,
+   *  série trimestral de fair value e parâmetros do fundo (Q1/2020–Q4/2025). */
+  baseDados: { label: "Workbook de gestão · Base de Dados", file: WORKBOOK, sheet: "13. Base de Dados", asOf: "2025-12-31" },
+  /** Posição do portfólio Q4 2025 — cost, fair value, ownership, método. */
+  posicaoQ4: { label: "Workbook de gestão · Base de Dados · Posição Q4 2025", file: WORKBOOK, sheet: "13. Base de Dados", range: "A16:I22", asOf: "2025-12-31" },
+  /** Série trimestral de fair value por ativo (Q1/2020–Q4/2025). */
+  serieFV: { label: "Workbook de gestão · Base de Dados · Fair value trimestral", file: WORKBOOK, sheet: "13. Base de Dados", range: "A27:Y33", asOf: "2025-12-31" },
+  /** Aba KPI de cada investida (7 a 12). */
+  kpiMorroVerde: { label: "Workbook de gestão · KPI Morro Verde", file: WORKBOOK, sheet: "7. KPI Morro Verde", asOf: "2025-12-31" },
+  kpiNzr: { label: "Workbook de gestão · KPI NZR Gold", file: WORKBOOK, sheet: "9. KPI NZR Gold", asOf: "2025-12-31" },
+  kpiIocg: { label: "Workbook de gestão · KPI IOCG Norte", file: WORKBOOK, sheet: "10. KPI IOCG Norte", asOf: "2025-12-31" },
+  kpiAlvo: { label: "Workbook de gestão · KPI Alvo", file: WORKBOOK, sheet: "11. KPI Alvo", asOf: "2025-12-31" },
+  kpiNeeo: { label: "Workbook de gestão · KPI Neeo", file: WORKBOOK, sheet: "12. KPI Neeo", asOf: "2025-12-31" },
+  /** Relatórios trimestrais e AGM — data-base própria de cada um. */
+  q4_2025: { label: "Relatório trimestral Q4 2025", file: Q4_2025, asOf: "2025-12-31", category: "Documento ORE" },
+  q1_2026: { label: "Relatório trimestral Q1 2026", file: Q1_2026, asOf: "2026-03-31", category: "Documento ORE" },
+  agm_2026: { label: "Assembleia Geral 2026", file: AGM_2026, asOf: "2026-04-30", category: "Documento ORE" },
 } as const satisfies Record<string, SourceRef>;
 
 /**

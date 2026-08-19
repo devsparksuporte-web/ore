@@ -53,6 +53,7 @@ export function buildWidget(spec: AnalyticsWidgetSpec): WidgetConfig<any> {
     costCenter: spec.query.costCenter,
     href: spec.href,
     source: defaultSource(spec),
+    dataStatus: spec.dataStatus,
   };
 
   switch (spec.visualization) {

@@ -10,11 +10,14 @@
 import type {
   AssetRef, Decision, ExitPlan, StrategicMap, StrategyEvent,
 } from "@/modules/strategy/types";
-/* Sprint 1.4 — a Ativa deixou de ser demonstrativa: seus registros vêm do
-   ADAPTADOR do workbook da ORE. As demais investidas seguem com dados de
-   demonstração até que a ORE forneça as planilhas correspondentes. */
+/* Sprint 1.5 — os painéis das SEIS investidas vêm do Mapa Estratégico do
+   workbook (aba 5). A auditoria documental mostrou que os textos das cinco
+   investidas antes rotuladas "demonstrativas" são transcrição literal daquela
+   aba — eram reais e estavam classificados por omissão. A Ativa continua vindo
+   do adaptador; as demais declaram a mesma origem via `source`/`dataStatus`,
+   com a célula exata de onde cada painel saiu. */
 import {
-  ativaDecisions, ativaExitPlan, ativaStrategicMap, ativaTimeline,
+  ativaDecisions, ativaExitPlan, ativaStrategicMap, ativaTimeline, SOURCES,
 } from "@/adapters/ore-workbook";
 
 /* ───────────────────────────── Ativos ───────────────────────────── */
@@ -34,6 +37,8 @@ const A: Record<string, AssetRef> = {
 export const strategicMaps: StrategicMap[] = [
   {
     id: "map-morroverde",
+    source: { ...SOURCES.mapa, cell: "B6:F6" },
+    dataStatus: "REAL",
     asset: A.morroverde,
     thesisOriginal:
       "Aquisição da Massari para consolidar posição em calcário e fosfato e capturar sinergias operacionais com a plataforma existente.",
@@ -64,6 +69,8 @@ export const strategicMaps: StrategicMap[] = [
   ativaStrategicMap,
   {
     id: "map-nzr",
+    source: { ...SOURCES.mapa, cell: "B8:F8" },
+    dataStatus: "REAL",
     asset: A.nzr,
     thesisOriginal:
       "Explorar o depósito Gamba (ouro) e destravar valor por descoberta e expansão de recursos.",
@@ -92,6 +99,8 @@ export const strategicMaps: StrategicMap[] = [
   },
   {
     id: "map-iocg",
+    source: { ...SOURCES.mapa, cell: "B9:F9" },
+    dataStatus: "REAL",
     asset: A.iocg,
     thesisOriginal:
       "Farm-out do ativo IOCG para parceiro (Centaurus) executar o programa exploratório e gerar dados.",
@@ -120,6 +129,8 @@ export const strategicMaps: StrategicMap[] = [
   },
   {
     id: "map-alvo",
+    source: { ...SOURCES.mapa, cell: "B10:F10" },
+    dataStatus: "REAL",
     asset: A.alvo,
     thesisOriginal:
       "Posição minoritária listada, mantida à espera de re-rating de mercado ou alternativa estratégica.",
@@ -149,6 +160,8 @@ export const strategicMaps: StrategicMap[] = [
   },
   {
     id: "map-neeo",
+    source: { ...SOURCES.mapa, cell: "B11:F11" },
+    dataStatus: "REAL",
     asset: A.neeo,
     thesisOriginal:
       "Portfólio de direitos minerários em exploração (ouro e titânio) a ser monetizado via JV ou venda.",

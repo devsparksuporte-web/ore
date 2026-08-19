@@ -22,7 +22,7 @@ export function MainLayout({ children }: { children: React.ReactNode }) {
         Pular para o conteúdo
       </a>
       <Sidebar />
-      <div className="lg:pl-60">
+      <div className="lg:pl-80">
         <Topbar />
         <main id="conteudo" className="outline-none" tabIndex={-1}>
           {children}

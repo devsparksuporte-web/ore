@@ -7,30 +7,50 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { EntityCard } from "@/components/data/entity-card";
 import { DataTable, type Column } from "@/components/data/data-table";
-import { IntegrationBadge } from "@/components/data/status-badge";
 import { EmptyState } from "@/components/data/empty-state";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { companies } from "@/mocks/companies";
-import { formatMoney } from "@/lib/format";
+import { listCompanies, getCobertura, MODULO_LABEL, type ModuloCrystal } from "@modules/organizations";
+import { DATA_STATUS_LABEL, type DataStatus } from "@modules/data-source";
 import type { Company } from "@/types/domain";
 import { toast } from "sonner";
 import { useRouter } from "next/navigation";
 import { DashboardLayout } from "@/components/layouts";
 
+/* Fase 5.2 · ORE-51-001 — o filtro e o cabeçalho tratavam a fonte como
+   tudo-ou-nada ("1 com fonte documental · 5 com dados demonstrativos"), o que
+   se lia como "só a Ativa tem dados reais". As seis têm. O que varia é o
+   MÓDULO: por isso o filtro passa a ser por módulo com fonte documental. */
+const MODULOS: ModuloCrystal[] = ["estrategia", "performance", "valuation", "financeiro", "caixa"];
+
 export default function InvestidasPage() {
   const router = useRouter();
+  const companies = listCompanies();
   const [view, setView] = React.useState<"grid" | "list">("grid");
   const [statusFilter, setStatusFilter] = React.useState("all");
 
-  const filtered = companies.filter((c) => statusFilter === "all" || c.integrationStatus === statusFilter);
+  /* Sprint 1.4 · B-01 — a lista filtrava e rotulava por estado de INTEGRAÇÃO
+     ("Integradas", "Em implantação", "Sem integração"), afirmando pipelines que
+     não existem. Passa a filtrar e rotular por estado do DADO.
+     Fase 5.2 — o estado do dado é por módulo: o filtro seleciona o módulo e
+     mostra quem já tem fonte documental nele. */
+  const filtered =
+    statusFilter === "all"
+      ? companies
+      : companies.filter((c) => getCobertura(c.slug)?.[statusFilter as ModuloCrystal] === "REAL");
+
+  const comFinanceiro = companies.filter((c) => getCobertura(c.slug)?.financeiro === "REAL").length;
 
   const columns: Column<Company>[] = [
     { key: "name", header: "Empresa", render: (c) => <span className="font-medium text-navy-900">{c.name}</span> },
     { key: "commodity", header: "Commodity", render: (c) => <Badge variant="navy">{c.commodity}</Badge> },
     { key: "region", header: "Região", render: (c) => c.region },
-    { key: "ownership", header: "Participação", align: "right", render: (c) => `${c.ownershipPct}%` },
-    { key: "status", header: "Integração", render: (c) => <IntegrationBadge status={c.integrationStatus} /> },
-    { key: "cash", header: "Caixa", align: "right", render: (c) => (c.kpis ? formatMoney(c.kpis.cash, { compact: true }) : "—") },
+    { key: "ownership", header: "Participação", align: "right", render: (c) => (c.ownershipPct === null ? "—" : `${c.ownershipPct}%`) },
+    /* Colunas por módulo: uma linha da tabela responde "onde há fonte nesta
+       investida?" sem precisar abrir o card. */
+    ...MODULOS.map<Column<Company>>((m) => ({
+      key: `mod-${m}`, header: MODULO_LABEL[m], align: "center",
+      render: (c) => <ModuloDot status={getCobertura(c.slug)?.[m]} />,
+    })),
     { key: "alerts", header: "Alertas", align: "center", render: (c) => (c.alerts > 0 ? <Badge variant="warning">{c.alerts}</Badge> : "—") },
   ];
 
@@ -38,7 +58,7 @@ export default function InvestidasPage() {
     <DashboardLayout spacing="md">
       <PageHeader
         title="Investidas"
-        description="6 empresas · 1 integrada · 2 em implantação"
+        description={`${companies.length} investidas · Estratégia, Performance e Valuation com fonte documental da Ore · Financeiro e Caixa em ${comFinanceiro} delas`}
         actions={
           <>
             <div className="flex rounded-md border">
@@ -56,10 +76,10 @@ export default function InvestidasPage() {
         <Select value={statusFilter} onValueChange={setStatusFilter}>
           <SelectTrigger chip><SelectValue /></SelectTrigger>
           <SelectContent>
-            <SelectItem value="all">Status: Todos</SelectItem>
-            <SelectItem value="integrated">Integradas</SelectItem>
-            <SelectItem value="implementing">Em implantação</SelectItem>
-            <SelectItem value="not_integrated">Sem integração</SelectItem>
+            <SelectItem value="all">Módulo: todos</SelectItem>
+            {MODULOS.map((m) => (
+              <SelectItem key={m} value={m}>{`Com fonte: ${MODULO_LABEL[m]}`}</SelectItem>
+            ))}
           </SelectContent>
         </Select>
       </div>
@@ -74,12 +94,28 @@ export default function InvestidasPage() {
         <DataTable
           columns={columns}
           rows={filtered}
-          onRowClick={(c) => {
-            if (c.integrationStatus === "integrated") router.push(`/e/${c.slug}/overview`);
-            else toast.info(`${c.shortName} ainda não está integrada`, { description: "Dados disponíveis após o go-live da integração." });
-          }}
+          onRowClick={(c) => router.push(`/e/${c.slug}/overview`)}
         />
       )}
     </DashboardLayout>
+  );
+}
+
+/** Ponto de estado por módulo — mesmo vocabulário do SourceCaption. */
+const dotTone: Record<DataStatus, string> = {
+  REAL: "bg-success",
+  DEMONSTRATIVO: "bg-warning",
+  AGUARDANDO_DADOS: "bg-warning",
+  NAO_DISPONIVEL: "bg-gray-300",
+  PLANEJADO: "bg-gray-300",
+};
+
+function ModuloDot({ status }: { status?: DataStatus }) {
+  if (!status) return <span className="text-gray-400">—</span>;
+  return (
+    <span className="inline-flex items-center justify-center" title={DATA_STATUS_LABEL[status]}>
+      <span className={`h-1.5 w-1.5 rounded-full ${dotTone[status]}`} aria-hidden />
+      <span className="sr-only">{DATA_STATUS_LABEL[status]}</span>
+    </span>
   );
 }

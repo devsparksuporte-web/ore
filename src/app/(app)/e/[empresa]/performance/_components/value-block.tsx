@@ -8,7 +8,7 @@ import { EditorialSection } from "@/components/ui";
 import { DeltaIndicator } from "@/components/data/delta-indicator";
 import { formatMoney } from "@/lib/format";
 import type { PerformanceDerived, PerformanceSnapshot } from "@modules/performance";
-import { formatAsOf, moicLabel } from "./helpers";
+import { formatAsOf, moicLabel, opcional } from "./helpers";
 import { ValuationChart } from "./valuation-chart";
 
 export function ValueHero({ snap, derived }: { snap: PerformanceSnapshot; derived: PerformanceDerived }) {
@@ -39,20 +39,39 @@ export function ValueHero({ snap, derived }: { snap: PerformanceSnapshot; derive
       }
     >
       <div className="mb-4 flex flex-wrap items-baseline gap-x-4 gap-y-1">
-        <span className="font-display text-kpi font-normal tracking-kpi tnum text-navy-900">
-          {money(v.current)}
+        {/* Sprint 1.5 — a marcação pode não existir: quando os documentos
+            conflitam sobre o fair value (Alvo), a tela declara a ausência em
+            corpo pequeno em vez de exibir um número eleito por conveniência. */}
+        <span
+          className={
+            v.current === null
+              ? "font-display text-body-sm font-normal leading-6 tnum text-gray-400"
+              : "font-display text-kpi font-normal tracking-kpi tnum text-navy-900"
+          }
+        >
+          {opcional(v.current, money)}
         </span>
-        {temSerie && <DeltaIndicator value={derived.valuationVariationYoY} favorable={up} label="a.a." />}
+        {temSerie && v.current !== null && (
+          <DeltaIndicator value={derived.valuationVariationYoY} favorable={up} label="a.a." />
+        )}
       </div>
 
       {temSerie ? (
-        <ValuationChart data={v.annualSeries} />
+        <>
+          <ValuationChart data={v.annualSeries} />
+          {/* Fase 5.2 · ORE-51-002 — quando o valor de topo é "não
+              disponibilizado" mas a série existe, o gráfico sozinho contradizia
+              a declaração acima. A ressalva vem colada nele. */}
+          {v.seriesNote && (
+            <p className="mt-3 max-w-prose text-caption leading-6 text-warning-fg">{v.seriesNote}</p>
+          )}
+        </>
       ) : (
-        /* Marcação única na fonte: um gráfico de um ponto só sugere uma
+        /* Sem série anual na fonte: um gráfico de um ponto só sugere uma
            tendência que não existe. O histórico completo vem abaixo. */
         <p className="border-t pt-4 text-body-sm leading-6 text-gray-500">
-          A fonte registra uma única marcação para esta investida — não há série
-          histórica para desenhar evolução. As marcações disponíveis estão no
+          A fonte registra uma única marcação anual para esta investida — não há
+          série para desenhar evolução. As marcações disponíveis estão no
           histórico ao final da página.
         </p>
       )}

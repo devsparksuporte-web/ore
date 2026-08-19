@@ -1,398 +1,84 @@
 "use client";
 
-import * as React from "react";
-import Link from "next/link";
-import { useParams } from "next/navigation";
-import {
-  AlertOctagon, ArrowRight, Briefcase, CheckCircle2, ClipboardList, FileWarning, ShieldAlert, Wallet,
-} from "lucide-react";
-import { WidgetGrid, ready, type WidgetConfig } from "@modules/widgets";
-import { generateInsights, type BriefingWidgetData, type Insight } from "@modules/insights";
-import { buildAtivaInsightContext } from "@/lib/insight-context";
-import { mockSession } from "@/lib/session";
-import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
-import { FilterBar } from "@/components/shell/filter-bar";
-import { PageHeader } from "@/components/shell/page-header";
-import { ChartCard } from "@/components/data/chart-card";
-import { DeltaIndicator } from "@/components/data/delta-indicator";
-import { PeriodBadge } from "@/components/data/status-badge";
-import { SourceCaption } from "@/components/data/source-caption";
-import type { DataStatus } from "@modules/data-source";
-import { Sparkline } from "@/components/data/sparkline";
-import { CashChart } from "@/components/charts/cash-chart";
-import { WaterfallChart } from "@/components/charts/waterfall-chart";
-import { ForecastChart } from "@/components/charts/forecast-chart";
-import {
-  bankAccounts, cashFlow, CASH_MINIMUM, forecastSeries, operationalKpis, oxrLines, oxrWaterfall, upcomingOutflows,
-} from "@/mocks/financeiro";
-import { alerts } from "@/mocks/governanca";
-import { formatMoney } from "@/lib/format";
-import { getCompany } from "@/mocks/companies";
-import { cn } from "@/lib/utils";
-import { DashboardLayout } from "@/components/layouts";
-import { EditorialSection } from "@/components/ui";
-
 /**
- * Dashboard Executivo · v2 — desenhado para a leitura diária do CEO.
- * Fluxo: SÍNTESE (como estamos?) → RISCO (o que ameaça?) → EVIDÊNCIA
- * (caixa · orçamento) → DECISÃO (investimento · pendências).
- * Cada seção nasce de uma pergunta — contexto e clareza antes de volume.
+ * DASHBOARD DA INVESTIDA (Fase 6).
+ *
+ * Antes: esta tela lia `mocks/financeiro.ts` sem receber o slug da empresa —
+ * caixa, orçamento, forecast, contas bancárias e KPIs operacionais eram os
+ * MESMOS nas seis investidas. Mudavam o nome no cabeçalho, os alertas e os
+ * links; os números, não. Uma plataforma de governança não pode atribuir os
+ * indicadores de uma empresa a outra.
+ *
+ * Agora: a composição vem do adaptador documental, por investida, e é
+ * ADAPTATIVA — cada uma exibe os blocos que a sua aba de KPI sustenta.
+ * Nenhum bloco é preenchido para manter simetria visual.
+ *
+ * A tela só compõe: quem conhece o documento é o adaptador (ADR-029), e quem
+ * decide o que existe é a camada de composição.
  */
+import { useParams } from "next/navigation";
+import { Badge, EmptyState } from "@/components/ui";
+import { PageHeader } from "@/components/shell/page-header";
+import { DashboardLayout } from "@/components/layouts";
+import { BlockRenderer } from "@/components/data/block-renderer";
+import {
+  getCompanyBySlug, getDashboardDaInvestida, getNomeDaFonte, getStatusDeAcompanhamento,
+} from "@modules/companies";
+import { getCobertura, MODULO_LABEL, type ModuloCrystal } from "@modules/organizations";
+import { DATA_STATUS_LABEL } from "@modules/data-source";
+
+const MODULOS: ModuloCrystal[] = ["estrategia", "performance", "valuation", "financeiro", "caixa"];
+
 export default function CompanyOverviewPage() {
   const { empresa } = useParams<{ empresa: string }>();
-  const company = getCompany(empresa);
-  const base = `/e/${empresa}`;
+  const company = getCompanyBySlug(empresa);
+  const companyName = company?.shortName ?? company?.name ?? empresa;
 
-  /* Insight Engine (ADR-020): a análise é do motor; a tela só exibe */
-  const [insights, setInsights] = React.useState<Insight[]>([]);
-  React.useEffect(() => {
-    generateInsights(buildAtivaInsightContext()).then(setInsights);
-  }, []);
+  const blocos = getDashboardDaInvestida(empresa);
+  const nomeFonte = getNomeDaFonte(empresa);
+  const statusAcompanhamento = getStatusDeAcompanhamento(empresa);
+  const cobertura = getCobertura(empresa);
 
-  const critical = alerts.filter((a) => a.severity === "critical" && a.companySlug === empresa);
-  const topDeviations = oxrLines
-    .map((l) => ({ ...l, dev: ((l.actual - l.budget) / Math.abs(l.budget)) * 100 }))
-    .sort((a, b) => Math.abs(b.dev) - Math.abs(a.dev))
-    .slice(0, 4);
-
-  return (
-    <>
-      <FilterBar />
+  if (!blocos || blocos.length === 0) {
+    return (
       <DashboardLayout spacing="lg">
         <PageHeader
           title="Dashboard Executivo"
-          description={company?.name ?? "Ativa Titânio e Vanádio"}
-          badge={
-            <span className="flex items-center gap-2">
-              <PeriodBadge published />
-              {critical.length > 0 ? (
-                <Badge variant="danger" dot>{critical.length} riscos ativos</Badge>
-              ) : (
-                <Badge variant="success" dot>Sem riscos críticos</Badge>
-              )}
-            </span>
-          }
+          description={companyName}
+          badge={<Badge variant="outline">{companyName}</Badge>}
         />
-
-        {/* ── SÍNTESE · Como está a empresa? ─────────────────────────── */}
-        <section aria-label="Síntese">
-          <div className="grid gap-4 lg:grid-cols-3">
-            {/* Qual o caixa? */}
-            <HeroCard
-              eyebrow="Caixa"
-              question="Qual o caixa?"
-              value="R$ 48,2 mi"
-              reading="Cobre 4,2 meses de operação"
-              delta={<DeltaIndicator value={6.4} favorable label="vs mai" />}
-              spark={[39.5, 41.2, 40.1, 43.8, 45.3, 48.2]}
-              href={`${base}/financeiro/fluxo-de-caixa`}
-              source="Posição de caixa" dataStatus="DEMONSTRATIVO"
-            />
-            {/* Como está o EBITDA? */}
-            <HeroCard
-              eyebrow="EBITDA"
-              question="Como está o EBITDA?"
-              value="R$ 5,4 mi"
-              reading="Margem 28,6% · ano projetado R$ 61,2 mi"
-              delta={<DeltaIndicator value={-21.7} favorable={false} label="vs orçado (mês)" />}
-              spark={[5.9, 6.1, 5.8, 5.2, 5.6, 5.4]}
-              href={`${base}/financeiro/dre`}
-              source="DRE publicada · jun/26"
-              tone="warning"
-            />
-            {/* O orçamento está saudável? */}
-            <HeroCard
-              eyebrow="Orçamento"
-              question="O orçamento está saudável?"
-              value="−R$ 1,5 mi"
-              reading="5 de 7 linhas fora do limiar · 2 justificativas pendentes"
-              delta={<DeltaIndicator value={-21.7} favorable={false} label="EBITDA vs plano" />}
-              href={`${base}/financeiro/oxr`}
-              source="Orçamento 2026 v2 × realizado"
-              tone="danger"
-            />
-          </div>
-        </section>
-
-        {/* ── CRYSTAL INTELLIGENCE · briefing diário (a tela só exibe) ── */}
-        {insights.length > 0 && (
-          <section aria-label="Crystal Intelligence — briefing diário">
-            <WidgetGrid
-              widgets={[
-                {
-                  id: "crystal-briefing",
-                  type: "briefing",
-                  span: { base: 12 },
-                  requires: "dashboard.ver",
-                  company: empresa,
-                  data: ready<BriefingWidgetData>({
-                    firstName: mockSession.user.name.split(" ")[0],
-                    insights,
-                    maxItems: 6,
-                  }),
-                } satisfies WidgetConfig<BriefingWidgetData>,
-              ]}
-            />
-          </section>
-        )}
-
-        {/* ── RISCO · Existe algum risco? ─────────────────────────────── */}
-        {critical.length > 0 && (
-          <section aria-label="Riscos ativos">
-            <Eyebrow icon={<ShieldAlert className="h-3.5 w-3.5" />} label="Riscos ativos" />
-            <div className="overflow-hidden rounded-md border border-danger/25 bg-surface">
-              {critical.map((a) => (
-                <div key={a.id} className="flex items-center gap-3 border-b border-danger/10 px-5 py-3.5 last:border-0">
-                  <AlertOctagon className="h-4 w-4 shrink-0 text-danger" />
-                  <p className="min-w-0 flex-1 truncate text-body-sm font-medium text-gray-800">{a.title}</p>
-                  <span className="hidden text-caption text-muted-foreground sm:block">há {a.timeAgo}</span>
-                  <Link href={a.action.href} className="flex shrink-0 items-center gap-1 text-body-sm font-semibold text-action-600 hover:underline">
-                    {a.action.label} <ArrowRight className="h-3.5 w-3.5" />
-                  </Link>
-                </div>
-              ))}
-            </div>
-          </section>
-        )}
-
-        {/* ── CAIXA · evidência ───────────────────────────────────────── */}
-        <section aria-label="Caixa">
-          <Eyebrow icon={<Wallet className="h-3.5 w-3.5" />} label="Caixa · próximos 90 dias" />
-          <div className="grid gap-4 xl:grid-cols-12">
-            <ChartCard
-              className="xl:col-span-8"
-              title="Fluxo de caixa"
-              subtitle="R$ mi · semanal · realizado + projetado"
-              source="Projeção de caixa" dataStatus="DEMONSTRATIVO"
-              actions={
-                <Link href={`${base}/financeiro/fluxo-de-caixa`}>
-                  <Button variant="ghost" size="sm">Ver completo <ArrowRight /></Button>
-                </Link>
-              }
-            >
-              <CashChart data={cashFlow} minimum={CASH_MINIMUM} />
-            </ChartCard>
-
-            <div className="space-y-4 xl:col-span-4">
-              <EditorialSection title="Posição por conta">
-                  {bankAccounts.map((b) => (
-                    <div key={b.bank} className="flex items-center gap-3 text-body-sm">
-                      <span className="w-28 shrink-0 text-gray-700">{b.bank}</span>
-                      <div className="h-2 flex-1 overflow-hidden rounded-full bg-gray-100">
-                        <div className="h-full rounded-full bg-navy-900" style={{ width: `${b.pct}%` }} />
-                      </div>
-                      <span className="w-20 shrink-0 text-right font-medium tnum">{formatMoney(b.balance, { compact: true })}</span>
-                    </div>
-                  ))}
-              </EditorialSection>
-              <EditorialSection title="Maiores saídas · 15 dias">
-                  {upcomingOutflows.slice(0, 4).map((o) => (
-                    <div key={o.id} className="flex items-center justify-between gap-2 text-body-sm">
-                      <div className="min-w-0">
-                        <p className="truncate font-medium text-gray-700">{o.who}</p>
-                        <p className="truncate text-caption text-muted-foreground">vence {o.due}</p>
-                      </div>
-                      <span className="shrink-0 font-medium tnum text-danger">({formatMoney(o.amount, { compact: true })})</span>
-                    </div>
-                  ))}
-              </EditorialSection>
-            </div>
-          </div>
-        </section>
-
-        {/* ── ORÇAMENTO · há desvios? contas críticas? ────────────────── */}
-        <section aria-label="Orçamento e desvios">
-          <Eyebrow icon={<FileWarning className="h-3.5 w-3.5" />} label="Orçamento · desvios e contas críticas" />
-          <div className="grid gap-4 xl:grid-cols-12">
-            <ChartCard
-              className="xl:col-span-7"
-              title="Ponte do EBITDA — junho"
-              subtitle="Orçado → realizado · R$ mi"
-              source="DRE gerencial × Orçamento 2026 v2"
-              actions={<Link href={`${base}/financeiro/oxr`}><Button variant="ghost" size="sm">Ver OxR <ArrowRight /></Button></Link>}
-            >
-              <WaterfallChart data={oxrWaterfall} />
-            </ChartCard>
-
-            <EditorialSection title="Contas críticas" className="xl:col-span-5" meta={<Badge variant="warning">2 sem justificativa</Badge>}>
-              <div className="space-y-1">
-                {topDeviations.map((d) => {
-                  const isRevenue = d.label.toLowerCase().includes("receita");
-                  const favorable = isRevenue ? d.dev >= 0 : d.dev <= 0;
-                  return (
-                    <Link
-                      key={d.id}
-                      href={`${base}/financeiro/oxr`}
-                      className="flex items-center justify-between gap-2 rounded px-2 py-2 transition-colors duration-fast hover:bg-gray-50"
-                    >
-                      <span className="min-w-0">
-                        <span className="block truncate text-body-sm font-medium text-gray-800">{d.label}</span>
-                        <span className="text-caption text-muted-foreground">{d.costCenter}</span>
-                      </span>
-                      <span className="flex shrink-0 items-center gap-2">
-                        <DeltaIndicator value={d.dev} favorable={favorable} />
-                        {d.justification === "accepted" && <Badge variant="success">OK</Badge>}
-                        {d.justification === "submitted" && <Badge variant="info">Análise</Badge>}
-                        {d.justification === "pending" && <Badge variant="warning">Pendente</Badge>}
-                      </span>
-                    </Link>
-                  );
-                })}
-              </div>
-              <div className="mt-4 flex items-center justify-between border-t pt-2.5">
-                <SourceCaption source="Limiar de desvio 5%" dataStatus="DEMONSTRATIVO" />
-                <Link href={`${base}/financeiro/oxr`} className="text-body-sm font-medium text-action-600 hover:underline">Cobrar →</Link>
-              </div>
-            </EditorialSection>
-          </div>
-        </section>
-
-        {/* ── INVESTIMENTO E AÇÃO · preciso investir? o que decido hoje? ── */}
-        <section aria-label="Investimento e ação">
-          <Eyebrow icon={<Briefcase className="h-3.5 w-3.5" />} label="Investimento · trajetória e decisões" />
-          <div className="grid gap-4 xl:grid-cols-12">
-            <ChartCard
-              className="xl:col-span-5"
-              title="EBITDA — trajetória do ano"
-              subtitle="R$ mi · real × forecast × orçado"
-              source="Rolling forecast · fc jun (15/jun)"
-            >
-              <ForecastChart data={forecastSeries} height={200} />
-            </ChartCard>
-
-            <EditorialSection title="CAPEX — execução do ano" className="xl:col-span-4">
-              <div className="space-y-4">
-                <div>
-                  <div className="flex items-baseline justify-between">
-                    <span className="font-display text-2xl font-semibold tnum text-navy-900">R$ 14,1 mi</span>
-                    <span className="text-body-sm text-muted-foreground tnum">de R$ 32,0 mi</span>
-                  </div>
-                  <div className="relative mt-2 h-2 w-full overflow-hidden rounded-full bg-gray-100">
-                    <div className="h-full rounded-full bg-navy-900" style={{ width: "44%" }} />
-                    <div className="absolute top-[-3px] h-3.5 w-[2px] rounded bg-copper-500" style={{ left: "62%" }} title="onde o plano esperava: 62%" />
-                  </div>
-                  <p className="mt-1.5 text-caption text-muted-foreground">
-                    44% executado · plano previa <span className="font-medium text-copper-500">62%</span> — ritmo abaixo do planejado
-                  </p>
-                </div>
-                <div className="rounded-md bg-sunken px-3 py-2.5 text-body-sm text-gray-700">
-                  <span className="font-medium">Aguardando decisão:</span> ampliação do pátio de estocagem
-                  (R$ 2,4 mi) — na alçada da Diretoria Ore.
-                </div>
-              </div>
-              <div className="mt-4 flex items-center justify-between border-t pt-2.5"><SourceCaption source="Projetos" dataStatus="DEMONSTRATIVO" /></div>
-            </EditorialSection>
-
-            {/* Minhas pendências — a ação do dia */}
-            <EditorialSection title="Decidir hoje" className="xl:col-span-3">
-              <div className="space-y-1">
-                <PendingItem icon={<ClipboardList className="h-4 w-4 text-warning-fg" />} text="7 aprovações" detail="R$ 2,3 mi · 2 fora do SLA" href={`${base}/governanca/aprovacoes`} />
-                <PendingItem icon={<FileWarning className="h-4 w-4 text-warning-fg" />} text="1 justificativa" detail="Energia · prazo 05/jul" href={`${base}/financeiro/oxr`} />
-                <PendingItem icon={<CheckCircle2 className="h-4 w-4 text-info-fg" />} text="Fechamento jul/26" detail="3 de 9 etapas" href={`${base}/config/periodos`} />
-                <Link href={`${base}/governanca/aprovacoes`} className="block">
-                  <Button className="mt-1 w-full" size="sm">Ir para a fila <ArrowRight /></Button>
-                </Link>
-              </div>
-            </EditorialSection>
-          </div>
-        </section>
-
-        {/* ── OPERAÇÃO · contexto de rodapé, enxuto ───────────────────── */}
-        <section aria-label="Operação">
-          <div className="grid grid-cols-1 gap-4 border-y py-5 sm:grid-cols-3">
-            {operationalKpis.slice(0, 1).concat(operationalKpis.slice(3, 4), operationalKpis.slice(5, 6)).map((k) => (
-              <div key={k.label} className="flex items-center justify-between gap-3 sm:flex-col sm:items-start">
-                <span className="text-caption uppercase tracking-wider text-gray-500">{k.label}</span>
-                <span className="flex items-baseline gap-2">
-                  <span className="font-display text-lg font-semibold tnum text-navy-900">{k.value}</span>
-                  {k.delta !== 0 ? (
-                    <DeltaIndicator value={k.delta} favorable={k.favorable} className="text-caption" />
-                  ) : (
-                    <span className="text-caption text-success">na meta</span>
-                  )}
-                </span>
-              </div>
-            ))}
-          </div>
-          <p className="mt-2 text-caption text-muted-foreground">
-            Régua operacional completa (6 indicadores) no catálogo da empresa
-          </p>
-        </section>
+        <EmptyState
+          kind="not-configured"
+          title="Sem fonte documental para esta investida"
+          description="Os documentos disponibilizados pela Ore não trazem indicadores desta empresa. Nada é exibido aqui até que a fonte exista."
+        />
       </DashboardLayout>
-    </>
-  );
-}
+    );
+  }
 
-/* ── Blocos locais do dashboard ─────────────────────────────────────── */
+  /* Cobertura por módulo, no topo: o leitor precisa saber onde há fonte e
+     onde ainda não há, ANTES de ler os números. */
+  const aguardando = cobertura
+    ? MODULOS.filter((m) => cobertura[m] === "AGUARDANDO_DADOS").map((m) => MODULO_LABEL[m])
+    : [];
 
-/** Sobrancelha de seção — nomeia a pergunta que a seção responde. */
-function Eyebrow({ icon, label }: { icon: React.ReactNode; label: string }) {
   return (
-    <p className="mb-3 flex items-center gap-1.5 text-caption font-semibold uppercase tracking-wider text-gray-500">
-      {icon} {label}
-    </p>
-  );
-}
+    <DashboardLayout spacing="xl">
+      <PageHeader
+        title="Dashboard Executivo"
+        description={[nomeFonte, statusAcompanhamento].filter(Boolean).join(" · ")}
+        badge={<Badge variant="outline">{companyName}</Badge>}
+      />
 
-/** Card vital da tríade executiva — valor grande + leitura em uma linha. */
-function HeroCard({
-  eyebrow, question, value, reading, delta, spark, href, source, dataStatus, tone,
-}: {
-  eyebrow: string;
-  question: string;
-  value: string;
-  reading: string;
-  delta?: React.ReactNode;
-  spark?: number[];
-  href: string;
-  source: string;
-  /** Sprint 1.4 · item 5 — estado do dado deste indicador. */
-  dataStatus?: DataStatus;
-  tone?: "warning" | "danger";
-}) {
-  return (
-    <Link
-      href={href}
-      className="block h-full rounded-md focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
-    >
-      <div
-        className={cn(
-          "group flex h-full cursor-pointer flex-col rounded-md border bg-surface p-6",
-          "transition-[border-color,box-shadow] duration-fast ease-standard hover:border-action-600/70 hover:shadow-sm",
-          tone === "danger" && "border-l-[3px] border-l-danger",
-          tone === "warning" && "border-l-[3px] border-l-warning"
-        )}
-      >
-        <div className="flex items-center justify-between">
-          <span className="text-caption font-semibold uppercase tracking-wider text-gray-500">{eyebrow}</span>
-          <span className="text-caption text-gray-400">{question}</span>
-        </div>
-        <div className="mt-3 flex items-end justify-between gap-4">
-          <div className="min-w-0">
-            <div className="font-display text-3xl font-semibold leading-9 tracking-tight tnum text-navy-900">{value}</div>
-            <p className="mt-1 truncate text-body-sm text-gray-700">{reading}</p>
-            {delta && <div className="mt-2">{delta}</div>}
-          </div>
-          {spark && <Sparkline data={spark} className="shrink-0 text-navy-900 opacity-70 transition-opacity duration-fast group-hover:opacity-100" />}
-        </div>
-        <div className="mt-auto flex items-center justify-between pt-4">
-          <SourceCaption source={source} dataStatus={dataStatus} />
-          <span aria-hidden className="text-gray-300 transition-transform duration-fast group-hover:translate-x-0.5 group-hover:text-action-600">→</span>
-        </div>
-      </div>
-    </Link>
-  );
-}
+      {aguardando.length > 0 && (
+        <p className="max-w-3xl text-body-sm leading-6 text-gray-500">
+          {`${DATA_STATUS_LABEL.REAL} nos blocos abaixo, transcritos do workbook de gestão da Ore. `}
+          {aguardando.join(" e ")} {aguardando.length === 1 ? "ainda aguarda" : "ainda aguardam"} dados
+          desta investida e {aguardando.length === 1 ? "não aparece" : "não aparecem"} aqui.
+        </p>
+      )}
 
-function PendingItem({ icon, text, detail, href }: { icon: React.ReactNode; text: string; detail: string; href: string }) {
-  return (
-    <Link href={href} className="flex items-start gap-2.5 rounded-md border p-3 transition-colors duration-fast hover:border-action-600">
-      {icon}
-      <span className="min-w-0">
-        <span className="block text-body-sm font-medium text-gray-800">{text}</span>
-        <span className="block truncate text-caption text-muted-foreground">{detail}</span>
-      </span>
-    </Link>
+      <BlockRenderer blocos={blocos} />
+    </DashboardLayout>
   );
 }

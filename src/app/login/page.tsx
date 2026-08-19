@@ -88,7 +88,7 @@ export default function LoginPage() {
         </div>
 
         <p className="anim-fade mt-6 text-center text-caption text-gray-400" style={{ animationDelay: "220ms" }}>
-          Ambiente de demonstração · dados fictícios
+          Ambiente de análise · dados documentais e demonstrativos
         </p>
       </div>
     </AuthLayout>

@@ -6,12 +6,19 @@
  * fundo mais profundo com luz difusa, separadores-fio, hover com deslize
  * sutil, indicador ativo em cobre com halo, avatar com anel, tipografia
  * e alinhamento de ícones calibrados. Confiança de sala de diretoria.
+ *
+ * Fase 5.1 — largura 240px (w-60) → 320px (w-80). Em 240px os rótulos
+ * truncavam ("Estratégia & Exec…", "Performance do I…", "Governança Corp…",
+ * "Visão Financeira (…"), e reduzir a tipografia para caber sacrificaria a
+ * legibilidade executiva. O `truncate` permanece como proteção para rótulos
+ * futuros. `MainLayout` acompanha com `lg:pl-80`.
  */
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
 import { ContextSwitcher } from "./context-switcher";
 import { companyNav, portfolioNav, type NavGroup } from "./nav-config";
+import { MODULE_AVAILABILITY_LABEL } from "@modules/data-source";
 import { mockSession } from "@/lib/session";
 import { cn } from "@/lib/utils";
 import { icon as dsIcon } from "@/design-system";
@@ -23,7 +30,7 @@ export function Sidebar() {
   const groups: NavGroup[] = slug ? companyNav(slug, 7) : portfolioNav;
 
   return (
-    <aside className="fixed inset-y-0 left-0 z-sidebar hidden w-60 flex-col bg-sidebar border-r border-white/[0.04] lg:flex">
+    <aside className="fixed inset-y-0 left-0 z-sidebar hidden w-80 flex-col bg-sidebar border-r border-white/[0.04] lg:flex">
       {/* Logo — marca oficial Ore (arquivo original, versão branca) */}
       <Link
         href="/portfolio/overview"
@@ -94,7 +101,13 @@ export function Sidebar() {
                     {item.disabled ? (
                       <Tooltip>
                         <TooltipTrigger asChild><span>{content}</span></TooltipTrigger>
-                        <TooltipContent side="right">{item.disabledReason}</TooltipContent>
+                        {/* Sprint 1.4 · item 9 — quando o módulo declara
+                            disponibilidade, ela é a dona do texto: o rótulo sai
+                            de MODULE_AVAILABILITY_LABEL, não de string livre.
+                            Sem declaração, o motivo antigo segue válido. */}
+                        <TooltipContent side="right">
+                          {item.availability ? MODULE_AVAILABILITY_LABEL[item.availability] : item.disabledReason}
+                        </TooltipContent>
                       </Tooltip>
                     ) : (
                       <Link

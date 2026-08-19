@@ -23,7 +23,7 @@ export function buildAtivaInsightContext(): InsightContext {
     companySlug: "ativa-mineracao",
     periodLabel: "jun/26",
     cash: {
-      balanceCompact: cash?.value ?? "R$ 48,2 mi",
+      balanceCompact: cash?.value ?? "Não disponibilizado",
       coverageMonths: 4.2,
       minimumMonths: 2,
       sparkMi: cash?.spark ?? [],
@@ -41,7 +41,11 @@ export function buildAtivaInsightContext(): InsightContext {
       topConcentrationPct: top?.concentrationPct ?? 0,
       concentrationLimitPct: 40,
     },
-    dataFreshness: { lastSyncLabel: "hoje 06:15", stale: false },
+    /* Sprint 1.4 · Fase 5 — era `lastSyncLabel: "hoje 06:15"`, o mesmo carimbo
+       fixo que o item 1 removeu da interface. Não há ingestão: não existe
+       "última sincronização" verdadeira para rotular. O rótulo passa a nomear
+       a data-base do dado, que é o que a plataforma de fato sabe. */
+    dataFreshness: { lastSyncLabel: "data-base de junho/2026", stale: false },
     runway: { positiveMonths: 8 },
     approvals: (() => {
       const q = getApprovalQueue();

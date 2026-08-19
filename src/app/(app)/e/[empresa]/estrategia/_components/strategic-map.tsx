@@ -7,6 +7,8 @@
  */
 import * as React from "react";
 import { DetailDrawer, EditorialSection } from "@/components/ui";
+import { SourceCaption } from "@/components/data/source-caption";
+import { DATA_STATUS_LABEL } from "@modules/data-source";
 import type { CriticalPathStep, StrategicMap } from "@modules/strategy";
 
 /** Tom da etiqueta de status do marco, a partir do texto do workbook. */
@@ -105,10 +107,34 @@ export function StrategyHero({ map }: { map: StrategicMap }) {
     <EditorialSection title="Estratégia da investida">
       <div className="space-y-6">
           <div className="grid gap-x-10 gap-y-6 md:grid-cols-2">
-            {map.thesisOriginal && (
+            {/* Tese original — o bloco NÃO some quando falta o texto. Omiti-lo
+                fazia a investida com dados reais parecer menos documentada que
+                as demonstrativas, que exibem uma tese de entrada escrita para
+                demonstração: inversão que engana. Some apenas quando a fonte
+                não declara nem texto nem estado.
+
+                Quem decide o estado é o ADAPTADOR, nunca esta tela — por isso
+                o rótulo sai de `DATA_STATUS_LABEL[map.thesisOriginalStatus]`,
+                sem valor padrão. Mesmo espaço, mesma coluna e mesmos tokens da
+                Tese atual; ausência em cinza e corpo pequeno, como a
+                plataforma já a trata em Performance. */}
+            {(map.thesisOriginal || map.thesisOriginalStatus) && (
               <div>
                 <Label>Tese original</Label>
-                <p className="max-w-prose text-body-sm leading-6 text-gray-500">{map.thesisOriginal}</p>
+                {map.thesisOriginal ? (
+                  <p className="max-w-prose text-body-sm leading-6 text-gray-500">{map.thesisOriginal}</p>
+                ) : (
+                  <div className="max-w-prose">
+                    <p className="text-body-sm leading-6 text-gray-400">
+                      {DATA_STATUS_LABEL[map.thesisOriginalStatus!]}
+                    </p>
+                    {map.thesisOriginalUnavailableReason && (
+                      <p className="mt-1.5 text-caption leading-6 text-gray-500">
+                        {map.thesisOriginalUnavailableReason}
+                      </p>
+                    )}
+                  </div>
+                )}
               </div>
             )}
             <div>
@@ -142,6 +168,16 @@ export function StrategyHero({ map }: { map: StrategicMap }) {
             <div className="mb-1.5 text-body-sm text-copper-500">Decisão estratégica</div>
             <p className="max-w-prose text-body-sm font-medium leading-6 text-navy-900">{map.decision}</p>
           </div>
+
+          {/* Sprint 1.5 — origem e estado do bloco, no rodapé, com o mesmo
+              SourceCaption dos demais módulos. Sem esta linha, a Estratégia de
+              uma investida demonstrativa era indistinguível da de uma real:
+              é a lacuna que a auditoria registrou como AUD-003. */}
+          {map.source && (
+            <div className="border-t pt-3">
+              <SourceCaption source={map.source.label} dataStatus={map.dataStatus} />
+            </div>
+          )}
       </div>
     </EditorialSection>
   );

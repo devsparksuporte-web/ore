@@ -85,6 +85,19 @@ export interface SourceRef {
   category?: string;
   /** Data-base do dado (ISO). Só preencher com data conhecida. */
   asOf?: string;
+  /**
+   * Sprint 1.5 — rastreabilidade granular até a origem.
+   *
+   * `cell` para um valor único ("D18"), `range` para uma série ("B28:Y28"),
+   * `page` para documento paginado ("p.9"). Opcionais como todo o resto: uma
+   * origem sem célula continua sendo uma origem; célula inventada, não.
+   *
+   * Servem à auditoria — quem conferir a tela consegue abrir o arquivo na
+   * posição exata de onde o número saiu.
+   */
+  cell?: string;
+  range?: string;
+  page?: string;
 }
 
 /**

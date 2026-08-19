@@ -7,6 +7,7 @@
  * por empresa e data-base, para receber, no futuro, dados de API ou de um
  * mapeamento de Excel sem alterar a UI (ver docs/performance-module-notes.md).
  */
+import type { DataStatus } from "@modules/data-source";
 
 /* ─────────────────────────── Enums de domínio ─────────────────────────── */
 
@@ -31,8 +32,12 @@ export interface ValuationRecord {
 }
 
 export interface Valuation {
-  /** Valuation atual (headline). */
-  current: number;
+  /**
+   * Valuation atual (headline). Sprint 1.5: aceita `null` porque há investida
+   * cujos documentos CONFLITAM sobre o fair value (Alvo) — e um valor eleito
+   * por conveniência seria pior que a ausência declarada.
+   */
+  current: number | null;
   /** Data-base da marcação atual (ISO). */
   asOf: string;
   method: string;
@@ -42,6 +47,17 @@ export interface Valuation {
   annualSeries: ValuationPoint[];
   /** Histórico de marcações (tabela, ao final da tela). */
   history: ValuationRecord[];
+  /**
+   * Fase 5.2 · ORE-51-002 — estado da SÉRIE, distinto do estado do valor atual.
+   * Há investida cujo fair value corrente está em conflito documental aberto
+   * enquanto a série trimestral segue sendo transcrição literal do que os
+   * documentos reportaram. Sem este campo, gráfico e tabela apresentavam as
+   * marcações como definitivas e contradiziam o "não disponibilizado" exibido
+   * logo acima, no mesmo bloco.
+   */
+  seriesStatus?: DataStatus;
+  /** Ressalva de uma linha sobre a série — exibida junto ao gráfico e à tabela. */
+  seriesNote?: string;
 }
 
 /* ──────────────────── B. CAPITAL (posição de capital) ─────────────────── */
@@ -88,6 +104,28 @@ export interface Liquidity {
   /** Moeda do consumo operacional — pode diferir da moeda do investimento
    *  (o fundo marca em USD; a operação da investida gasta em BRL). */
   currency?: string;
+  /**
+   * Sprint 1.4 · item 8 — data-base do CONSUMO (ISO), que não é a data-base do
+   * snapshot: o valuation é marcado no fechamento do ano e o consumo vem do
+   * forecast operacional, com outra data. Sem este campo o drawer do runway
+   * exibiria a data errada com aparência de certeza. `null` quando a fonte não
+   * a informa.
+   */
+  burnAsOf?: string | null;
+  /**
+   * Sprint 1.4 · item 8 — período de consumo que a FONTE considera (ex.: "Média
+   * dos últimos 12 meses"). `null` quando a metodologia ainda não foi definida:
+   * a tela diz "Aguardando definição" em vez de assumir um período. Um runway
+   * calculado sobre um período arbitrado é um número plausível e falso.
+   */
+  burnPeriodLabel?: string | null;
+  /**
+   * Fase 5.2 · ORE-51-004 — data-base do SALDO DE CAIXA (ISO). Distinta da do
+   * consumo e da do snapshot: o caixa da Morro Verde vem do relatório do
+   * Q1/2026 (31/03/2026) enquanto o valuation dela é de 31/12/2025. Sem este
+   * campo o saldo aparecia sob a data-base do snapshot, três meses errada.
+   */
+  cashAsOf?: string | null;
   unavailableReason?: string;
 }
 
@@ -116,8 +154,9 @@ export interface PerformanceSnapshot {
   currency: string;
   /** Câmbio para converter a apresentação, quando a fonte não é BRL. */
   fxToBRL?: number;
-  /** Participação da Ore na investida (%). */
-  ownershipPct: number;
+  /** Participação da Ore na investida (%). `null` quando os documentos
+   *  conflitam sem explicação (Sprint 1.5 · Alvo). */
+  ownershipPct: number | null;
   /** Data-base geral do snapshot (ISO). */
   asOf: string;
   valuation: Valuation;
@@ -127,13 +166,24 @@ export interface PerformanceSnapshot {
   scenarios?: ReturnScenarios;
   /** Origem exibível do snapshot (rodapé dos blocos). */
   sourceLabel?: string;
+  /**
+   * Sprint 1.5 — estado do dado POR CAMPO, não por empresa.
+   *
+   * Uma investida pode ter valuation REAL e caixa AGUARDANDO_DADOS ao mesmo
+   * tempo; um `dataStatus` único no nível da empresa faria o selo certificar
+   * o que não tem fonte. As chaves são os blocos que a tela exibe.
+   */
+  fieldStatus?: Partial<Record<
+    "valuation" | "ownership" | "capital" | "liquidity" | "runway" | "scenarios",
+    DataStatus
+  >>;
 }
 
 /* ───────────────── Derivados (calculados no serviço) ──────────────────── */
 
 export interface PerformanceDerived {
-  /** MOIC = valuation atual ÷ capital investido. */
-  moic: number;
+  /** MOIC = valuation atual ÷ capital investido. `null` sem valuation. */
+  moic: number | null;
   /** Variação anual do valuation (último ano vs anterior), em %. */
   valuationVariationYoY: number;
   /** Capital não chamado = comprometido − chamado. `null` sem os dois insumos. */

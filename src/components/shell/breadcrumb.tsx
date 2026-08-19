@@ -33,8 +33,15 @@ export function Breadcrumb() {
     const rest = parts.slice(2).filter((p) => !["financeiro", "operacoes", "governanca", "config"].includes(p));
     rest.forEach((p) => crumbs.push({ label: labels[p] ?? p }));
   } else {
+    /* Fase 5.1 — segmentos que NÃO têm página própria não viram link.
+       `/portfolio` e `/dashboards` são apenas agrupadores de rota: o Next
+       fazia prefetch deles e recebia 404 em toda navegação por Investidas,
+       Home do portfólio e Visão Financeira. Rota inexistente não é destino. */
+    const SEM_PAGINA = new Set(["portfolio", "dashboards", "e"]);
     parts.forEach((p, i) => {
-      crumbs.push({ label: labels[p] ?? p, href: i < parts.length - 1 ? "/" + parts.slice(0, i + 1).join("/") : undefined });
+      const ultimo = i === parts.length - 1;
+      const href = ultimo || SEM_PAGINA.has(p) ? undefined : "/" + parts.slice(0, i + 1).join("/");
+      crumbs.push({ label: labels[p] ?? p, href });
     });
   }
 
@@ -47,8 +54,10 @@ export function Breadcrumb() {
             <Link href={c.href} className="shrink-0 text-muted-foreground transition-colors hover:text-foreground">
               {c.label}
             </Link>
-          ) : (
+          ) : i === crumbs.length - 1 ? (
             <span className="truncate font-medium text-foreground">{c.label}</span>
+          ) : (
+            <span className="shrink-0 text-muted-foreground">{c.label}</span>
           )}
         </React.Fragment>
       ))}

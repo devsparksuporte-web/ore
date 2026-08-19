@@ -65,7 +65,10 @@ export default function CashFlowPage() {
 
         {/* KPIs do recorte */}
         <section className="grid grid-cols-2 gap-4 xl:grid-cols-4">
-          <MiniStat label="Saldo atual" value="R$ 48,2 mi" />
+          {/* Sprint 1.5 · AUD-001 — sem fonte para o saldo da Ativa. O módulo
+              permanece com a série demonstrativa declarada, mas o headline não
+              afirma um saldo que nenhum documento sustenta. */}
+          <MiniStat label="Saldo atual" value="Não disponibilizado" />
           <MiniStat label="Entradas (jun)" value="R$ 23,4 mi" delta={<DeltaIndicator value={4.1} favorable label="vs mai" />} />
           <MiniStat label="Saídas (jun)" value="R$ 20,1 mi" delta={<DeltaIndicator value={7.8} favorable={false} label="vs mai" />} />
           <MiniStat label="Cobertura" value="4,2 meses" />
@@ -91,7 +94,7 @@ export default function CashFlowPage() {
             <ChartCard title="Evolução do caixa" subtitle="R$ mi · semanal · arraste a régua para dar zoom" source="Evolução de caixa" dataStatus="DEMONSTRATIVO">
               <CashChart data={cashFlow} minimum={CASH_MINIMUM} zoomable />
             </ChartCard>
-            <EditorialSection title="Posição por conta bancária">
+            <EditorialSection title="Posição por conta bancária" meta="Dados demonstrativos">
                 {bankAccounts.map((b) => (
                   <div key={b.bank} className="rounded-md border p-4">
                     <p className="text-caption uppercase tracking-wide text-muted-foreground">{b.bank}</p>

@@ -11,6 +11,7 @@
 import Link from "next/link";
 import { AlertTriangle, ArrowRight, CheckCircle2, ChevronRight, Info, Sparkles } from "lucide-react";
 import { registerWidget, type WidgetConfig } from "@modules/widgets";
+import { DATA_STATUS_LABEL, type DataStatus } from "@modules/data-source";
 import { cn } from "@/lib/utils";
 import type { Insight, InsightTone } from "../types";
 
@@ -18,6 +19,13 @@ export interface BriefingWidgetData {
   firstName: string;
   insights: Insight[];
   maxItems?: number;
+  /**
+   * Fase 5.2 · ORE-51-005 — estado dos dados sobre os quais o motor leu.
+   * O briefing é derivação: ele não vale mais do que a base que o alimenta.
+   * Sem este campo, leituras geradas sobre números demonstrativos apareciam
+   * com a mesma autoridade das geradas sobre documento da Ore.
+   */
+  dataStatus?: DataStatus;
 }
 
 function greeting(): string {
@@ -52,6 +60,9 @@ export function BriefingWidgetBody({ data }: { data: BriefingWidgetData; config:
           </h3>
           <p className="text-caption text-muted-foreground">
             {today} · hoje identificamos {items.length} pontos de leitura
+          </p>
+          <p className="mt-1 text-caption text-warning-fg">
+            Leitura derivada · {DATA_STATUS_LABEL[data.dataStatus ?? "DEMONSTRATIVO"]}
           </p>
         </div>
       </div>
@@ -95,7 +106,7 @@ export function BriefingWidgetBody({ data }: { data: BriefingWidgetData; config:
       {/* Rodapé de instrução */}
       <p className="flex items-center gap-1.5 px-6 py-3 text-caption text-gray-500">
         <ArrowRight className="h-3 w-3" aria-hidden />
-        Selecione um item para investigar · cada leitura tem evidência
+        Selecione um item para investigar · cada leitura aponta para a sua base
       </p>
     </div>
   );

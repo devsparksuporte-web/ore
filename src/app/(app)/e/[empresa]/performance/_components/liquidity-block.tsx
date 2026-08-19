@@ -12,7 +12,7 @@ import { EditorialSection } from "@/components/ui";
 import { formatMoney } from "@/lib/format";
 import type { Liquidity, PerformanceDerived } from "@modules/performance";
 import { RUNWAY_ATTENTION_MONTHS, RUNWAY_CRITICAL_MONTHS } from "@modules/performance";
-import { opcional, runwayLabel, SEM_DADO } from "./helpers";
+import { formatAsOf, opcional, runwayLabel, SEM_DADO } from "./helpers";
 import { BurnChart } from "./burn-chart";
 import { cn } from "@/lib/utils";
 
@@ -79,6 +79,12 @@ export function LiquiditySection({ liquidity, derived }: { liquidity: Liquidity;
             >
               {opcional(liquidity.cash, money)}
             </p>
+            {/* Fase 5.2 · ORE-51-004 — o saldo tem data-base PRÓPRIA, diferente
+                da do valuation. Exibi-lo sem ela deixava o leitor supor a data
+                do snapshot, três meses antes do que o documento diz. */}
+            {liquidity.cash !== null && liquidity.cashAsOf && (
+              <p className="mt-1 text-caption tnum text-gray-500">data-base {formatAsOf(liquidity.cashAsOf)}</p>
+            )}
             <p className="mt-2.5 text-caption text-gray-500">Contingências</p>
             <p
               className={cn(
@@ -107,7 +113,7 @@ export function LiquiditySection({ liquidity, derived }: { liquidity: Liquidity;
           <div className="border-t pt-4">
             <p className="text-body-sm leading-6 text-gray-700">
               Do consumo do mês, <span className="tnum font-medium text-navy-900">{money(liquidity.unclassified)}</span>{" "}
-              está sem classificação de atividade na planilha de origem — não entra nos totais por atividade acima.
+              está sem classificação de atividade nos documentos fornecidos pela Ore — não entra nos totais por atividade acima.
             </p>
             <p className="mt-1.5 text-caption leading-6 text-gray-500">
               Mesma natureza das contas não mapeadas do DRE: o valor não some, mas não pode ser atribuído.

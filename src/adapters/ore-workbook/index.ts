@@ -10,9 +10,15 @@ import type {
 } from "@modules/strategy/types";
 import type { PerformanceSnapshot } from "@modules/performance/types";
 import * as ativa from "./ativa";
-import { FX_BRL_PER_USD } from "./provenance";
+import { FX_BRL_PER_USD, SOURCES } from "./provenance";
+import {
+  CENARIOS_SAIDA, MORRO_VERDE_Q1_2026, POSICOES, type InvestidaSlug,
+} from "./portfolio";
 
 export * from "./provenance";
+export * from "./kpis";
+export * from "./dashboards";
+export * from "./portfolio";
 export { ativa };
 
 const ASSET = { id: ativa.ATIVA.assetId, label: ativa.ATIVA.displayName, companySlug: ativa.ATIVA.companySlug };
@@ -67,16 +73,36 @@ const objectives = ativa.tese.sucesso2026
   .map((s) => s.replace(/\.$/, "").trim())
   .filter(Boolean);
 
+/**
+ * Sprint 1.4 · item 7 — a tese de entrada não está no workbook. O adaptador
+ * traduz esse `null` em ausência DECLARADA (estado + motivo), e não em campo
+ * silenciosamente vazio: a tela precisa de algo para mostrar no lugar do texto.
+ *
+ * `AGUARDANDO_DADOS` e não `NAO_DISPONIVEL` porque a pendência é de entrega,
+ * não de natureza da fonte — o campo existe no modelo e há a quem pedir.
+ *
+ * Sem `SourceRef` aqui de propósito: não há fonte documental para este campo.
+ * Declarar uma seria inventar origem — exatamente o que a sprint corrige.
+ * Quando a ORE disponibilizar a tese de entrada (desta ou de qualquer outra
+ * investida), o adaptador preenche `thesisOriginal` e estes dois campos somem
+ * do objeto; nenhum componente muda.
+ */
+const teseOriginalAusente = ativa.tese.original === null;
+
 export const ativaStrategicMap: StrategicMap = {
   id: "map-ativa",
   asset: ASSET,
   thesisOriginal: ativa.tese.original ?? undefined,
+  thesisOriginalStatus: teseOriginalAusente ? "AGUARDANDO_DADOS" : undefined,
+  thesisOriginalUnavailableReason: teseOriginalAusente ? ativa.tese.originalMotivo : undefined,
   thesis: ativa.tese.atual,
   criticalPath,
   objectives,
   keyRisks: ativa.tese.riscos.map((r) => ({ label: r.label, severity: r.severity })),
   success: ativa.tese.sucesso2026,
   decision: ativa.tese.decisao2026,
+  source: { ...SOURCES.mapa, cell: "B7:F7" },
+  dataStatus: "REAL",
   updatedAt: ativa.tese.source.asOf,
 };
 
@@ -127,7 +153,16 @@ export const ativaTimeline: StrategyEvent[] = ORDEM.flatMap((o) => {
     m.status === "Concluído" ? "done"
       : m.status === "Em andamento" || m.status === "Agendado" ? "current"
         : "upcoming";
-  return [{ id: `ev-${m.id}`, dateISO: o.iso, dateLabel: o.label, title: m.title, kind: KIND[m.category] ?? "milestone", state }];
+  return [{
+    id: `ev-${m.id}`, dateISO: o.iso, dateLabel: o.label, title: m.title,
+    kind: KIND[m.category] ?? "milestone", state,
+    /* Fase 5.2 — drill-down do marco. Responsável, alvo, estado e observação
+       saem do workbook exatamente como registrados; nada é acrescentado. */
+    detail: {
+      owner: m.owner, target: m.target, status: m.status, notes: m.notes,
+      category: m.category, sourceLabel: SOURCES.kpiAtiva.label, dataStatus: "REAL",
+    },
+  }];
 });
 
 export const ativaExitPlan: ExitPlan = {
@@ -150,63 +185,146 @@ export const ativaExitPlan: ExitPlan = {
 
 /* ─────────────────────────── Performance ────────────────────────── */
 
+/* ══════════ PERFORMANCE DAS SEIS INVESTIDAS (Sprint 1.5) ═════════════════
+ *
+ * Gerado da posição documental (`./portfolio`). Regras aplicadas:
+ *  · Moeda USD, como o workbook registra. NENHUMA conversão (D6).
+ *  · O workbook grava em USD '000; aqui vira USD absoluto (×1.000) — mudança
+ *    de UNIDADE, não de moeda nem de valor.
+ *  · Caixa, burn, contingências e capital por investida NÃO EXISTEM nos
+ *    documentos (exceto Morro Verde) → `null`, com o motivo declarado.
+ *  · Runway só é calculável com caixa e consumo reais → ausente para todas.
+ *  · O caixa do FUNDO nunca preenche o caixa de uma investida.
+ */
+
+const K = 1_000;
+
+const CAPITAL_SEM_FONTE =
+  "Os documentos da ORE controlam commitments e capital chamado no nível do Fundo, não por investida.";
+const LIQUIDEZ_SEM_FONTE =
+  "Nenhum documento disponibilizado informa saldo de caixa desta investida — sem ele, o runway não é calculável.";
+
+/** Série anual: última marcação de cada ano da série documental. */
+function serieAnual(pontos: readonly { trimestre: string; asOf: string; valorUSD: number }[]) {
+  const porAno = new Map<number, number>();
+  for (const p of pontos) porAno.set(Number(p.asOf.slice(0, 4)), p.valorUSD * K);
+  return Array.from(porAno.entries()).sort((a, b) => a[0] - b[0]).map(([year, value]) => ({ year, value }));
+}
+
+function snapshotDe(slug: InvestidaSlug, assetId: string): PerformanceSnapshot {
+  const pos = POSICOES[slug];
+  const cen = CENARIOS_SAIDA[slug];
+  const asOf = pos.source.asOf ?? "2025-12-31";
+  return {
+    assetId,
+    companySlug: slug,
+    currency: "USD",
+    ownershipPct: pos.ownership === null ? null : Math.round(pos.ownership * 10000) / 100,
+    asOf,
+    sourceLabel: pos.source.label,
+    valuation: {
+      current: pos.fairValueUSD === null ? null : pos.fairValueUSD * K,
+      asOf,
+      method: pos.metodo,
+      investedCapital: pos.costBasisUSD * K,
+      annualSeries: serieAnual(pos.serieFV),
+      /* Histórico = a série trimestral inteira, do mais recente ao mais antigo.
+         Cada marcação preserva a SUA data-base (D1).
+         Fase 5.2 · ORE-51-008 — a fonte de cada linha vinha de `pos.source`,
+         cujo rótulo já termina em "Posição Q4 2025"; somado ao trimestre da
+         linha, produzia "Posição Q4 2025 · Q4 2025". A série tem origem
+         própria na planilha (range A27:Y33) e é ela que deve ser citada. */
+      history: [...pos.serieFV].reverse().map((p) => ({
+        asOf: p.asOf, value: p.valorUSD * K, method: pos.metodo,
+        source: `${SOURCES.serieFV.label} · ${p.trimestre}`,
+      })),
+      seriesStatus: pos.serieStatus ?? pos.fairValueStatus,
+      seriesNote: pos.serieNota,
+    },
+    capital: {
+      committed: null, called: null, availableBalance: null,
+      invested: pos.costBasisUSD * K,
+      unavailableReason: CAPITAL_SEM_FONTE,
+    },
+    liquidity: {
+      cash: null, contingencies: null,
+      burnMonthly: null, burnQuarterly: null, burnAnnual: null, burnSeries: [],
+      currency: "USD", burnAsOf: null, burnPeriodLabel: null, cashAsOf: null,
+      unavailableReason: LIQUIDEZ_SEM_FONTE,
+    },
+    scenarios: {
+      current: cen.fvAtualUSD * K, downside: cen.downsideUSD * K,
+      base: cen.baseUSD * K, upside: cen.upsideUSD * K,
+      mechanism: cen.mecanismo, window: cen.janela, buyers: cen.compradores,
+    },
+    fieldStatus: {
+      valuation: pos.fairValueStatus,
+      ownership: pos.ownershipStatus,
+      capital: "AGUARDANDO_DADOS",
+      liquidity: "AGUARDANDO_DADOS",
+      runway: "AGUARDANDO_DADOS",
+      scenarios: "REAL",
+    },
+  };
+}
+
+const ASSET_ID: Record<InvestidaSlug, string> = {
+  "ativa-mineracao": "c-ativa", "nazareno-gold": "c-nazareno", "morro-verde": "c-morroverde",
+  "rio-novo": "c-rionovo", "alvo-minerals": "c-alvo", "neeo-exploration": "c-neeo",
+};
+
 /**
- * Snapshot de performance da Ativa. Valores em USD, como o fundo registra.
- *
- * O que NÃO existe na fonte e por isso vai `null`:
- *  · capital comprometido / chamado / saldo — o workbook controla isso no nível
- *    do Fundo 1, não por investida;
- *  · saldo de caixa e contingências da investida — nenhuma das duas fontes traz;
- *    sem caixa não há runway, e runway estimado seria invenção.
- * O que ENTRA no lugar: os cenários de saída projetados pela própria ORE.
- *
- * O burn é real (forecast, Maio/2026, em BRL) mas só existe para UM mês —
- * não há série mensal, então `burnSeries` fica vazia em vez de interpolada.
+ * Ativa. Base documental do workbook + o consumo mensal REAL do forecast
+ * operacional — única investida com burn documentado.
  */
 export const ativaPerformance: PerformanceSnapshot = {
-  assetId: ativa.ATIVA.assetId,
-  companySlug: ativa.ATIVA.companySlug,
-  currency: "USD",
+  ...snapshotDe("ativa-mineracao", ASSET_ID["ativa-mineracao"]),
   fxToBRL: FX_BRL_PER_USD,
-  ownershipPct: ativa.valorInvestimento.ownershipPct,
-  asOf: ativa.valorInvestimento.asOf,
-  sourceLabel: ativa.valorInvestimento.source.label,
-  valuation: {
-    current: ativa.valorInvestimento.fairValueUSD,
-    asOf: ativa.valorInvestimento.asOf,
-    method: ativa.valorInvestimento.method,
-    investedCapital: ativa.valorInvestimento.costBasisUSD,
-    annualSeries: [{ year: 2025, value: ativa.valorInvestimento.fairValueUSD }],
-    history: ativa.historicoValuation.map((h) => ({
-      asOf: h.asOf, value: h.valueUSD, method: h.method, source: h.source,
-    })),
-  },
-  capital: {
-    committed: ativa.capital.committedUSD,
-    called: ativa.capital.calledUSD,
-    availableBalance: ativa.capital.availableBalanceUSD,
-    invested: ativa.capital.investedUSD,
-    unavailableReason: ativa.capital.nota,
-  },
   liquidity: {
-    cash: ativa.liquidez.cashBRL,
-    contingencies: ativa.liquidez.contingenciesBRL,
+    cash: null, contingencies: null,
     burnMonthly: ativa.liquidez.burnMonthlyBRL,
-    burnQuarterly: null,
-    burnAnnual: null,
-    burnSeries: [],
+    burnQuarterly: null, burnAnnual: null, burnSeries: [],
+    /* Consumo em BRL — moeda do forecast; o valuation é USD. Moedas distintas
+       para dados distintos, nunca misturadas no mesmo indicador (D6). */
     currency: "BRL",
     unclassified: ativa.liquidez.naoMapeadoMesBRL,
-    unavailableReason:
-      "O saldo de caixa da investida não consta no workbook nem no forecast — sem ele, o runway não é calculável.",
-  },
-  scenarios: {
-    current: ativa.planoSaida.scenariosUSD.current,
-    downside: ativa.planoSaida.scenariosUSD.downside,
-    base: ativa.planoSaida.scenariosUSD.base,
-    upside: ativa.planoSaida.scenariosUSD.upside,
-    mechanism: ativa.planoSaida.mechanism,
-    window: ativa.planoSaida.window,
-    buyers: ativa.planoSaida.buyers,
+    burnAsOf: ativa.liquidez.asOf,
+    burnPeriodLabel: null,
+    unavailableReason: LIQUIDEZ_SEM_FONTE,
   },
 };
+
+/**
+ * Morro Verde — única investida com caixa documentado (Q1/2026, 31/03/2026).
+ * Essa data-base é DIFERENTE da do fair value (31/12/2025): as duas convivem,
+ * cada uma declarando a sua (D1). Moeda BRL, como a fonte registra.
+ */
+export const morroVerdePerformance: PerformanceSnapshot = {
+  ...snapshotDe("morro-verde", ASSET_ID["morro-verde"]),
+  liquidity: {
+    cash: MORRO_VERDE_Q1_2026.caixaBRLmm * 1_000_000,
+    contingencies: null,
+    burnMonthly: null, burnQuarterly: null, burnAnnual: null, burnSeries: [],
+    currency: "BRL",
+    burnAsOf: null,
+    burnPeriodLabel: null,
+    cashAsOf: MORRO_VERDE_Q1_2026.asOf,
+    unavailableReason:
+      "O caixa vem do relatório Q1/2026 (data-base 31/03/2026). O consumo mensal não é publicado por investida — sem ele, o runway não é calculável.",
+  },
+  fieldStatus: {
+    valuation: "REAL", ownership: "REAL", capital: "AGUARDANDO_DADOS",
+    liquidity: "REAL", runway: "AGUARDANDO_DADOS", scenarios: "REAL",
+  },
+};
+
+export const nazarenoPerformance = snapshotDe("nazareno-gold", ASSET_ID["nazareno-gold"]);
+export const rioNovoPerformance = snapshotDe("rio-novo", ASSET_ID["rio-novo"]);
+export const alvoPerformance = snapshotDe("alvo-minerals", ASSET_ID["alvo-minerals"]);
+export const neeoPerformance = snapshotDe("neeo-exploration", ASSET_ID["neeo-exploration"]);
+
+/** As seis — consumido pelo port de Performance. */
+export const portfolioPerformance: PerformanceSnapshot[] = [
+  ativaPerformance, morroVerdePerformance, nazarenoPerformance,
+  rioNovoPerformance, alvoPerformance, neeoPerformance,
+];

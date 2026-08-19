@@ -5,11 +5,18 @@
  * título discreto + ações · corpo · rodapé com origem do dado ·
  * 6 estados (ready/loading/empty/error/negado/oculto) · tom semântico ·
  * animação de entrada contida · clicável quando href.
+ *
+ * Fase 5.2 — o widget também é ocultável para apresentação (@modules/
+ * presentation). Distinto do estado "negado": negado é AUTORIZAÇÃO (o leitor
+ * não pode ver); oculto é COMPOSIÇÃO (o apresentador escolheu não mostrar
+ * agora). Os dois coexistem sem se confundir — e ocultar nunca substitui
+ * autorizar.
  */
 import * as React from "react";
 import Link from "next/link";
 import { Lock, RefreshCw } from "lucide-react";
 import { authorize } from "@modules/permissions";
+import { BlockMenu, useVisibility } from "@modules/presentation";
 import { SourceCaption } from "@/components/data/source-caption";
 import { EmptyState } from "@/components/data/empty-state";
 import { Skeleton, SkeletonTable } from "@/components/ui/skeleton";
@@ -39,11 +46,16 @@ export function WidgetFrame({
   /* AUTORIZAÇÃO CENTRALIZADA (ADR-021): todo widget verifica empresa +
      papel + permissão + escopo ANTES de renderizar — automático, aqui,
      nunca espalhado pela aplicação. A fronteira real é o backend (P-E4). */
+  const v = useVisibility();
+  const podeOcultar = Boolean(config.title) && !config.frameless;
+  const oculto = podeOcultar && v.isHidden(config.id);
+
   const decision = config.requires
     ? authorize({ capability: config.requires, company: config.company, costCenter: config.costCenter })
     : { allowed: true as const, reason: "ok" };
   const allowed = decision.allowed;
   if (!allowed && config.deniedBehavior === "hide") return null;
+  if (oculto) return null;
 
   const body = !allowed ? (
     <div className="flex min-h-[96px] flex-col items-center justify-center gap-1.5 text-muted-foreground">
@@ -84,18 +96,21 @@ export function WidgetFrame({
          widget e o conteúdo assenta na página (mesma gramática das seções). */
       className={cn(
         "widget-enter",
-        "group flex h-full flex-col border-t-2 border-navy-900/85 pt-3",
+        "group/bloco group flex h-full flex-col border-t-2 border-navy-900/85 pt-3",
         toneRule[config.tone ?? "default"],
         config.href && "cursor-pointer transition-colors duration-fast ease-standard"
       )}
     >
-      {(config.title || config.actions) && (
+      {(config.title || config.actions || podeOcultar) && (
         <header className="flex items-start justify-between gap-3 pb-3">
           <div className="min-w-0">
             {config.title && <h3 className="font-display text-body-sm font-medium tracking-snug text-navy-900">{config.title}</h3>}
             {config.description && <p className="mt-0.5 text-caption text-gray-500">{config.description}</p>}
           </div>
-          {config.actions && <div className="flex shrink-0 items-center gap-2">{config.actions}</div>}
+          <div className="flex shrink-0 items-center gap-2">
+            {config.actions}
+            {podeOcultar && <BlockMenu id={config.id} label={config.title ?? config.id} />}
+          </div>
         </header>
       )}
       <div className="flex-1">{body}</div>

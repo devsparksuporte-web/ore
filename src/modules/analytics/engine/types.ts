@@ -10,6 +10,7 @@
  */
 import type { Capability } from "@/lib/session";
 import type { WidgetSpan, WidgetTone } from "@modules/widgets";
+import type { DataStatus } from "@modules/data-source";
 
 /* ── Consulta (JSON) — o contrato de dados ────────────────────────── */
 export interface AnalyticsQuery {
@@ -60,6 +61,13 @@ export interface AnalyticsWidgetSpec {
   requires?: Capability;
   href?: string;
   source?: string;             // legenda de origem; default derivado da query
+  /**
+   * Fase 5.1 — estado do dado do widget, exibido no rodapé pelo SourceCaption
+   * que o WidgetFrame já renderiza. Sem ele, um widget demonstrativo mostrava
+   * apenas "Plataforma · ativa-mineracao · 2026-06", origem que soa
+   * autoritativa para dado que não tem fonte documental.
+   */
+  dataStatus?: DataStatus;
 }
 
 /* ── Dashboard configurável (JSON) ────────────────────────────────── */

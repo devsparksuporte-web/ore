@@ -32,6 +32,18 @@ function ratio(a: number | null | undefined, b: number | null | undefined): numb
 export const RUNWAY_CRITICAL_MONTHS = 6;
 export const RUNWAY_ATTENTION_MONTHS = 12;
 
+/**
+ * Sprint 1.4 · item 8 — a fórmula do runway, exibível ao leitor.
+ *
+ * Mora aqui, ao lado do `ratio(l.cash, l.burnMonthly)` que a implementa, para
+ * que texto e cálculo não possam divergir: um drawer que descreve uma fórmula
+ * diferente da executada é pior que drawer nenhum.
+ */
+export const RUNWAY_FORMULA_LABEL = "Caixa ÷ consumo mensal";
+
+/** Rótulo do período quando a fonte ainda não definiu a metodologia. */
+export const RUNWAY_PERIOD_UNDEFINED = "Aguardando definição";
+
 /** Zona semântica do runway a partir dos meses. */
 export function runwayZone(months: number): RunwayZone {
   if (months < RUNWAY_CRITICAL_MONTHS) return "critical";
@@ -48,12 +60,14 @@ export function getPerformanceByCompany(companySlug: string): PerformanceSnapsho
 export function derivePerformance(s: PerformanceSnapshot): PerformanceDerived {
   const { valuation: v, capital: c, liquidity: l } = s;
   const series = v.annualSeries;
-  const last = series[series.length - 1]?.value ?? v.current;
+  const last = series[series.length - 1]?.value ?? v.current ?? 0;
   const prev = series[series.length - 2]?.value ?? last;
   const runwayMonths = ratio(l.cash, l.burnMonthly);
   const calledRatio = ratio(c.called, c.committed);
   return {
-    moic: v.investedCapital > 0 ? v.current / v.investedCapital : 0,
+    /* Sprint 1.5 — sem valuation não há múltiplo. `null`, nunca 0: um MOIC
+       de 0,0x afirmaria perda total onde o que existe é ausência de fonte. */
+    moic: v.current !== null && v.investedCapital > 0 ? v.current / v.investedCapital : null,
     valuationVariationYoY: prev > 0 ? ((last - prev) / prev) * 100 : 0,
     uncalled: c.committed !== null && c.called !== null ? c.committed - c.called : null,
     calledPct: calledRatio === null ? null : calledRatio * 100,

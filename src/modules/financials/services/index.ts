@@ -32,3 +32,16 @@ export const getOperationalKpis = () => operationalKpis;
 
 /* Forecast (M11) */
 export const getForecastSeries = () => forecastSeries;
+
+/* ── Resultado documentado por investida (Fase 6) ─────────────────────────
+   As funções acima não recebem slug: retornam o mesmo conjunto para as seis
+   investidas, e por isso o que elas alimentam segue declarado como
+   demonstrativo. Esta função é o contrário — só devolve algo onde existe
+   documento da Ore para AQUELA investida. */
+import { blocosFinanceirosDaInvestida, type BlocoDashboard } from "@/adapters/ore-workbook";
+
+export type { BlocoDashboard };
+
+export function getResultadoDocumentado(slug: string): BlocoDashboard[] {
+  return blocosFinanceirosDaInvestida(slug);
+}
