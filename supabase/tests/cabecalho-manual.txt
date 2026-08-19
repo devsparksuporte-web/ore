@@ -1,0 +1,56 @@
+/* =============================================================================
+   ORE · REGRAS DE BANCO — ARQUIVO ÚNICO PARA APLICAÇÃO MANUAL
+   -----------------------------------------------------------------------------
+   Gerado a partir de supabase/migrations/ (00 -> 09), na ordem. Não edite este
+   arquivo: edite as migrations e regenere com
+
+       bash supabase/tests/gerar-arquivo-unico.sh
+
+   COMO APLICAR
+   ------------
+   Supabase Dashboard > SQL Editor > New query > cole TUDO > Run.
+
+   O editor roda o bloco inteiro em UMA transação: se qualquer comando falhar,
+   nada é aplicado. Não há estado pela metade — leia o erro, corrija, rode de
+   novo. Leva alguns segundos.
+
+   DEPOIS DE RODAR (nada disto é SQL — sem estes passos, metade das regras não
+   está no ar):
+
+   1. Authentication > Hooks
+        · Custom Access Token           -> app.custom_access_token_hook
+        · Password Verification Attempt -> app.password_verification_attempt_hook
+      Sem o segundo, NÃO EXISTE bloqueio progressivo de login.
+
+   2. Authentication > Password protection
+        · Minimum password length ............ 12
+        · Required characters ................ letras minúsculas, maiúsculas,
+                                               dígitos e símbolos
+        · Prevent use of leaked passwords .... LIGADO (HIBP)
+
+   3. Authentication > Sessions
+        · Time-box user sessions ............. 12 horas
+        · Inactivity timeout ................. 30 minutos
+        · Access token (JWT) expiry .......... 1800 s
+        · Refresh token rotation ............. LIGADO, reuse interval 10 s
+
+   4. Authentication > Sign In / Providers
+        · Allow new users to sign up ......... DESLIGADO (plataforma é por convite)
+        · Confirm email ...................... LIGADO
+        · Secure email change ................ LIGADO
+        · Secure password change ............. LIGADO
+        · MFA (TOTP) ......................... habilitado
+
+   5. Primeiro administrador — nesta ordem:
+        a) Authentication > Users > Invite user (e-mail corporativo)
+        b) a pessoa entra e CADASTRA O TOTP
+        c) SQL Editor:  select public.bootstrap_first_admin('email@dominio');
+      Cadastrar o TOTP antes é obrigatório: o papel administrador exige AAL2,
+      e um admin sem segundo fator fica travado sem ninguém que possa destravá-lo.
+
+   6. Conferência: cole supabase/tests/conferir.sql no SQL Editor.
+
+   Regras, matriz de papéis e o que ficou de fora: docs/13-regras-de-banco.md
+============================================================================= */
+
+

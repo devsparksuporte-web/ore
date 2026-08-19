@@ -72,7 +72,12 @@ o que `src/modules/permissions` hoje só decide no front: usuários, política d
 senha e sessão, MFA, bloqueio progressivo de login, RBAC (papel × capacidade ×
 empresa × centro de custo) sob RLS, ciclo de vida da conta e trilha imutável.
 
-Regras, matriz de papéis e passo a passo de aplicação em
+Aplicação **manual**: cole `supabase/aplicar-manual.sql` (arquivo único, gerado
+das migrations) no SQL Editor do Supabase e depois confira com
+`supabase/tests/conferir.sql`. Os ajustes de senha, sessão e hooks ficam no
+Dashboard — a lista está no doc.
+
+Regras, matriz de papéis e passo a passo em
 [docs/13-regras-de-banco.md](docs/13-regras-de-banco.md).
 
 > Alterou `ROLE_POLICIES` em `src/modules/permissions/policies.ts`? Nova

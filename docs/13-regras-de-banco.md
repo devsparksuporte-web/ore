@@ -268,52 +268,72 @@ Só isto é chamável por um usuário autenticado:
 
 ## 11. Como aplicar
 
+### Manual (SQL Editor) — caminho adotado
+
+1. **SQL** — Dashboard › SQL Editor › New query › cole
+   [`supabase/aplicar-manual.sql`](../supabase/aplicar-manual.sql) inteiro › Run.
+   O editor roda tudo em **uma transação**: se algo falhar, nada é aplicado.
+   Não existe estado pela metade.
+
+2. **Configuração do Auth** — metade das regras de senha e sessão não é SQL.
+   Sem esta etapa, o banco está pronto e a autenticação está frouxa:
+
+   | Onde no Dashboard | Ajuste |
+   |---|---|
+   | Authentication › Hooks | *Custom Access Token* → `app.custom_access_token_hook` |
+   | Authentication › Hooks | *Password Verification Attempt* → `app.password_verification_attempt_hook` — **sem ele não há bloqueio progressivo** |
+   | Password protection | mínimo **12**, exigir as 4 classes, **HIBP ligado** |
+   | Sessions | time-box **12 h**, inatividade **30 min** |
+   | JWT / Tokens | access token **1800 s**, refresh rotation **ligado**, reuse interval **10 s** |
+   | Sign In / Providers | *Allow new users to sign up* **DESLIGADO**; confirm email, secure email change e secure password change **ligados** |
+   | MFA | TOTP habilitado |
+
+   `supabase/config.toml` continua no repositório como **a especificação
+   versionada** desses valores — é por onde se confere o que deveria estar
+   configurado, e o que a CLI aplicaria se um dia for adotada.
+
+3. **Primeiro administrador**, nesta ordem exata:
+   a. Authentication › Users › *Invite user* (e-mail corporativo);
+   b. a pessoa entra e **cadastra o TOTP**;
+   c. SQL Editor: `select public.bootstrap_first_admin('email@dominio');`
+
+   Inverter (b) e (c) trava a conta: o papel exige AAL2 e ninguém tem permissão
+   para destravar.
+
+4. **Conferir** — cole [`supabase/tests/conferir.sql`](../supabase/tests/conferir.sql).
+   Oito consultas com a resposta esperada ao lado de cada uma.
+
+### Ao editar as regras
+
+As migrations numeradas em `supabase/migrations/` continuam sendo a fonte.
+Editou uma? Regenere o arquivo único antes de aplicar:
+
 ```bash
-npm i -g supabase          # se ainda não tiver
-supabase link --project-ref <ref>
-supabase db push           # aplica 00 → 09
+bash supabase/tests/gerar-arquivo-unico.sh
 ```
 
-Depois, **na ordem**:
+Aplicando à mão, **você é o controle de versão**: registre no PR qual arquivo
+foi rodado e quando. Se um dia adotar a CLI, marque as migrations já aplicadas
+com `supabase migration repair --status applied <version>` — senão o
+`db push` tentará rodá-las de novo.
 
-1. Dashboard › Authentication › Hooks: ligar *Custom Access Token* e
-   *Password Verification Attempt* (o `config.toml` já os declara para o
-   ambiente local).
-2. Dashboard › Authentication › Password protection: ligar **HIBP**.
-3. Criar a conta do primeiro administrador (Auth › Users › Invite).
-4. Essa pessoa entra, **cadastra o TOTP** e só então:
-
-```sql
--- SQL Editor (roda como service_role)
-select public.bootstrap_first_admin('marcio@oreinvestments.com.br');
-```
-
-5. Conferir: `select * from public.v_access_recertification_due;`
-
-### Validar antes de aplicar
+### Validar antes de aplicar (opcional, requer Docker)
 
 ```bash
-bash supabase/tests/validar.sh     # requer Docker
+bash supabase/tests/validar.sh
 ```
 
-Sobe um Postgres descartável com stubs do GoTrue (`supabase/tests/stub-supabase.sql`),
-aplica as 10 migrations em ordem e confere três coisas: nenhuma tabela de
-`public` sem RLS, quantas capacidades cada papel recebeu após a expansão dos
-wildcards, e que o convidado não recebeu nenhuma capacidade da lista de negação.
-Não toca em nenhum projeto Supabase.
+Sobe um Postgres descartável com stubs do GoTrue, aplica as 10 migrations em
+ordem e roda as conferências. Não toca em nenhum projeto Supabase.
 
 ### Checklist de go-live
 
-- [ ] `enable_signup = false` confirmado em produção
+- [ ] *Allow new users to sign up* desligado em produção
 - [ ] HIBP ligado
-- [ ] Hooks ligados e testados (errar uma senha 5× deve bloquear por 1 min)
-- [ ] Ao menos **dois** administradores com MFA (o `deactivate_user` protege o
-      último, mas um só administrador é um ponto único de falha)
-- [ ] `select count(*) from pg_tables t
-        where schemaname='public' and not rowsecurity;` → **0**
-- [ ] `supabase db lint` e o Security Advisor sem alertas
-
----
+- [ ] Os dois hooks ligados e testados (errar a senha 5× deve bloquear por 1 min)
+- [ ] Ao menos **dois** administradores com MFA cadastrado
+- [ ] `conferir.sql` sem surpresas nas consultas 1, 2, 4 e 5
+- [ ] Security Advisor do projeto sem alertas
 
 ## 12. O que fica para depois
 
