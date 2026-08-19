@@ -1,0 +1,81 @@
+# =============================================================================
+# Supabase · configuração de AUTENTICAÇÃO
+# -----------------------------------------------------------------------------
+# Metade das regras de senha e sessão NÃO é SQL: vive na configuração do
+# GoTrue. Este arquivo é a outra metade das migrations — versionado junto,
+# revisado junto.
+#
+# Gerado para ser mesclado com o `supabase init` (que traz [db], [studio],
+# [storage] etc.). Se você já tem um config.toml, copie apenas os blocos
+# [auth*] abaixo.
+# =============================================================================
+
+project_id = "ore"
+
+[auth]
+enabled = true
+site_url = "http://localhost:3000"
+additional_redirect_urls = ["http://localhost:3000/**"]
+
+# Access token curto: permissão revogada dói em no máximo 30 minutos.
+jwt_expiry = 1800
+
+# Refresh ROTATIVO: cada uso troca o token. Reuso fora da janela de 10s
+# (corrida de rede legítima) é tratado como roubo -> família revogada.
+enable_refresh_token_rotation = true
+refresh_token_reuse_interval = 10
+
+# Plataforma é por CONVITE. Ninguém cria conta sozinho.
+enable_signup = false
+enable_anonymous_sign_ins = false
+enable_manual_linking = false
+
+# Senha: 12+ com as quatro classes. Combinado com a proteção contra senhas
+# vazadas (HIBP), elimina a senha adivinhável sem exigir troca periódica —
+# rotação forçada produz "Senha@2026", que é pior.
+minimum_password_length = 12
+password_requirements = "lower_upper_letters_digits_symbols"
+
+[auth.email]
+enable_signup = false
+enable_confirmations = true
+# Trocar e-mail confirma nos DOIS endereços — impede sequestro por troca.
+double_confirm_changes = true
+# Trocar senha exige reautenticação recente.
+secure_password_change = true
+max_frequency = "60s"
+otp_length = 8
+otp_expiry = 900
+
+[auth.sms]
+enable_signup = false
+enable_confirmations = false
+
+# MFA · TOTP. A obrigatoriedade por papel é do banco (roles.requires_mfa);
+# aqui apenas habilitamos o fator.
+[auth.mfa]
+max_enrolled_factors = 5
+
+[auth.mfa.totp]
+enroll_enabled = true
+verify_enabled = true
+
+# Sessão: teto absoluto de 12h e 30min de inatividade. Estação destravada em
+# sala de reunião deixa de ser sessão eterna.
+[auth.sessions]
+timebox = "12h"
+inactivity_timeout = "30m"
+
+# ── Hooks (migration 06) ─────────────────────────────────────────────────────
+[auth.hook.custom_access_token]
+enabled = true
+uri = "pg-functions://postgres/app/custom_access_token_hook"
+
+[auth.hook.password_verification_attempt]
+enabled = true
+uri = "pg-functions://postgres/app/password_verification_attempt_hook"
+
+# ── Ainda no Dashboard, não no config.toml ───────────────────────────────────
+# Authentication > Password protection > "Prevent use of leaked passwords"
+#   (HIBP). Depende do plano; conferir se está LIGADO antes do go-live.
+# Authentication > Rate limits: manter os padrões de e-mail/OTP.

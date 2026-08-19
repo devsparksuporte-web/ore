@@ -64,3 +64,16 @@ src/
 ## Próximos passos (Fase 5+)
 
 Substituir `src/mocks` por chamadas à API NestJS (contratos no doc 10 §A3/doc 09) — os componentes já consomem tipos de domínio, então a troca é na camada de dados, não na UI. Itens sinalizados com toast "v1.1/Fase 3" no produto: CAPEX completo, Forecast completo, Balanço, documentos, pipeline kanban, ⌘K real, modo apresentação.
+
+## Banco de dados — identidade, senha e permissões
+
+`supabase/migrations/` (00→09) + `supabase/config.toml` materializam no Postgres
+o que `src/modules/permissions` hoje só decide no front: usuários, política de
+senha e sessão, MFA, bloqueio progressivo de login, RBAC (papel × capacidade ×
+empresa × centro de custo) sob RLS, ciclo de vida da conta e trilha imutável.
+
+Regras, matriz de papéis e passo a passo de aplicação em
+[docs/13-regras-de-banco.md](docs/13-regras-de-banco.md).
+
+> Alterou `ROLE_POLICIES` em `src/modules/permissions/policies.ts`? Nova
+> migration no mesmo PR — o banco é a fonte de verdade, o front é a projeção.
